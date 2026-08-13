@@ -1,6 +1,7 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "vgzt-contact",
+  "account_id": "fd4eb20c16040711048e738d0445e38b",
   "main": "src/index.ts",
   "compatibility_date": "2026-08-13",
   "compatibility_flags": ["nodejs_compat"],
@@ -15,11 +16,10 @@
     "ALLOWED_ORIGINS": "https://vgzt.org,https://www.vgzt.org",
     "TURNSTILE_EXPECTED_HOSTNAMES": "vgzt.org,www.vgzt.org",
     "TURNSTILE_EXPECTED_ACTION": "vgzt_contact",
-    "CONTACT_FROM": "contact@vgzt.org",
-    "CONTACT_TO": "organizers@vgzt.org"
+    "CONTACT_FROM": "contact@vgzt.org"
   },
   "secrets": {
-    "required": ["TURNSTILE_SECRET"]
+    "required": ["TURNSTILE_SECRET", "CONTACT_TO"]
   },
   "ratelimits": [
     {
@@ -42,7 +42,6 @@
   "send_email": [
     {
       "name": "CONTACT_EMAIL",
-      "destination_address": "organizers@vgzt.org",
       "allowed_sender_addresses": ["contact@vgzt.org"]
     }
   ],
