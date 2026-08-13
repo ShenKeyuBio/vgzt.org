@@ -1,0 +1,6 @@
+# Copy this file to .dev.vars and replace the value locally.
+# Never commit .dev.vars or a production secret.
+TURNSTILE_SECRET="replace-with-a-development-turnstile-secret"
+
+# Optional. Omit this key entirely to disable Slack notifications.
+SLACK_WEBHOOK_URL="https://hooks.slack.com/services/EXAMPLE/EXAMPLE/EXAMPLE"

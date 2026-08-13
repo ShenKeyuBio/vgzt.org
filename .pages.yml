@@ -1,0 +1,896 @@
+settings:
+  commit:
+    identity: user
+    templates:
+      create: 'content(create): {path}'
+      update: 'content(update): {path}'
+      delete: 'content(delete): {path}'
+      rename: 'content(rename): {oldPath} -> {newPath}'
+
+media:
+  - name: brand
+    label: Approved brand assets
+    input: public/brand
+    output: /brand
+    extensions: [png, jpg, jpeg, webp]
+    rename: safe
+  - name: posters
+    label: Event posters
+    input: src/assets/posters
+    output: ../../assets/posters
+    extensions: [png, jpg, jpeg, webp]
+    rename: safe
+  - name: people
+    label: People portraits
+    input: src/assets/people
+    output: ../../assets/people
+    extensions: [png, jpg, jpeg, webp]
+    rename: safe
+
+components:
+  stable_id:
+    type: string
+    label: Stable ID (permanent after creation)
+    required: true
+    pattern:
+      regex: '^[a-z0-9]+(?:-[a-z0-9]+)*$'
+      message: 'Use lowercase letters, numbers, and single hyphens only. Do not change an ID after publishing.'
+    description: 'Permanent relationship/public-route key. Use lowercase kebab-case and do not include mutable dates, titles, or affiliations. Pages CMS cannot lock this field only after creation: never edit it on an existing record; CI rejects filename/ID drift.'
+    options:
+      minlength: 3
+      maxlength: 80
+  calendar_date:
+    type: string
+    required: true
+    pattern:
+      regex: '^\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\d|3[01])$'
+      message: 'Use YYYY-MM-DD and enter the confirmed calendar date explicitly.'
+    options:
+      minlength: 10
+      maxlength: 10
+  nullable_calendar_date:
+    type: string
+    default: null
+    pattern:
+      regex: '^\d{4}-(?:0[1-9]|1[0-2])-(?:0[1-9]|[12]\d|3[01])$'
+      message: 'Use YYYY-MM-DD or leave this field empty.'
+    options:
+      minlength: 10
+      maxlength: 10
+  https_url:
+    type: string
+    required: true
+    pattern:
+      regex: '^https://[^\s]+$'
+      message: 'Use a complete https:// URL with no spaces.'
+    options:
+      maxlength: 2048
+  nullable_https_url:
+    type: string
+    default: null
+    pattern:
+      regex: '^https://[^\s]+$'
+      message: 'Use a complete https:// URL with no spaces, or leave this field empty.'
+    options:
+      maxlength: 2048
+  publication_status:
+    type: select
+    label: Publication status
+    required: true
+    default: draft
+    options:
+      values:
+        - name: draft
+          label: Draft — never shown as public content
+        - name: published
+          label: Published — approved for the public site
+
+content:
+  - name: settings_group
+    label: Site and campaign settings
+    type: group
+    items:
+      - name: site_settings
+        label: Site Settings
+        type: file
+        path: src/data/site.yml
+        format: yaml
+        operations:
+          delete: false
+        fields:
+          - name: site
+            label: Canonical site URL
+            component: https_url
+            description: 'Public canonical origin, normally https://vgzt.org. DNS and GitHub Pages settings must be updated separately.'
+          - name: name
+            label: Full site name
+            type: string
+            required: true
+            options:
+              maxlength: 120
+          - name: shortName
+            label: Short site name
+            type: string
+            required: true
+            options:
+              maxlength: 20
+          - name: description
+            label: Default site description
+            type: text
+            required: true
+            options:
+              maxlength: 300
+          - name: currentSeason
+            label: Current season
+            type: reference
+            required: true
+            description: 'Controls the homepage season and organizers. Starting a new season must not overwrite the prior record.'
+            options:
+              collection: seasons
+              value: '{fields.id}'
+              label: '{fields.label}'
+              search: 'id,label,season'
+          - name: publicEmail
+            label: Public contact email
+            type: string
+            required: true
+            pattern:
+              regex: '^[^\s@]+@[^\s@]+\.[^\s@]+$'
+              message: 'Enter one public email address with no line breaks.'
+            options:
+              maxlength: 254
+            description: 'Use only the public VGZT organizer address; never enter a personal destination inbox.'
+          - name: contactEndpoint
+            label: Contact API endpoint
+            component: nullable_https_url
+            pattern:
+              regex: '^https://api\.vgzt\.org/contact$'
+              message: 'Use exactly https://api.vgzt.org/contact or leave this field empty.'
+            description: 'Exact production Worker endpoint. Leave empty until the Worker is deployed; never enter a secret.'
+          - name: turnstileSiteKey
+            label: Turnstile public site key
+            type: string
+            default: null
+            options:
+              maxlength: 200
+            description: 'Public site key only. TURNSTILE_SECRET belongs in Cloudflare Worker secrets and must never appear here.'
+          - name: masterLogo
+            label: Approved master logo
+            type: image
+            default: null
+            description: 'Optional replaceable brand asset. Leave null to use the clean VGZT text mark. Historical reference crops are not approved masters.'
+            options:
+              media: brand
+              extensions: [png, jpg, jpeg, webp]
+              rename: safe
+
+      - name: social_links
+        label: Social Links
+        type: file
+        path: src/data/social.yml
+        format: yaml
+        operations:
+          delete: false
+        fields:
+          - name: newsletterUrl
+            label: Newsletter subscription URL
+            component: nullable_https_url
+            description: 'Leave empty until the canonical HTTPS destination is verified. Do not paste an email tracking redirect.'
+          - name: slackInviteUrl
+            label: VGZT Slack invitation URL
+            component: nullable_https_url
+            description: 'Leave empty until the canonical community invitation is verified.'
+          - name: linkedinUrl
+            label: LinkedIn URL
+            component: nullable_https_url
+          - name: blueskyUrl
+            label: Bluesky URL
+            component: nullable_https_url
+          - name: xUrl
+            label: X URL
+            component: nullable_https_url
+
+      - name: abstract_call
+        label: Abstract Call
+        type: file
+        path: src/data/abstract-call.yml
+        format: yaml
+        operations:
+          delete: false
+        fields:
+          - name: open
+            label: Show the call as open
+            type: boolean
+            default: false
+            description: 'Before enabling, verify the season, deadline, eligibility copy, and canonical submission URL.'
+          - name: season
+            label: Season
+            type: reference
+            required: true
+            options:
+              collection: seasons
+              value: '{fields.id}'
+              label: '{fields.label}'
+              search: 'id,label,season'
+          - name: audience
+            label: Audience / eligibility
+            type: text
+            required: true
+          - name: deadline
+            label: Submission deadline
+            type: object
+            default: null
+            description: 'Optional. Enter the deadline in its canonical timezone; leave the entire object empty until confirmed.'
+            fields:
+              - name: date
+                label: Deadline date
+                component: calendar_date
+              - name: time
+                label: Deadline wall-clock time
+                type: string
+                required: true
+                pattern:
+                  regex: '^(?:[01][0-9]|2[0-3]):[0-5][0-9]$'
+                  message: 'Use 24-hour HH:mm.'
+              - name: timezone
+                label: Deadline IANA timezone
+                type: string
+                required: true
+                default: America/New_York
+          - name: formUrl
+            label: Submission form URL
+            component: nullable_https_url
+            description: 'Canonical HTTPS form destination. Leave empty rather than using # or a guessed URL.'
+          - name: description
+            label: Call description
+            type: text
+            default: null
+          - name: eligibility
+            label: Detailed eligibility
+            type: text
+            default: null
+          - name: whatToSubmit
+            label: What applicants should submit
+            type: string
+            list: true
+          - name: reviewDescription
+            label: Review / selection description
+            type: text
+            default: null
+          - name: preferredTimeSlots
+            label: Preferred timing options
+            type: select
+            description: 'Select the standard schedule modes applicants may request.'
+            options:
+              multiple: true
+              values:
+                - name: eastern
+                  label: Eastern session — 10:00 ET
+                - name: western
+                  label: Western session — 12:30 ET
+                - name: alternative
+                  label: Alternative session — 21:00 ET
+          - name: faq
+            label: Frequently asked questions
+            type: object
+            list:
+              collapsible:
+                collapsed: true
+                summary: '{question}'
+            fields:
+              - name: question
+                label: Question
+                type: string
+                required: true
+              - name: answer
+                label: Answer
+                type: text
+                required: true
+
+      - name: session_types
+        label: Session Types and Times
+        type: file
+        path: src/data/session-types.yml
+        format: yaml
+        operations:
+          delete: false
+        fields:
+          - name: sessionTypes
+            label: Session formats
+            type: object
+            required: true
+            readonly: true
+            list:
+              min: 1
+              collapsible:
+                collapsed: true
+                summary: '{label}'
+            description: 'Read-only in Pages CMS because event choices are schema-controlled. Adding or changing a format requires a reviewed code/config change.'
+            fields:
+              - name: id
+                component: stable_id
+              - name: label
+                label: Display label
+                type: string
+                required: true
+              - name: speakerCount
+                label: Number of speakers
+                type: number
+                required: true
+                options:
+                  min: 1
+              - name: totalDurationMinutes
+                label: Total session duration in minutes
+                type: number
+                required: true
+                options:
+                  min: 1
+              - name: presentationMinutesPerSpeaker
+                label: Presentation minutes per speaker
+                type: number
+                required: true
+                options:
+                  min: 1
+              - name: qaMinutesPerSpeaker
+                label: Q&A minutes per speaker
+                type: number
+                required: true
+                options:
+                  min: 1
+              - name: description
+                label: Public format description
+                type: text
+                required: true
+          - name: timeSlots
+            label: Standard New York time slots
+            type: object
+            required: true
+            readonly: true
+            list:
+              min: 1
+              collapsible:
+                collapsed: true
+                summary: '{label} — {time}'
+            description: 'Read-only in Pages CMS. These are America/New_York wall-clock definitions referenced by schema-controlled event choices.'
+            fields:
+              - name: id
+                component: stable_id
+              - name: label
+                label: Display label
+                type: string
+                required: true
+              - name: time
+                label: New York wall-clock time
+                type: string
+                required: true
+                pattern:
+                  regex: '^(?:[01][0-9]|2[0-3]):[0-5][0-9]$'
+                  message: 'Use 24-hour HH:mm.'
+
+      - name: pending_content
+        label: Pending Content
+        type: file
+        path: src/data/pending-content.yml
+        format: yaml
+        operations:
+          delete: false
+        fields:
+          - name: pending
+            label: Unresolved production content
+            type: object
+            list:
+              collapsible:
+                collapsed: true
+                summary: '{label} — {status}'
+            fields:
+              - name: key
+                label: Stable key
+                type: string
+                required: true
+                description: 'Machine-readable dot path or stable checklist key; must be unique.'
+              - name: label
+                label: Human-readable label
+                type: string
+                required: true
+              - name: type
+                label: Content type
+                type: select
+                required: true
+                options:
+                  values:
+                    - name: image
+                      label: Image
+                    - name: url
+                      label: URL
+                    - name: text
+                      label: Text
+                    - name: date
+                      label: Date
+                    - name: configuration
+                      label: Configuration
+              - name: intendedLocation
+                label: Intended public location
+                type: string
+                required: true
+              - name: status
+                label: Status
+                type: select
+                required: true
+                default: pending
+                options:
+                  values:
+                    - name: pending
+                      label: Pending
+                    - name: resolved
+                      label: Resolved
+              - name: replaceVia
+                label: Replacement instructions
+                type: string
+                required: true
+                description: 'Exact Pages CMS navigation or configuration step a future organizer should use.'
+              - name: requiredForLaunch
+                label: Required before launch
+                type: boolean
+                default: false
+              - name: resolvedAt
+                label: Resolved date
+                component: nullable_calendar_date
+                description: 'Optional audit date. Leave null while status is pending.'
+              - name: notes
+                label: Notes
+                type: text
+                default: null
+
+  - name: programme_group
+    label: Programme and people
+    type: group
+    items:
+      - name: seasons
+        label: Seasons
+        type: collection
+        path: src/content/seasons
+        format: yaml
+        filename:
+          template: '{id}.yml'
+          field: false
+        operations:
+          rename: false
+          delete: false
+        view:
+          fields: [label, status, start, end, timezone]
+          primary: label
+          sort: [season, start, status]
+          search: [id, label, description]
+          default:
+            sort: season
+            order: desc
+        fields:
+          - name: id
+            component: stable_id
+            description: 'Use season-08, season-09, and so on. This is permanent.'
+          - name: season
+            label: Season number
+            type: number
+            required: true
+            options:
+              min: 1
+              max: 99
+          - name: label
+            label: Display label
+            type: string
+            required: true
+            options:
+              maxlength: 80
+            description: 'For example, Season 8.'
+          - name: start
+            label: Start date
+            component: calendar_date
+          - name: end
+            label: End date
+            component: calendar_date
+          - name: timezone
+            label: Canonical IANA timezone
+            type: string
+            required: true
+            default: America/New_York
+            description: 'Use an IANA identifier, not EDT, EST, or a UTC offset.'
+          - name: status
+            label: Season status
+            type: select
+            required: true
+            default: draft
+            options:
+              values:
+                - name: draft
+                  label: Draft
+                - name: published
+                  label: Published
+                - name: archived
+                  label: Archived
+          - name: description
+            label: Description
+            type: text
+            default: null
+            options:
+              maxlength: 2000
+          - name: organizers
+            label: Organizers
+            type: reference
+            default: []
+            description: 'Draft seasons may leave this empty. A published season requires at least one organizer; homepage organizer cards use this ordered list.'
+            options:
+              collection: people
+              multiple: true
+              max: 30
+              value: '{fields.id}'
+              label: '{fields.name} — {fields.currentAffiliation}'
+              search: 'id,name,preferredName,currentAffiliation'
+
+      - name: events
+        label: Events
+        type: collection
+        path: src/content/events
+        format: yaml
+        filename:
+          template: '{id}.yml'
+          field: false
+        operations:
+          rename: false
+          delete: false
+        view:
+          fields: [id, date, time, sessionType, status]
+          primary: id
+          sort: [date, status, season]
+          search: [id, date, speakers]
+          default:
+            sort: date
+            order: desc
+        fields:
+          - name: id
+            component: stable_id
+          - name: season
+            label: Season
+            type: reference
+            required: true
+            options:
+              collection: seasons
+              value: '{fields.id}'
+              label: '{fields.label}'
+              search: 'id,label,season'
+          - name: status
+            label: Publication status
+            type: select
+            required: true
+            default: draft
+            options:
+              values:
+                - name: draft
+                  label: Draft — not public
+                - name: published
+                  label: Published — public event
+                - name: cancelled
+                  label: Cancelled
+          - name: date
+            label: New York calendar date
+            component: nullable_calendar_date
+            description: "Enter the date on the America/New_York calendar. Visitors' local dates are derived automatically."
+          - name: time
+            label: New York wall-clock time
+            type: string
+            default: null
+            pattern:
+              regex: '^(?:[01][0-9]|2[0-3]):[0-5][0-9]$'
+              message: 'Use 24-hour HH:mm, for example 10:00, 12:30, or 21:00.'
+            description: 'Do not convert to UTC and do not enter an EDT/EST offset.'
+          - name: timezone
+            label: Canonical IANA timezone
+            type: string
+            required: true
+            default: America/New_York
+          - name: durationMinutes
+            label: Duration in minutes
+            type: number
+            required: true
+            default: 60
+            options:
+              min: 15
+              max: 180
+          - name: sessionType
+            label: Session type
+            type: select
+            required: true
+            options:
+              values:
+                - name: two-speaker
+                  label: Two-speaker session
+                - name: keynote
+                  label: Keynote
+          - name: timeSlot
+            label: Timing / daypart mode
+            type: select
+            required: true
+            options:
+              values:
+                - name: eastern
+                  label: Eastern session — usually 10:00 ET
+                - name: western
+                  label: Western session — usually 12:30 ET
+                - name: alternative
+                  label: Alternative session — usually 21:00 ET
+                - name: custom
+                  label: Custom approved timing
+          - name: speakers
+            label: Speakers
+            type: object
+            required: true
+            default: []
+            list:
+              max: 2
+              collapsible:
+                collapsed: true
+                summary: '{role}: {person}'
+            description: 'A published keynote needs one speaker; a published two-speaker session needs two.'
+            fields:
+              - name: person
+                label: Person
+                type: reference
+                required: true
+                options:
+                  collection: people
+                  value: '{fields.id}'
+                  label: '{fields.name} — {fields.currentAffiliation}'
+                  search: 'id,name,preferredName,currentAffiliation'
+              - name: role
+                label: Role in this session
+                type: select
+                default: null
+                description: 'Optional; select only the approved role for this event.'
+                options:
+                  values:
+                    - name: pi
+                      label: PI
+                    - name: student
+                      label: Student
+                    - name: postdoc
+                      label: Postdoc
+                    - name: keynote
+                      label: Keynote speaker
+                    - name: speaker
+                      label: Speaker
+              - name: talkTitle
+                label: Talk title
+                type: string
+                default: null
+                description: 'Leave empty until confirmed; never invent a title.'
+                options:
+                  maxlength: 300
+              - name: affiliationOverride
+                label: Affiliation at the time of this seminar
+                type: string
+                default: null
+                description: "Optional. Use only when the historical/event affiliation differs from the person's current profile."
+                options:
+                  maxlength: 200
+          - name: poster
+            label: Approved event poster
+            type: image
+            default: null
+            description: 'Optional. Leave empty for the polished Poster coming soon state.'
+            options:
+              media: posters
+              extensions: [png, jpg, jpeg, webp]
+              rename: safe
+          - name: posterAlt
+            label: Poster alt text
+            type: text
+            default: null
+            description: 'Required when a poster is supplied. Structured event fields still carry all essential information.'
+            options:
+              maxlength: 300
+          - name: description
+            label: Event description
+            type: text
+            default: null
+            options:
+              maxlength: 2000
+          - name: recordingUrl
+            label: Public recording URL
+            component: nullable_https_url
+            description: 'Optional approved public recording only. Never enter subscriber-only or Zoom access details.'
+          - name: recordingLabel
+            label: Recording link label
+            type: string
+            default: null
+            options:
+              maxlength: 100
+          - name: featured
+            label: Featured event
+            type: boolean
+            default: false
+
+      - name: people
+        label: People
+        type: collection
+        path: src/content/people
+        format: yaml
+        filename:
+          template: '{id}.yml'
+          field: false
+        operations:
+          rename: false
+          delete: false
+        view:
+          fields: [name, currentAffiliation, title, status]
+          primary: name
+          sort: [name, currentAffiliation, status]
+          search: [id, name, preferredName, currentAffiliation]
+          default:
+            sort: name
+            order: asc
+        fields:
+          - name: id
+            component: stable_id
+          - name: name
+            label: Full name
+            type: string
+            required: true
+            options:
+              maxlength: 100
+          - name: preferredName
+            label: Preferred display name
+            type: string
+            default: null
+            options:
+              maxlength: 100
+          - name: currentAffiliation
+            label: Current affiliation
+            type: string
+            default: null
+            description: 'Leave empty until confirmed. Event-specific historical affiliations belong on the event override.'
+            options:
+              maxlength: 160
+          - name: title
+            label: Current title / role
+            type: string
+            default: null
+            description: 'Leave empty until approved.'
+            options:
+              maxlength: 120
+          - name: portrait
+            label: Approved portrait
+            type: image
+            default: null
+            description: 'Optional. Upload only an approved image; never scrape LinkedIn, Google, or institutional sites.'
+            options:
+              media: people
+              extensions: [png, jpg, jpeg, webp]
+              rename: safe
+          - name: portraitAlt
+            label: Portrait alt text
+            type: string
+            default: null
+            options:
+              maxlength: 180
+          - name: website
+            label: Personal / laboratory website
+            component: nullable_https_url
+          - name: orcid
+            label: ORCID URL
+            type: string
+            default: null
+            pattern:
+              regex: '^https://orcid\.org/\d{4}-\d{4}-\d{4}-\d{3}[\dX]$'
+              message: 'Use the canonical https://orcid.org/0000-0000-0000-0000 form, or leave empty.'
+          - name: bluesky
+            label: Bluesky URL
+            component: nullable_https_url
+          - name: linkedin
+            label: LinkedIn URL
+            component: nullable_https_url
+          - name: bio
+            label: Biography
+            type: text
+            default: null
+            description: 'Optional approved biography; do not infer one from external profiles.'
+            options:
+              maxlength: 2000
+          - name: status
+            component: publication_status
+
+  - name: opportunities
+    label: Opportunities
+    type: collection
+    path: src/content/opportunities
+    format: yaml
+    filename:
+      template: '{id}.yml'
+      field: false
+    operations:
+      rename: false
+      delete: false
+    view:
+      fields: [title, type, institution, postedAt, expiresAt, featured, status]
+      primary: title
+      sort: [postedAt, deadline, expiresAt, status]
+      search: [id, title, institution, location, summary]
+      default:
+        sort: postedAt
+        order: desc
+    fields:
+      - name: id
+        component: stable_id
+      - name: title
+        label: Listing title
+        type: string
+        required: true
+        options:
+          minlength: 3
+          maxlength: 160
+      - name: type
+        label: Listing type
+        type: select
+        required: true
+        options:
+          values:
+            - name: job
+              label: Job
+            - name: phd
+              label: PhD
+            - name: postdoc
+              label: Postdoc
+            - name: funding
+              label: Funding
+            - name: event
+              label: Event
+            - name: community
+              label: Community
+      - name: institution
+        label: Institution / organization
+        type: string
+        required: true
+        options:
+          maxlength: 160
+      - name: location
+        label: Location
+        type: string
+        required: true
+        options:
+          maxlength: 160
+      - name: summary
+        label: Plain-text summary
+        type: text
+        required: true
+        description: 'Do not paste arbitrary HTML or scraped job-board content.'
+        options:
+          minlength: 20
+          maxlength: 500
+      - name: postedAt
+        label: Posted date
+        component: calendar_date
+      - name: deadline
+        label: Application deadline
+        component: nullable_calendar_date
+      - name: expiresAt
+        label: Remove from active view after
+        component: nullable_calendar_date
+      - name: externalUrl
+        label: Canonical external URL
+        component: https_url
+        description: 'Required for every listing, including drafts. Verify the HTTPS destination; never use # or an email tracking link.'
+      - name: featured
+        label: Featured listing
+        type: boolean
+        default: false
+      - name: status
+        label: Publication status
+        type: select
+        required: true
+        default: draft
+        options:
+          values:
+            - name: draft
+              label: Draft — not public
+            - name: published
+              label: Published — active/public when not expired
+            - name: archived
+              label: Archived

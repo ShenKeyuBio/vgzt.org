@@ -1,0 +1,92 @@
+---
+import PersonCard from './PersonCard.astro';
+
+interface Organizer {
+  id: string;
+  name: string;
+  preferredName?: string | null;
+  title?: string | null;
+  currentAffiliation?: string | null;
+  portrait?: string | null;
+  portraitAlt?: string | null;
+  website?: string | null;
+  status?: string;
+}
+
+interface Props {
+  organizers: Organizer[];
+  heading?: string;
+  intro?: string;
+  sectionId?: string;
+}
+
+const {
+  organizers,
+  heading = 'Current organizers.',
+  intro = 'Season 8 is organized by volunteers from across the developmental-biology community.',
+  sectionId = 'organizers',
+} = Astro.props;
+---
+
+<section
+  class="section organizers-section"
+  id={sectionId}
+  aria-labelledby={`${sectionId}-title`}
+>
+  <div class="container">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">The people behind VGZT</p>
+        <h2 id={`${sectionId}-title`}>{heading}</h2>
+      </div>
+      <p>{intro}</p>
+    </div>
+    <div class="organizer-grid">
+      {
+        organizers.map((person) => (
+          <PersonCard
+            id={person.id}
+            name={person.name}
+            preferredName={person.preferredName}
+            title={person.title}
+            affiliation={person.currentAffiliation}
+            portrait={person.portrait}
+            portraitAlt={person.portraitAlt}
+            website={person.website}
+            profileIncomplete={person.status === 'draft'}
+          />
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .organizers-section {
+    background: var(--vgzt-paper);
+  }
+
+  .organizer-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+
+  @media (max-width: 68rem) {
+    .organizer-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 42rem) {
+    .organizer-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 28rem) {
+    .organizer-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

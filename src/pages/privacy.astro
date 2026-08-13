@@ -1,0 +1,62 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import {
+  getFooterSocial,
+  getSiteSettings,
+  getSocialSettings,
+} from '../lib/site-data';
+
+const site = getSiteSettings();
+const social = getSocialSettings();
+---
+
+<BaseLayout
+  title="Privacy"
+  description="Privacy information for the VGZT website and contact form."
+  email={site.publicEmail}
+  social={getFooterSocial(social)}
+  masterLogo={site.masterLogo}
+>
+  <header class="page-hero page-hero--pink">
+    <div class="container">
+      <p class="eyebrow">Privacy</p>
+      <h1>Only what the conversation needs.</h1>
+      <p>
+        This static website uses minimal client-side functionality and requests
+        no location permission.
+      </p>
+    </div>
+  </header>
+  <section class="section">
+    <div class="container prose">
+      <h2>Website</h2>
+      <p>
+        The public VGZT website is generated as static files. Timezone display
+        uses the browser’s standard timezone setting, or an override stored
+        locally in that browser. This preference is not sent to VGZT.
+      </p>
+
+      <h2>Contact form</h2>
+      <p>
+        If you use the contact form, VGZT processes your name, email address,
+        selected category, and message so organizers can reply. Cloudflare
+        Turnstile supplies anti-abuse verification. The contact service may
+        retain operational logs containing a request identifier and outcome, but
+        it is designed not to log message content or email addresses.
+      </p>
+
+      <h2>Email and community services</h2>
+      <p>
+        Following an external email-subscription, Slack, or social link takes
+        you to that service, whose own privacy terms apply. The site does not
+        silently embed those provider forms or tracking links.
+      </p>
+
+      <h2>Questions</h2>
+      <p>
+        Contact <a href={`mailto:${site.publicEmail}`}>{site.publicEmail}</a> with
+        privacy questions or requests related to a message you submitted.
+      </p>
+    </div>
+  </section>
+</BaseLayout>

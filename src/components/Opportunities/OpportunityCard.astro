@@ -1,0 +1,135 @@
+---
+interface Props {
+  title: string;
+  type: string;
+  institution: string;
+  location: string;
+  summary: string;
+  postedAt: string;
+  deadline?: string | null;
+  externalUrl: string;
+  featured?: boolean;
+}
+
+const {
+  title,
+  type,
+  institution,
+  location,
+  summary,
+  postedAt,
+  deadline = null,
+  externalUrl,
+  featured = false,
+} = Astro.props;
+const formatDate = (value: string) =>
+  new Intl.DateTimeFormat('en-GB', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    timeZone: 'UTC',
+  }).format(new Date(`${value}T12:00:00Z`));
+---
+
+<article
+  class:list={['opportunity-card', { 'opportunity-card--featured': featured }]}
+  data-opportunity-type={type}
+>
+  <div class="opportunity-card__top">
+    <span class="status-badge">{type}</span>
+    {featured && <span class="opportunity-card__featured">Featured</span>}
+  </div>
+  <h2>{title}</h2>
+  <p class="opportunity-card__institution">
+    {institution}
+    <span aria-hidden="true">·</span>
+    {location}
+  </p>
+  <p>{summary}</p>
+  <dl>
+    <div><dt>Posted</dt><dd>{formatDate(postedAt)}</dd></div>
+    {
+      deadline && (
+        <div>
+          <>
+            <dt>Deadline</dt>
+            <dd>{formatDate(deadline)}</dd>
+          </>
+        </div>
+      )
+    }
+  </dl>
+  <a
+    class="button button--ink"
+    href={externalUrl}
+    rel="noopener noreferrer"
+    target="_blank"
+  >
+    View opportunity <span aria-hidden="true">↗</span>
+    <span class="visually-hidden"> (opens in a new tab)</span>
+  </a>
+</article>
+
+<style>
+  .opportunity-card {
+    display: grid;
+    padding: 1.5rem;
+    border: var(--keyline);
+    background: var(--vgzt-paper-strong);
+    gap: 1rem;
+    align-content: start;
+  }
+
+  .opportunity-card--featured {
+    background: var(--vgzt-pink);
+  }
+
+  .opportunity-card__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .opportunity-card__featured {
+    font-size: 0.7rem;
+    font-weight: 950;
+    text-transform: uppercase;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: clamp(1.7rem, 3vw, 2.5rem);
+  }
+
+  p,
+  dl {
+    margin: 0;
+  }
+
+  .opportunity-card__institution {
+    font-weight: 850;
+  }
+
+  dl {
+    display: flex;
+    padding-block: 0.8rem;
+    border-block: 1px solid var(--vgzt-ink);
+    gap: 2rem;
+  }
+
+  dt {
+    font-size: 0.65rem;
+    font-weight: 950;
+    text-transform: uppercase;
+  }
+
+  dd {
+    margin: 0;
+    font-size: 0.82rem;
+    font-weight: 800;
+  }
+
+  .button {
+    justify-self: start;
+  }
+</style>

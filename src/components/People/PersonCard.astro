@@ -1,0 +1,181 @@
+---
+interface Props {
+  id: string;
+  name: string;
+  preferredName?: string | null | undefined;
+  title?: string | null | undefined;
+  affiliation?: string | null | undefined;
+  portrait?: string | null | undefined;
+  portraitAlt?: string | null | undefined;
+  website?: string | null | undefined;
+  profileIncomplete?: boolean | undefined;
+}
+
+const {
+  id,
+  name,
+  preferredName = null,
+  title = null,
+  affiliation = null,
+  portrait = null,
+  portraitAlt = null,
+  website = null,
+  profileIncomplete = false,
+} = Astro.props;
+const displayName = preferredName || name;
+const initials = displayName
+  .split(/\s+/)
+  .map((part) => part[0])
+  .filter(Boolean)
+  .slice(0, 2)
+  .join('')
+  .toUpperCase();
+---
+
+<article class="person-card" data-person-id={id}>
+  <div class="person-card__portrait">
+    {
+      portrait ? (
+        <img
+          src={portrait}
+          alt={portraitAlt || `Portrait of ${displayName}`}
+          loading="lazy"
+          decoding="async"
+        />
+      ) : (
+        <div
+          class="person-card__initials"
+          role="img"
+          aria-label={`Portrait not yet supplied for ${displayName}`}
+        >
+          <span aria-hidden="true">{initials}</span>
+        </div>
+      )
+    }
+  </div>
+  <div class="person-card__content">
+    <h3>{displayName}</h3>
+    {title && <p class="person-card__title">{title}</p>}
+    {affiliation && <p>{affiliation}</p>}
+    {
+      !title && !affiliation && (
+        <p class="person-card__pending">
+          Profile details will be added after confirmation.
+        </p>
+      )
+    }
+    {
+      website && (
+        <a href={website} rel="noopener noreferrer" target="_blank">
+          Website <span aria-hidden="true">↗</span>
+          <span class="visually-hidden"> (opens in a new tab)</span>
+        </a>
+      )
+    }
+    {
+      import.meta.env.DEV && profileIncomplete && (
+        <span class="person-card__draft">Draft profile</span>
+      )
+    }
+  </div>
+</article>
+
+<style>
+  .person-card {
+    position: relative;
+    display: grid;
+    min-width: 0;
+    border: var(--keyline);
+    background: var(--vgzt-paper-strong);
+    grid-template-rows: auto 1fr;
+  }
+
+  .person-card__portrait {
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    border-bottom: var(--keyline);
+    background: var(--vgzt-pink);
+  }
+
+  .person-card:nth-child(3n + 2) .person-card__portrait {
+    background: var(--vgzt-cyan);
+  }
+
+  .person-card:nth-child(3n) .person-card__portrait {
+    background: var(--vgzt-orange);
+  }
+
+  .person-card__portrait img,
+  .person-card__initials {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .person-card__initials {
+    display: grid;
+    background:
+      linear-gradient(
+        135deg,
+        transparent 49.2%,
+        var(--vgzt-ink) 49.2%,
+        var(--vgzt-ink) 50.8%,
+        transparent 50.8%
+      ),
+      repeating-radial-gradient(
+        circle at 20% 30%,
+        transparent 0 1.5rem,
+        rgb(11 11 11 / 12%) 1.6rem 1.85rem
+      );
+    place-items: center;
+  }
+
+  .person-card__initials span {
+    font-size: clamp(2.8rem, 7vw, 5rem);
+    font-weight: 1000;
+    letter-spacing: -0.08em;
+  }
+
+  .person-card__content {
+    display: grid;
+    padding: 1.1rem;
+    align-content: start;
+  }
+
+  h3 {
+    margin-bottom: 0.45rem;
+    font-size: clamp(1.35rem, 2.4vw, 1.8rem);
+  }
+
+  p {
+    margin-bottom: 0.35rem;
+    font-size: 0.85rem;
+  }
+
+  .person-card__title {
+    font-weight: 850;
+  }
+
+  .person-card__pending {
+    color: var(--vgzt-muted);
+  }
+
+  a {
+    margin-top: 0.7rem;
+    font-size: 0.82rem;
+    font-weight: 900;
+  }
+
+  .person-card__draft {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    padding: 0.25rem 0.42rem;
+    border: 2px solid currentColor;
+    background: var(--vgzt-paper-strong);
+    font-size: 0.6rem;
+    font-weight: 1000;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+</style>

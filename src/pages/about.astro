@@ -1,0 +1,69 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import {
+  getFooterSocial,
+  getSiteSettings,
+  getSocialSettings,
+} from '../lib/site-data';
+
+const site = getSiteSettings();
+const social = getSocialSettings();
+---
+
+<BaseLayout
+  title="About"
+  description="About Virtual Gastrulation Zoom Talks and its global developmental-biology community."
+  email={site.publicEmail}
+  social={getFooterSocial(social)}
+  masterLogo={site.masterLogo}
+>
+  <header class="page-hero page-hero--blue">
+    <div class="container">
+      <p class="eyebrow">About the series</p>
+      <h1>Development in motion.</h1>
+      <p>
+        VGZT is a volunteer-led global online seminar series focused on
+        gastrulation and developmental biology.
+      </p>
+    </div>
+  </header>
+
+  <section class="section">
+    <div class="container prose">
+      <p class="lede">
+        Virtual Gastrulation Zoom Talks brings together early-career
+        researchers, principal investigators, and the wider
+        developmental-biology community for focused scientific conversations
+        online.
+      </p>
+
+      <h2>A global room</h2>
+      <p>
+        Sessions are scheduled across several US Eastern start times so
+        researchers in different regions can join live. The website converts
+        every published event to each visitor’s chosen timezone.
+      </p>
+
+      <h2>Paired voices and keynotes</h2>
+      <p>
+        Two-speaker sessions pair a principal investigator with a student or
+        postdoc. Keynotes give one speaker a longer presentation and discussion.
+        Each format keeps room for questions.
+      </p>
+
+      <h2>An evolving community</h2>
+      <p>
+        VGZT’s visual language has evolved through many seasons of posters and
+        organizer graphics. The reaction–diffusion pattern, stacked VGZT mark,
+        bold keylines, and time-of-day colour system on this site continue that
+        history in a web-native form.
+      </p>
+
+      <p>
+        <a href="/people/">Meet VGZT speakers and organizers</a> or <a
+          href="/subscribe/">join the community</a
+        >.
+      </p>
+    </div>
+  </section>
+</BaseLayout>

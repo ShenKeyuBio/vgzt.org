@@ -1,0 +1,137 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import {
+  getFooterSocial,
+  getSiteSettings,
+  getSocialSettings,
+} from '../lib/site-data';
+
+const site = getSiteSettings();
+const social = getSocialSettings();
+---
+
+<BaseLayout
+  title="Stay connected"
+  description="Choose email updates or the VGZT Slack community."
+  email={site.publicEmail}
+  social={getFooterSocial(social)}
+  masterLogo={site.masterLogo}
+>
+  <header class="page-hero page-hero--pink">
+    <div class="container">
+      <p class="eyebrow">Join the community</p>
+      <h1>Stay connected with VGZT.</h1>
+      <p>
+        Choose the channel that suits you. Both links are managed centrally by
+        the organizers.
+      </p>
+    </div>
+  </header>
+
+  <section class="section">
+    <div class="container subscribe-grid">
+      <article class="subscribe-card subscribe-card--blue">
+        <p class="eyebrow">Email updates</p>
+        <h2>Posters in your inbox.</h2>
+        <ul>
+          <li>Seminar announcements</li>
+          <li>Posters and reminders</li>
+          <li>Community news</li>
+        </ul>
+        {
+          social.newsletterUrl ? (
+            <a
+              class="button"
+              href={social.newsletterUrl}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              Subscribe by email
+            </a>
+          ) : (
+            <span class="button" aria-disabled="true">
+              Email subscription coming soon
+            </span>
+          )
+        }
+      </article>
+
+      <article class="subscribe-card subscribe-card--orange">
+        <p class="eyebrow">VGZT Slack</p>
+        <h2>Keep talking after the talk.</h2>
+        <ul>
+          <li>Community discussion</li>
+          <li>Seminar updates</li>
+          <li>Opportunities and networking</li>
+        </ul>
+        {
+          social.slackInviteUrl ? (
+            <a
+              class="button button--ink"
+              href={social.slackInviteUrl}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              Join VGZT Slack
+            </a>
+          ) : (
+            <span class="button button--ink" aria-disabled="true">
+              Slack invitation coming soon
+            </span>
+          )
+        }
+      </article>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .subscribe-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .subscribe-card {
+    display: grid;
+    min-height: 34rem;
+    padding: clamp(2rem, 5vw, 4rem);
+    border: var(--keyline);
+    gap: 1.5rem;
+    align-content: center;
+    justify-items: start;
+  }
+
+  .subscribe-card + .subscribe-card {
+    border-left: 0;
+  }
+
+  .subscribe-card--blue {
+    background: var(--vgzt-blue);
+    color: var(--vgzt-paper-strong);
+  }
+
+  .subscribe-card--orange {
+    background: var(--vgzt-orange);
+  }
+
+  h2 {
+    max-width: 9ch;
+  }
+
+  ul {
+    margin: 0;
+    padding-left: 1.2rem;
+    font-weight: 750;
+  }
+
+  @media (max-width: 48rem) {
+    .subscribe-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .subscribe-card + .subscribe-card {
+      border-top: 0;
+      border-left: var(--keyline);
+    }
+  }
+</style>

@@ -1,0 +1,156 @@
+---
+import { getCollection } from 'astro:content';
+import AnnouncementBar from '../components/AnnouncementBar.astro';
+import ContactForm from '../components/Forms/ContactForm.astro';
+import Hero from '../components/Hero.astro';
+import OrganizerGrid from '../components/People/OrganizerGrid.astro';
+import ScheduleStage from '../components/Schedule/ScheduleStage.astro';
+import SeasonFormat from '../components/SeasonFormat.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getAbstractCallState, resolvePoster } from '../lib/config';
+import { selectDefaultEvent } from '../lib/event-selection';
+import {
+  getAbstractCallSettings,
+  getFooterSocial,
+  getSessionSettings,
+  getSiteSettings,
+  getSocialSettings,
+} from '../lib/site-data';
+import { canonicalEventInstant, eventEndInstant } from '../lib/time';
+import type { EventViewModel } from '../lib/view-models';
+
+const site = getSiteSettings();
+const social = getSocialSettings();
+const sessionSettings = getSessionSettings();
+const abstractCall = getAbstractCallSettings();
+const abstractState = getAbstractCallState(abstractCall);
+
+const [seasons, people, eventEntries] = await Promise.all([
+  getCollection('seasons'),
+  getCollection('people', ({ data }) => data.status === 'published'),
+  getCollection('events', ({ data }) => data.status === 'published'),
+]);
+
+const currentSeason = seasons.find(
+  ({ data }) => data.id === site.currentSeason,
+);
+if (!currentSeason)
+  throw new Error(`Current season "${site.currentSeason}" was not found.`);
+
+const peopleById = new Map(people.map((entry) => [entry.data.id, entry.data]));
+const organizers = currentSeason.data.organizers
+  .map((id) => peopleById.get(id))
+  .filter((person): person is NonNullable<typeof person> => Boolean(person))
+  .map((person) => ({
+    ...person,
+    portrait: person.portrait?.src ?? null,
+  }));
+
+const sessionTypesById = new Map(
+  sessionSettings.sessionTypes.map((item) => [item.id, item]),
+);
+const timeSlotsById = new Map(
+  sessionSettings.timeSlots.map((item) => [item.id, item]),
+);
+
+const publishedEvents = eventEntries
+  .filter(({ data }) => data.id !== 'collection-empty-state')
+  .filter(({ data }) => data.date !== null && data.time !== null)
+  .map((entry): EventViewModel => {
+    const event = entry.data;
+    if (event.date === null || event.time === null)
+      throw new Error('Published event has no date/time.');
+    const scheduled = { ...event, date: event.date, time: event.time };
+    const poster = resolvePoster(event.poster, event.posterAlt);
+    const speakers = event.speakers.map((speaker) => {
+      const person = peopleById.get(speaker.person);
+      if (!person)
+        throw new Error(
+          `Speaker "${speaker.person}" does not reference a person record.`,
+        );
+      return {
+        id: person.id,
+        name: person.preferredName || person.name,
+        role: speaker.role,
+        talkTitle: speaker.talkTitle,
+        affiliation: speaker.affiliationOverride || person.currentAffiliation,
+      };
+    });
+    return {
+      id: event.id,
+      slug: event.id,
+      instant: canonicalEventInstant(scheduled).toString(),
+      endInstant: eventEndInstant(scheduled).toString(),
+      canonicalDate: event.date,
+      canonicalTime: event.time,
+      timezone: event.timezone,
+      durationMinutes: event.durationMinutes,
+      sessionType:
+        sessionTypesById.get(event.sessionType)?.label || event.sessionType,
+      timeSlot:
+        timeSlotsById.get(
+          event.timeSlot as 'eastern' | 'western' | 'alternative',
+        )?.label || event.timeSlot,
+      posterSrc: typeof poster.src === 'string' ? poster.src : poster.src.src,
+      posterAlt: poster.alt,
+      speakers,
+      recordingUrl: event.recordingUrl,
+    };
+  })
+  .sort((a, b) => a.instant.localeCompare(b.instant));
+
+const selectedEvent = selectDefaultEvent(
+  eventEntries
+    .filter(({ data }) => data.id !== 'collection-empty-state')
+    .map(({ data }) => data),
+);
+const seasonDates = `${new Intl.DateTimeFormat('en-GB', { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(`${currentSeason.data.start}T12:00:00Z`))}–${new Intl.DateTimeFormat('en-GB', { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(`${currentSeason.data.end}T12:00:00Z`))}`;
+const eastern = timeSlotsById.get('eastern');
+const western = timeSlotsById.get('western');
+const alternative = timeSlotsById.get('alternative');
+const twoSpeaker = sessionTypesById.get('two-speaker');
+const keynote = sessionTypesById.get('keynote');
+---
+
+<BaseLayout
+  title="VGZT"
+  description={site.description}
+  email={site.publicEmail}
+  social={getFooterSocial(social)}
+  masterLogo={site.masterLogo}
+>
+  <AnnouncementBar
+    open={abstractState.showBanner}
+    seasonLabel={currentSeason.data.label}
+    audience={abstractCall.audience}
+    formUrl={abstractState.ctaUrl}
+  />
+  <Hero
+    seasonLabel={currentSeason.data.label}
+    seasonDates={seasonDates}
+    description="A global online seminar series for developmental biology—bringing emerging researchers and established investigators into one lively scientific room."
+    abstractUrl={abstractState.ctaUrl}
+    masterLogo={site.masterLogo}
+  />
+  <ScheduleStage
+    events={publishedEvents}
+    selectedId={selectedEvent?.id}
+    start={currentSeason.data.start}
+    end={currentSeason.data.end}
+  />
+  <SeasonFormat
+    easternTime={eastern?.time}
+    westernTime={western?.time}
+    alternativeTime={alternative?.time}
+    twoSpeakerPresentation={twoSpeaker?.presentationMinutesPerSpeaker}
+    twoSpeakerQa={twoSpeaker?.qaMinutesPerSpeaker}
+    keynotePresentation={keynote?.presentationMinutesPerSpeaker}
+    keynoteQa={keynote?.qaMinutesPerSpeaker}
+  />
+  <OrganizerGrid organizers={organizers} />
+  <ContactForm
+    endpoint={site.contactEndpoint}
+    turnstileSiteKey={site.turnstileSiteKey}
+    email={site.publicEmail}
+  />
+</BaseLayout>

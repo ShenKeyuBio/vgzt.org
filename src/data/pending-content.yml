@@ -1,0 +1,270 @@
+pending:
+  - key: brand.masterLogo
+    label: Approved VGZT master logo
+    type: image
+    intendedLocation: Header, homepage hero, and social previews
+    status: pending
+    requiredForLaunch: false
+    replaceVia: Pages CMS > Site Settings > Brand assets
+    resolvedAt: null
+    notes: Historical raster logo crops remain reference-only until approval.
+
+  - key: season8.program
+    label: Published Season 8 programme
+    type: configuration
+    intendedLocation: Homepage schedule and event pages
+    status: pending
+    requiredForLaunch: true
+    replaceVia: Pages CMS > Events
+    resolvedAt: null
+    notes: Add only confirmed sessions; no example event is published.
+
+  - key: abstractCall.deadline
+    label: Season 8 abstract submission deadline
+    type: date
+    intendedLocation: Abstracts page and announcement bar
+    status: pending
+    requiredForLaunch: true
+    replaceVia: Pages CMS > Abstract Call > Deadline
+    resolvedAt: null
+    notes: null
+
+  - key: abstractCall.formUrl
+    label: Season 8 abstract submission URL
+    type: url
+    intendedLocation: Abstracts page and announcement bar
+    status: pending
+    requiredForLaunch: true
+    replaceVia: Pages CMS > Abstract Call > Form URL
+    resolvedAt: null
+    notes: null
+
+  - key: abstractCall.eligibility
+    label: Approved abstract eligibility copy
+    type: text
+    intendedLocation: Abstracts page
+    status: pending
+    requiredForLaunch: true
+    replaceVia: Pages CMS > Abstract Call > Eligibility
+    resolvedAt: null
+    notes: null
+
+  - key: abstractCall.submissionDetails
+    label: Approved abstract submission requirements
+    type: text
+    intendedLocation: Abstracts page
+    status: pending
+    requiredForLaunch: true
+    replaceVia: Pages CMS > Abstract Call > What to submit
+    resolvedAt: null
+    notes: null
+
+  - key: abstractCall.reviewDescription
+    label: Approved abstract review description
+    type: text
+    intendedLocation: Abstracts page
+    status: pending
+    requiredForLaunch: true
+    replaceVia: Pages CMS > Abstract Call > Review description
+    resolvedAt: null
+    notes: null
+
+  - key: abstractCall.faq
+    label: Approved abstract call FAQ
+    type: text
+    intendedLocation: Abstracts page
+    status: pending
+    requiredForLaunch: false
+    replaceVia: Pages CMS > Abstract Call > FAQ
+    resolvedAt: null
+    notes: null
+
+  - key: social.newsletterUrl
+    label: Canonical VGZT mailing-list subscription URL
+    type: url
+    intendedLocation: Subscribe page
+    status: pending
+    requiredForLaunch: true
+    replaceVia: Pages CMS > Social Links > Newsletter URL
+    resolvedAt: null
+    notes: Use a canonical provider URL, not an email tracking redirect.
+
+  - key: social.slackInviteUrl
+    label: Canonical VGZT Slack invitation
+    type: url
+    intendedLocation: Subscribe page and footer
+    status: pending
+    requiredForLaunch: true
+    replaceVia: Pages CMS > Social Links > Slack invite URL
+    resolvedAt: null
+    notes: null
+
+  - key: social.linkedinUrl
+    label: Verified canonical VGZT LinkedIn URL
+    type: url
+    intendedLocation: Footer
+    status: pending
+    requiredForLaunch: false
+    replaceVia: Pages CMS > Social Links > LinkedIn URL
+    resolvedAt: null
+    notes: Historical references exist, but the production destination still requires approval.
+
+  - key: social.blueskyUrl
+    label: Verified canonical VGZT Bluesky URL
+    type: url
+    intendedLocation: Footer
+    status: pending
+    requiredForLaunch: false
+    replaceVia: Pages CMS > Social Links > Bluesky URL
+    resolvedAt: null
+    notes: Historical references exist, but the production destination still requires approval.
+
+  - key: social.xUrl
+    label: Verified canonical VGZT X URL
+    type: url
+    intendedLocation: Footer
+    status: pending
+    requiredForLaunch: false
+    replaceVia: Pages CMS > Social Links > X URL
+    resolvedAt: null
+    notes: Historical references exist, but the production destination still requires approval.
+
+  - key: site.contactEndpoint
+    label: Production contact form endpoint
+    type: configuration
+    intendedLocation: Homepage contact form
+    status: pending
+    requiredForLaunch: true
+    replaceVia: Pages CMS > Site Settings > Contact endpoint
+    resolvedAt: null
+    notes: The only accepted production value is https://api.vgzt.org/contact.
+
+  - key: site.turnstileSiteKey
+    label: Production Cloudflare Turnstile site key
+    type: configuration
+    intendedLocation: Homepage contact form
+    status: pending
+    requiredForLaunch: true
+    replaceVia: Pages CMS > Site Settings > Turnstile site key
+    resolvedAt: null
+    notes: This is the public site key; the secret belongs only in Worker secrets.
+
+  - key: contact.emailDelivery
+    label: Organizer email notification delivery configuration
+    type: configuration
+    intendedLocation: Cloudflare contact Worker
+    status: pending
+    requiredForLaunch: true
+    replaceVia: Follow docs/CLOUDFLARE-SETUP.md; do not store secret values here
+    resolvedAt: null
+    notes: Personal destination addresses must not be committed.
+
+  - key: contact.slackNotification
+    label: Optional Slack notification configuration
+    type: configuration
+    intendedLocation: Cloudflare contact Worker
+    status: pending
+    requiredForLaunch: false
+    replaceVia: Follow docs/CLOUDFLARE-SETUP.md; do not store webhook values here
+    resolvedAt: null
+    notes: null
+
+  - key: season8.organizers.keyu-shen.portrait
+    label: Keyu Shen portrait
+    type: image
+    intendedLocation: Homepage organizer section and People page
+    status: pending
+    requiredForLaunch: false
+    replaceVia: Pages CMS > People > Keyu Shen > Portrait
+    resolvedAt: null
+    notes: null
+
+  - key: season8.organizers.keyu-shen.profile
+    label: Keyu Shen title, affiliation, and webpage
+    type: text
+    intendedLocation: Homepage organizer section and People page
+    status: pending
+    requiredForLaunch: false
+    replaceVia: Pages CMS > People > Keyu Shen
+    resolvedAt: null
+    notes: null
+
+  - key: season8.organizers.sanskriti-saxena.portrait
+    label: Sanskriti Saxena portrait
+    type: image
+    intendedLocation: Homepage organizer section and People page
+    status: pending
+    requiredForLaunch: false
+    replaceVia: Pages CMS > People > Sanskriti Saxena > Portrait
+    resolvedAt: null
+    notes: null
+
+  - key: season8.organizers.sanskriti-saxena.profile
+    label: Sanskriti Saxena title, affiliation, and webpage
+    type: text
+    intendedLocation: Homepage organizer section and People page
+    status: pending
+    requiredForLaunch: false
+    replaceVia: Pages CMS > People > Sanskriti Saxena
+    resolvedAt: null
+    notes: null
+
+  - key: season8.organizers.manisha-goyal.portrait
+    label: Manisha Goyal portrait
+    type: image
+    intendedLocation: Homepage organizer section and People page
+    status: pending
+    requiredForLaunch: false
+    replaceVia: Pages CMS > People > Manisha Goyal > Portrait
+    resolvedAt: null
+    notes: null
+
+  - key: season8.organizers.manisha-goyal.profile
+    label: Manisha Goyal title, affiliation, and webpage
+    type: text
+    intendedLocation: Homepage organizer section and People page
+    status: pending
+    requiredForLaunch: false
+    replaceVia: Pages CMS > People > Manisha Goyal
+    resolvedAt: null
+    notes: null
+
+  - key: season8.organizers.guoye-guan.portrait
+    label: Guoye Guan portrait
+    type: image
+    intendedLocation: Homepage organizer section and People page
+    status: pending
+    requiredForLaunch: false
+    replaceVia: Pages CMS > People > Guoye Guan > Portrait
+    resolvedAt: null
+    notes: null
+
+  - key: season8.organizers.guoye-guan.profile
+    label: Guoye Guan title, affiliation, and webpage
+    type: text
+    intendedLocation: Homepage organizer section and People page
+    status: pending
+    requiredForLaunch: false
+    replaceVia: Pages CMS > People > Guoye Guan
+    resolvedAt: null
+    notes: null
+
+  - key: season8.organizers.james-teague.portrait
+    label: James Teague portrait
+    type: image
+    intendedLocation: Homepage organizer section and People page
+    status: pending
+    requiredForLaunch: false
+    replaceVia: Pages CMS > People > James Teague > Portrait
+    resolvedAt: null
+    notes: null
+
+  - key: season8.organizers.james-teague.profile
+    label: James Teague title, affiliation, and webpage
+    type: text
+    intendedLocation: Homepage organizer section and People page
+    status: pending
+    requiredForLaunch: false
+    replaceVia: Pages CMS > People > James Teague
+    resolvedAt: null
+    notes: null

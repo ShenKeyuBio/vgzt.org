@@ -1,0 +1,232 @@
+---
+import { getEntry } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getAbstractCallState } from '../lib/config';
+import {
+  getAbstractCallSettings,
+  getFooterSocial,
+  getSessionSettings,
+  getSiteSettings,
+  getSocialSettings,
+} from '../lib/site-data';
+import { formatEventTime } from '../lib/time';
+
+const site = getSiteSettings();
+const social = getSocialSettings();
+const call = getAbstractCallSettings();
+const state = getAbstractCallState(call);
+const sessions = getSessionSettings();
+const seasonEntry = await getEntry('seasons', call.season);
+const seasonLabel = seasonEntry?.data.label || call.season;
+const timeSlots = sessions.timeSlots.filter((slot) =>
+  call.preferredTimeSlots.includes(slot.id),
+);
+const deadline = call.deadline
+  ? formatEventTime(
+      {
+        date: call.deadline.date,
+        time: call.deadline.time,
+        timezone: call.deadline.timezone,
+      },
+      call.deadline.timezone,
+    ).reference
+  : null;
+---
+
+<BaseLayout
+  title="Call for abstracts"
+  description="VGZT Season 8 call for abstracts for Early Career Researchers."
+  email={site.publicEmail}
+  social={getFooterSocial(social)}
+  masterLogo={site.masterLogo}
+>
+  <header class="page-hero page-hero--orange">
+    <div class="container">
+      <p class="eyebrow">
+        {seasonLabel}
+        <span aria-hidden="true">·</span>
+        {call.audience}
+      </p>
+      <h1>Share your science with VGZT.</h1>
+      <p>
+        {
+          call.description ||
+            'Season 8 abstract-call details will be published here as soon as they are confirmed.'
+        }
+      </p>
+      <div class="button-row">
+        {
+          state.canSubmit && state.ctaUrl ? (
+            <a
+              class="button button--ink"
+              href={state.ctaUrl}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              Submit your abstract
+            </a>
+          ) : state.showBanner ? (
+            <span class="button button--ink" aria-disabled="true">
+              Submission link coming soon
+            </span>
+          ) : (
+            <span class="status-badge">Call currently closed</span>
+          )
+        }
+      </div>
+    </div>
+  </header>
+
+  <section class="section">
+    <div class="container abstracts-grid">
+      <div>
+        <p class="eyebrow">Call status</p>
+        <dl class="call-status">
+          <div><dt>Status</dt><dd>{call.open ? 'Open' : 'Closed'}</dd></div>
+          <div><dt>Season</dt><dd>{seasonLabel}</dd></div>
+          <div><dt>Audience</dt><dd>{call.audience}</dd></div>
+          <div>
+            <dt>Deadline</dt><dd>
+              {
+                deadline
+                  ? `${deadline.dateLabel}, ${deadline.timeLabel}`
+                  : 'To be confirmed'
+              }
+            </dd>
+          </div>
+        </dl>
+      </div>
+
+      <div class="prose abstracts-copy">
+        <h2>Who can apply</h2>
+        <p>
+          {
+            call.eligibility ||
+              'Confirmed eligibility guidance will be added before submissions open.'
+          }
+        </p>
+
+        <h2>What to submit</h2>
+        {
+          call.whatToSubmit.length > 0 ? (
+            <ul>
+              {call.whatToSubmit.map((item) => (
+                <li>{item}</li>
+              ))}
+            </ul>
+          ) : (
+            <p>
+              Submission requirements are being finalized and will appear here
+              before the form opens.
+            </p>
+          )
+        }
+
+        <h2>Seminar format</h2>
+        <p>
+          Selected early-career speakers may take part in a two-speaker session.
+          A typical talk is approximately 25 minutes, followed by approximately
+          5 minutes of questions.
+        </p>
+
+        <h2>Review and selection</h2>
+        <p>
+          {
+            call.reviewDescription ||
+              'The organizer team will publish its review and selection process before submissions open.'
+          }
+        </p>
+
+        <h2>Preferred session times</h2>
+        <p>
+          Sessions use America/New_York as the canonical timezone, with
+          daylight-saving transitions handled automatically.
+        </p>
+        <ul>
+          {
+            timeSlots.map((slot) => (
+              <li>
+                {slot.label}: {slot.time} ET
+              </li>
+            ))
+          }
+        </ul>
+
+        <h2>FAQ</h2>
+        {
+          call.faq.length > 0 ? (
+            <div class="faq-list">
+              {call.faq.map((item) => (
+                <details>
+                  <summary>{item.question}</summary>
+                  <p>{item.answer}</p>
+                </details>
+              ))}
+            </div>
+          ) : (
+            <p>
+              FAQ entries will be added as the call is finalized. For an urgent
+              question, email{' '}
+              <a href={`mailto:${site.publicEmail}`}>{site.publicEmail}</a>.
+            </p>
+          )
+        }
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .abstracts-grid {
+    display: grid;
+    grid-template-columns: minmax(16rem, 0.55fr) minmax(25rem, 1.45fr);
+    gap: clamp(2.5rem, 8vw, 8rem);
+    align-items: start;
+  }
+
+  .call-status {
+    margin: 0;
+    border-top: var(--keyline);
+  }
+
+  .call-status div {
+    padding-block: 0.8rem;
+    border-bottom: var(--keyline);
+  }
+
+  dt {
+    font-size: 0.68rem;
+    font-weight: 950;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  dd {
+    margin: 0.2rem 0 0;
+    font-weight: 800;
+  }
+
+  .abstracts-copy h2:first-child {
+    margin-top: 0;
+  }
+
+  .faq-list {
+    border-top: var(--keyline);
+  }
+
+  .faq-list details {
+    border-bottom: var(--keyline);
+  }
+
+  .faq-list summary {
+    cursor: pointer;
+    padding-block: 1rem;
+    font-weight: 900;
+  }
+
+  @media (max-width: 50rem) {
+    .abstracts-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

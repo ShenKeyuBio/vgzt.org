@@ -1,0 +1,146 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getCollection } from 'astro:content';
+import EventMetadata from '../../components/Schedule/EventMetadata.astro';
+import PosterViewer from '../../components/Schedule/PosterViewer.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { resolvePoster } from '../../lib/config';
+import { canonicalEventInstant, eventEndInstant } from '../../lib/time';
+import {
+  getFooterSocial,
+  getSessionSettings,
+  getSiteSettings,
+  getSocialSettings,
+} from '../../lib/site-data';
+import type { EventViewModel } from '../../lib/view-models';
+
+export const getStaticPaths = (async () => {
+  const [eventEntries, peopleEntries] = await Promise.all([
+    getCollection('events', ({ data }) => data.status === 'published'),
+    getCollection('people', ({ data }) => data.status === 'published'),
+  ]);
+  const people = new Map(peopleEntries.map(({ data }) => [data.id, data]));
+  const settings = getSessionSettings();
+  const sessionTypes = new Map(
+    settings.sessionTypes.map((item) => [item.id, item.label]),
+  );
+  const timeSlots = new Map(
+    settings.timeSlots.map((item) => [item.id, item.label]),
+  );
+
+  return eventEntries
+    .filter(({ data }) => data.id !== 'collection-empty-state')
+    .filter(({ data }) => data.date !== null && data.time !== null)
+    .map((entry) => {
+      const data = entry.data;
+      if (data.date === null || data.time === null)
+        throw new Error('Published event has no date/time.');
+      const scheduled = { ...data, date: data.date, time: data.time };
+      const poster = resolvePoster(data.poster, data.posterAlt);
+      const event: EventViewModel = {
+        id: data.id,
+        slug: data.id,
+        instant: canonicalEventInstant(scheduled).toString(),
+        endInstant: eventEndInstant(scheduled).toString(),
+        canonicalDate: data.date,
+        canonicalTime: data.time,
+        timezone: data.timezone,
+        durationMinutes: data.durationMinutes,
+        sessionType: sessionTypes.get(data.sessionType) || data.sessionType,
+        timeSlot:
+          timeSlots.get(
+            data.timeSlot as 'eastern' | 'western' | 'alternative',
+          ) || data.timeSlot,
+        posterSrc: typeof poster.src === 'string' ? poster.src : poster.src.src,
+        posterAlt: poster.alt,
+        speakers: data.speakers.map((speaker) => {
+          const person = people.get(speaker.person);
+          if (!person)
+            throw new Error(`Unknown speaker reference: ${speaker.person}`);
+          return {
+            id: person.id,
+            name: person.preferredName || person.name,
+            role: speaker.role,
+            talkTitle: speaker.talkTitle,
+            affiliation:
+              speaker.affiliationOverride || person.currentAffiliation,
+          };
+        }),
+        recordingUrl: data.recordingUrl,
+      };
+      return { params: { slug: data.id }, props: { event } };
+    });
+}) satisfies GetStaticPaths;
+
+interface Props {
+  event: EventViewModel;
+}
+
+const { event } = Astro.props;
+const site = getSiteSettings();
+const social = getSocialSettings();
+const names = event.speakers.map((speaker) => speaker.name).join(' & ');
+const dateLabel = new Intl.DateTimeFormat('en-GB', {
+  timeZone: event.timezone,
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+}).format(new Date(event.instant));
+---
+
+<BaseLayout
+  title={`${names} — ${dateLabel}`}
+  description={`${event.sessionType} from Virtual Gastrulation Zoom Talks on ${dateLabel}.`}
+  type="article"
+  image={event.posterSrc === '/assets/poster-placeholder.svg'
+    ? null
+    : event.posterSrc}
+  email={site.publicEmail}
+  social={getFooterSocial(social)}
+  masterLogo={site.masterLogo}
+>
+  <header class="page-hero page-hero--blue">
+    <div class="container">
+      <p class="eyebrow">
+        {event.sessionType}
+        <span aria-hidden="true">·</span>
+        {dateLabel}
+      </p>
+      <h1>{names}</h1>
+      <p>
+        Event information is provided as accessible HTML below, independent of
+        the poster image.
+      </p>
+    </div>
+  </header>
+  <section class="section event-page" data-schedule>
+    <div class="container event-page__grid">
+      <EventMetadata event={event} />
+      <PosterViewer id={event.id} src={event.posterSrc} alt={event.posterAlt} />
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .event-page__grid {
+    display: grid;
+    overflow: hidden;
+    border: var(--keyline);
+    grid-template-columns: minmax(20rem, 0.8fr) minmax(25rem, 1.2fr);
+  }
+
+  .event-page__grid > :global(:first-child) {
+    border-right: var(--keyline);
+  }
+
+  @media (max-width: 55rem) {
+    .event-page__grid {
+      grid-template-columns: 1fr;
+    }
+
+    .event-page__grid > :global(:first-child) {
+      border-right: 0;
+      border-bottom: var(--keyline);
+    }
+  }
+</style>

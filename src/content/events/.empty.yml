@@ -1,0 +1,16 @@
+id: collection-empty-state
+season: season-08
+status: draft
+date: null
+time: null
+timezone: America/New_York
+durationMinutes: 60
+sessionType: two-speaker
+timeSlot: western
+speakers: []
+poster: null
+posterAlt: null
+recordingUrl: null
+recordingLabel: null
+description: null
+featured: false

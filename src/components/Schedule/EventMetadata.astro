@@ -1,0 +1,178 @@
+---
+import type { EventViewModel } from '../../lib/view-models';
+
+interface Props {
+  event: EventViewModel;
+}
+
+const { event } = Astro.props;
+const easternDate = new Date(`${event.instant}`);
+const easternDateLabel = new Intl.DateTimeFormat('en-GB', {
+  timeZone: event.timezone,
+  weekday: 'long',
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+}).format(easternDate);
+const easternTimeLabel = new Intl.DateTimeFormat('en-GB', {
+  timeZone: event.timezone,
+  hour: '2-digit',
+  minute: '2-digit',
+  hour12: false,
+  timeZoneName: 'short',
+}).format(easternDate);
+---
+
+<div class="event-metadata">
+  <div>
+    <p class="eyebrow">Selected seminar</p>
+    <h3>{event.speakers.map((speaker) => speaker.name).join(' & ')}</h3>
+  </div>
+  <dl>
+    <div>
+      <dt>Your date</dt>
+      <dd data-local-date={event.instant}>{easternDateLabel}</dd>
+    </div>
+    <div>
+      <dt>Your time</dt>
+      <dd>
+        <span data-local-time={event.instant}>{easternTimeLabel}</span><br />
+        <small data-local-zone>Your timezone</small>
+      </dd>
+    </div>
+    <div>
+      <dt>Reference</dt>
+      <dd>{easternTimeLabel}<br /><small>{event.timezone}</small></dd>
+    </div>
+    <div>
+      <dt>Format</dt>
+      <dd>
+        {event.sessionType}<br /><small>{event.durationMinutes} minutes</small>
+      </dd>
+    </div>
+  </dl>
+
+  <div class="event-metadata__speakers">
+    {
+      event.speakers.map((speaker) => (
+        <article>
+          <p>{speaker.role}</p>
+          <h4>{speaker.name}</h4>
+          {speaker.affiliation && <p>{speaker.affiliation}</p>}
+          {speaker.talkTitle && (
+            <p class="event-metadata__title">“{speaker.talkTitle}”</p>
+          )}
+        </article>
+      ))
+    }
+  </div>
+
+  <div class="button-row">
+    <a class="button button--ink" href={`/events/${event.slug}/`}
+      >Event details</a
+    >
+    <a class="button" href={`/events/${event.slug}/calendar.ics`} download
+      >Add to calendar</a
+    >
+  </div>
+
+  <p class="event-metadata__access">
+    Zoom access is shared with VGZT subscribers and community members.
+    <a href="/subscribe/">Get seminar access</a>
+  </p>
+</div>
+
+<style>
+  .event-metadata {
+    display: grid;
+    padding: clamp(1.5rem, 3vw, 3rem);
+    background: var(--vgzt-paper-strong);
+    gap: 1.8rem;
+    align-content: start;
+  }
+
+  h3 {
+    margin-bottom: 0;
+    font-size: clamp(2rem, 4vw, 3.8rem);
+  }
+
+  dl {
+    display: grid;
+    margin: 0;
+    border-top: var(--keyline);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  dl div {
+    padding: 0.8rem 0;
+    border-bottom: var(--keyline);
+  }
+
+  dl div:nth-child(odd) {
+    padding-right: 1rem;
+    border-right: var(--keyline);
+  }
+
+  dl div:nth-child(even) {
+    padding-left: 1rem;
+  }
+
+  dt {
+    margin-bottom: 0.2rem;
+    font-size: 0.68rem;
+    font-weight: 950;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+  }
+
+  dd {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 850;
+  }
+
+  dd small {
+    color: var(--vgzt-muted);
+    font-size: 0.72rem;
+    font-weight: 700;
+  }
+
+  .event-metadata__speakers {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .event-metadata__speakers article {
+    padding-left: 1rem;
+    border-left: 0.45rem solid var(--vgzt-cyan);
+  }
+
+  .event-metadata__speakers article:nth-child(even) {
+    border-color: var(--vgzt-coral);
+  }
+
+  .event-metadata__speakers p,
+  h4 {
+    margin: 0;
+  }
+
+  h4 {
+    font-size: 1.25rem;
+    font-weight: 950;
+  }
+
+  .event-metadata__title {
+    margin-top: 0.4rem !important;
+    font-style: italic;
+    font-weight: 700;
+  }
+
+  .event-metadata__access {
+    margin: 0;
+    font-size: 0.83rem;
+  }
+
+  .event-metadata__access a {
+    font-weight: 900;
+  }
+</style>

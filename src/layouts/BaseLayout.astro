@@ -1,0 +1,74 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+interface SocialItem {
+  label: string;
+  url?: string | null;
+}
+
+interface Props {
+  title: string;
+  description: string;
+  image?: string | null;
+  type?: 'website' | 'article';
+  noindex?: boolean;
+  email?: string;
+  social?: SocialItem[];
+  masterLogo?: string | null;
+}
+
+const {
+  title,
+  description,
+  image = null,
+  type = 'website',
+  noindex = false,
+  email = 'organizers@vgzt.org',
+  social = [],
+  masterLogo = null,
+} = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const fullTitle =
+  title === 'VGZT'
+    ? 'VGZT — Virtual Gastrulation Zoom Talks'
+    : `${title} — VGZT`;
+const socialImage = image ? new URL(image, Astro.site).toString() : null;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="theme-color" content="#0b0b0b" />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <meta property="og:type" content={type} />
+    <meta property="og:site_name" content="Virtual Gastrulation Zoom Talks" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    {socialImage && <meta property="og:image" content={socialImage} />}
+    <meta
+      name="twitter:card"
+      content={socialImage ? 'summary_large_image' : 'summary'}
+    />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    {socialImage && <meta name="twitter:image" content={socialImage} />}
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+    <Header masterLogo={masterLogo} />
+    <main id="main-content" tabindex="-1">
+      <slot />
+    </main>
+    <Footer email={email} social={social} masterLogo={masterLogo} />
+  </body>
+</html>

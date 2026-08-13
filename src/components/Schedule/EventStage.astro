@@ -1,0 +1,68 @@
+---
+import type { EventViewModel } from '../../lib/view-models';
+import EventMetadata from './EventMetadata.astro';
+import PosterViewer from './PosterViewer.astro';
+
+interface Props {
+  events: EventViewModel[];
+  selectedId?: string | null;
+}
+
+const { events, selectedId = null } = Astro.props;
+---
+
+<div class="event-stage" data-event-stage>
+  {
+    events.map((event, index) => {
+      const selected = selectedId ? event.id === selectedId : index === 0;
+      return (
+        <section
+          class="event-stage__panel"
+          id={`event-${event.id}`}
+          role="tabpanel"
+          aria-labelledby={`rail-${event.id}`}
+          tabindex="0"
+          data-event-panel={event.id}
+          hidden={!selected}
+        >
+          <EventMetadata event={event} />
+          <PosterViewer
+            id={event.id}
+            src={event.posterSrc}
+            alt={event.posterAlt}
+          />
+        </section>
+      );
+    })
+  }
+</div>
+
+<style>
+  .event-stage {
+    border: var(--keyline);
+    border-top: 0;
+  }
+
+  .event-stage__panel {
+    grid-template-columns: minmax(19rem, 0.76fr) minmax(25rem, 1.24fr);
+  }
+
+  .event-stage__panel:not([hidden]) {
+    display: grid;
+  }
+
+  .event-stage__panel > :global(:first-child) {
+    border-right: var(--keyline);
+  }
+
+  @media (max-width: 55rem) {
+    .event-stage__panel {
+      grid-template-columns: 1fr;
+    }
+
+    .event-stage__panel > :global(:first-child) {
+      border-right: 0;
+      border-bottom: var(--keyline);
+    }
+  }
+</style>

@@ -1,0 +1,31 @@
+---
+interface SocialItem {
+  label: string;
+  url?: string | null;
+}
+
+interface Props {
+  items: SocialItem[];
+}
+
+const { items } = Astro.props;
+---
+
+<ul class="social-list" aria-label="VGZT social links">
+  {
+    items.map((item) => (
+      <li>
+        {item.url ? (
+          <a href={item.url} rel="noopener noreferrer" target="_blank">
+            {item.label}
+            <span class="visually-hidden"> (opens in a new tab)</span>
+          </a>
+        ) : (
+          <span aria-disabled="true" title={`${item.label} link coming soon`}>
+            {item.label}
+          </span>
+        )}
+      </li>
+    ))
+  }
+</ul>

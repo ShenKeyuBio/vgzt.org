@@ -1,0 +1,32 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import {
+  getFooterSocial,
+  getSiteSettings,
+  getSocialSettings,
+} from '../lib/site-data';
+
+const site = getSiteSettings();
+const social = getSocialSettings();
+---
+
+<BaseLayout
+  title="Page not found"
+  description="The requested VGZT page could not be found."
+  noindex
+  email={site.publicEmail}
+  social={getFooterSocial(social)}
+  masterLogo={site.masterLogo}
+>
+  <section class="page-hero page-hero--orange">
+    <div class="container">
+      <p class="eyebrow">404</p>
+      <h1>This cell took a different path.</h1>
+      <p>The page may have moved, or the address may be incomplete.</p>
+      <div class="button-row">
+        <a class="button button--ink" href="/">Return home</a>
+        <a class="button" href="/#programme">View the programme</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

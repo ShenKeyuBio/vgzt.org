@@ -1,0 +1,51 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "vgzt-contact",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-08-13",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": false,
+  "route": {
+    "pattern": "api.vgzt.org/*",
+    "zone_name": "vgzt.org"
+  },
+  "vars": {
+    "ALLOWED_ORIGINS": "https://vgzt.org,https://www.vgzt.org",
+    "TURNSTILE_EXPECTED_HOSTNAMES": "vgzt.org,www.vgzt.org",
+    "TURNSTILE_EXPECTED_ACTION": "vgzt_contact",
+    "CONTACT_FROM": "contact@vgzt.org",
+    "CONTACT_TO": "organizers@vgzt.org"
+  },
+  "secrets": {
+    "required": ["TURNSTILE_SECRET"]
+  },
+  "ratelimits": [
+    {
+      "name": "CONTACT_IP_RATE",
+      "namespace_id": "1001",
+      "simple": {
+        "limit": 10,
+        "period": 60
+      }
+    },
+    {
+      "name": "CONTACT_EMAIL_RATE",
+      "namespace_id": "1002",
+      "simple": {
+        "limit": 3,
+        "period": 60
+      }
+    }
+  ],
+  "send_email": [
+    {
+      "name": "CONTACT_EMAIL",
+      "destination_address": "organizers@vgzt.org",
+      "allowed_sender_addresses": ["contact@vgzt.org"]
+    }
+  ],
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1
+  }
+}

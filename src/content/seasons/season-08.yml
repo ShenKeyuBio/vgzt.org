@@ -1,0 +1,14 @@
+id: season-08
+season: 8
+label: Season 8
+start: '2026-09-18'
+end: '2027-07-30'
+timezone: America/New_York
+status: draft
+description: null
+organizers:
+  - keyu-shen
+  - sanskriti-saxena
+  - manisha-goyal
+  - guoye-guan
+  - james-teague

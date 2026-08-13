@@ -1,0 +1,366 @@
+---
+import { getCollection } from 'astro:content';
+import PersonCard from '../components/People/PersonCard.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import {
+  getFooterSocial,
+  getSiteSettings,
+  getSocialSettings,
+} from '../lib/site-data';
+
+const site = getSiteSettings();
+const social = getSocialSettings();
+const [peopleEntries, seasonEntries, eventEntries] = await Promise.all([
+  getCollection('people', ({ data }) => data.status === 'published'),
+  getCollection('seasons', ({ data }) => data.status !== 'draft'),
+  getCollection('events', ({ data }) => data.status === 'published'),
+]);
+const people = peopleEntries.map(({ data }) => ({
+  ...data,
+  portrait: data.portrait?.src ?? null,
+}));
+const peopleById = new Map(people.map((person) => [person.id, person]));
+const seasons = [...seasonEntries].sort(
+  (a, b) => b.data.season - a.data.season,
+);
+const currentSeason = seasons.find(
+  ({ data }) => data.id === site.currentSeason,
+);
+const currentOrganizers = (currentSeason?.data.organizers || [])
+  .map((id) => peopleById.get(id))
+  .filter(Boolean);
+const publishedSpeakerIds = new Set(
+  eventEntries
+    .filter(({ data }) => data.id !== 'collection-empty-state')
+    .flatMap(({ data }) => data.speakers.map((speaker) => speaker.person)),
+);
+const speakers = people.filter((person) => publishedSpeakerIds.has(person.id));
+---
+
+<BaseLayout
+  title="People"
+  description="VGZT speakers and organizer archive by season."
+  email={site.publicEmail}
+  social={getFooterSocial(social)}
+  masterLogo={site.masterLogo}
+>
+  <header class="page-hero page-hero--orange">
+    <div class="container">
+      <p class="eyebrow">Speakers and organizers</p>
+      <h1>The people who make VGZT.</h1>
+      <p>
+        Central person records keep names and current profiles consistent while
+        preserving event-specific affiliations in the seminar archive.
+      </p>
+    </div>
+  </header>
+
+  <section
+    class="section people-browser"
+    aria-labelledby="people-title"
+    data-people-browser
+  >
+    <div class="container">
+      <div class="people-browser__controls">
+        <div class="people-tabs" role="tablist" aria-label="People views">
+          <button
+            id="people-tab-speakers"
+            type="button"
+            role="tab"
+            aria-selected="true"
+            aria-controls="people-panel-speakers"
+            data-people-tab="speakers">Speakers</button
+          >
+          <button
+            id="people-tab-organizers"
+            type="button"
+            role="tab"
+            aria-selected="false"
+            aria-controls="people-panel-organizers"
+            tabindex="-1"
+            data-people-tab="organizers">Organizers</button
+          >
+        </div>
+        <label>
+          <span>Search people</span>
+          <input
+            type="search"
+            placeholder="Name or affiliation"
+            data-people-search
+          />
+        </label>
+        <label>
+          <span>Season</span>
+          <select data-season-filter>
+            <option value="all">All seasons</option>
+            {
+              seasons.map(({ data }) => (
+                <option value={data.id}>{data.label}</option>
+              ))
+            }
+          </select>
+        </label>
+      </div>
+
+      <h2 id="people-title" class="visually-hidden">VGZT people archive</h2>
+      <section
+        id="people-panel-speakers"
+        role="tabpanel"
+        aria-labelledby="people-tab-speakers"
+        data-people-panel="speakers"
+      >
+        {
+          speakers.length > 0 ? (
+            <div class="people-grid">
+              {speakers.map((person) => (
+                <div
+                  data-person-search={`${person.name} ${person.preferredName || ''} ${person.currentAffiliation || ''}`.toLowerCase()}
+                >
+                  <PersonCard
+                    id={person.id}
+                    name={person.name}
+                    preferredName={person.preferredName}
+                    title={person.title}
+                    affiliation={person.currentAffiliation}
+                    portrait={person.portrait}
+                    portraitAlt={person.portraitAlt}
+                    website={person.website}
+                  />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div class="empty-state">
+              <p class="eyebrow">Speaker archive</p>
+              <h3>Published speakers will appear with the programme.</h3>
+              <p>
+                No unconfirmed or example speakers are presented as real VGZT
+                participants.
+              </p>
+            </div>
+          )
+        }
+      </section>
+
+      <section
+        id="people-panel-organizers"
+        role="tabpanel"
+        aria-labelledby="people-tab-organizers"
+        data-people-panel="organizers"
+        hidden
+      >
+        <div class="season-groups">
+          {
+            seasons.map(({ data: season }) => {
+              const organizers = season.organizers
+                .map((id) => peopleById.get(id))
+                .filter(Boolean);
+              if (organizers.length === 0) return null;
+              return (
+                <section class="season-group" data-season-group={season.id}>
+                  <div class="season-group__heading">
+                    <p class="eyebrow">
+                      {season.id === site.currentSeason
+                        ? 'Current season'
+                        : 'Archive'}
+                    </p>
+                    <h3>{season.label}</h3>
+                  </div>
+                  <div class="people-grid">
+                    {organizers.map(
+                      (person) =>
+                        person && (
+                          <div
+                            data-person-search={`${person.name} ${person.preferredName || ''} ${person.currentAffiliation || ''}`.toLowerCase()}
+                          >
+                            <PersonCard
+                              id={person.id}
+                              name={person.name}
+                              preferredName={person.preferredName}
+                              title={person.title}
+                              affiliation={person.currentAffiliation}
+                              portrait={person.portrait}
+                              portraitAlt={person.portraitAlt}
+                              website={person.website}
+                              profileIncomplete={person.status === 'draft'}
+                            />
+                          </div>
+                        ),
+                    )}
+                  </div>
+                </section>
+              );
+            })
+          }
+        </div>
+      </section>
+      {
+        currentOrganizers.length === 0 && (
+          <p>No organizer records are available.</p>
+        )
+      }
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .people-browser__controls {
+    display: grid;
+    margin-bottom: 2rem;
+    padding: 0.7rem;
+    border: var(--keyline);
+    background: var(--vgzt-paper-strong);
+    grid-template-columns: auto 1fr minmax(10rem, 0.45fr);
+    gap: 0.7rem;
+    align-items: end;
+  }
+
+  .people-tabs {
+    display: flex;
+  }
+
+  .people-tabs button,
+  .people-browser__controls input,
+  .people-browser__controls select {
+    min-height: 3rem;
+    border: var(--keyline);
+    border-radius: 0;
+    background: var(--vgzt-paper);
+    font-weight: 800;
+  }
+
+  .people-tabs button {
+    cursor: pointer;
+    padding-inline: 1rem;
+  }
+
+  .people-tabs button + button {
+    border-left: 0;
+  }
+
+  .people-tabs button[aria-selected='true'] {
+    background: var(--vgzt-orange);
+  }
+
+  .people-browser__controls label {
+    display: grid;
+    gap: 0.3rem;
+    font-size: 0.72rem;
+    font-weight: 950;
+  }
+
+  .people-browser__controls input,
+  .people-browser__controls select {
+    width: 100%;
+    padding-inline: 0.75rem;
+  }
+
+  .people-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+
+  .season-group + .season-group {
+    margin-top: 4rem;
+  }
+
+  .season-group__heading {
+    margin-bottom: 1.5rem;
+  }
+
+  .season-group__heading h3 {
+    font-size: clamp(2rem, 4vw, 3.6rem);
+  }
+
+  @media (max-width: 64rem) {
+    .people-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 50rem) {
+    .people-browser__controls {
+      grid-template-columns: 1fr;
+    }
+
+    .people-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 30rem) {
+    .people-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  document
+    .querySelectorAll<HTMLElement>('[data-people-browser]')
+    .forEach((browser) => {
+      const tabs = [
+        ...browser.querySelectorAll<HTMLButtonElement>('[data-people-tab]'),
+      ];
+      const panels = [
+        ...browser.querySelectorAll<HTMLElement>('[data-people-panel]'),
+      ];
+      const search = browser.querySelector<HTMLInputElement>(
+        '[data-people-search]',
+      );
+      const season = browser.querySelector<HTMLSelectElement>(
+        '[data-season-filter]',
+      );
+
+      const applyFilters = () => {
+        const term = (search?.value || '').trim().toLowerCase();
+        browser
+          .querySelectorAll<HTMLElement>('[data-person-search]')
+          .forEach((card) => {
+            card.hidden =
+              term.length > 0 && !card.dataset.personSearch?.includes(term);
+          });
+        browser
+          .querySelectorAll<HTMLElement>('[data-season-group]')
+          .forEach((group) => {
+            group.hidden = Boolean(
+              season &&
+              season.value !== 'all' &&
+              group.dataset.seasonGroup !== season.value,
+            );
+          });
+      };
+
+      const selectTab = (button: HTMLButtonElement) => {
+        const view = button.dataset.peopleTab;
+        tabs.forEach((tab) => {
+          const selected = tab === button;
+          tab.setAttribute('aria-selected', String(selected));
+          tab.tabIndex = selected ? 0 : -1;
+        });
+        panels.forEach(
+          (panel) => (panel.hidden = panel.dataset.peoplePanel !== view),
+        );
+        if (season) season.disabled = view === 'speakers';
+        applyFilters();
+      };
+
+      tabs.forEach((tab, index) => {
+        tab.addEventListener('click', () => selectTab(tab));
+        tab.addEventListener('keydown', (event) => {
+          if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+          event.preventDefault();
+          const direction = event.key === 'ArrowRight' ? 1 : -1;
+          const next = tabs[(index + direction + tabs.length) % tabs.length];
+          if (next) {
+            selectTab(next);
+            next.focus();
+          }
+        });
+      });
+      if (season) season.disabled = true;
+      search?.addEventListener('input', applyFilters);
+      season?.addEventListener('change', applyFilters);
+    });
+</script>

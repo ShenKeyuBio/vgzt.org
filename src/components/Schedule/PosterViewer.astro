@@ -1,0 +1,120 @@
+---
+interface Props {
+  src: string;
+  alt: string;
+  id: string;
+}
+
+const { src, alt, id } = Astro.props;
+---
+
+<figure class="poster-viewer">
+  <button
+    class="poster-viewer__open"
+    type="button"
+    data-poster-open={id}
+    aria-label={`Enlarge poster: ${alt}`}
+  >
+    <img src={src} alt={alt} loading="lazy" decoding="async" />
+    <span>Enlarge poster</span>
+  </button>
+  <dialog
+    class="poster-viewer__dialog"
+    data-poster-dialog={id}
+    aria-label="Enlarged event poster"
+  >
+    <button type="button" data-poster-close aria-label="Close enlarged poster"
+      >Close ×</button
+    >
+    <img src={src} alt={alt} />
+  </dialog>
+</figure>
+
+<style>
+  .poster-viewer {
+    margin: 0;
+    background: var(--vgzt-ink);
+  }
+
+  .poster-viewer__open {
+    display: grid;
+    width: 100%;
+    min-height: 34rem;
+    cursor: zoom-in;
+    padding: clamp(1rem, 3vw, 2.5rem);
+    border: 0;
+    border-radius: 0;
+    background: var(--vgzt-ink);
+    color: var(--vgzt-paper-strong);
+    gap: 0.75rem;
+    place-items: center;
+  }
+
+  .poster-viewer__open img {
+    width: 100%;
+    max-height: 48rem;
+    object-fit: contain;
+  }
+
+  .poster-viewer__open span {
+    font-size: 0.72rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .poster-viewer__dialog {
+    width: min(94vw, 68rem);
+    max-height: 94vh;
+    padding: 1rem;
+    border: 3px solid var(--vgzt-ink);
+    background: var(--vgzt-paper);
+  }
+
+  .poster-viewer__dialog::backdrop {
+    background: rgb(11 11 11 / 86%);
+  }
+
+  .poster-viewer__dialog img {
+    width: 100%;
+    max-height: calc(94vh - 5rem);
+    object-fit: contain;
+  }
+
+  .poster-viewer__dialog button {
+    display: block;
+    min-height: 2.8rem;
+    margin: 0 0 0.75rem auto;
+    cursor: pointer;
+    padding-inline: 0.9rem;
+    border: var(--keyline);
+    background: var(--vgzt-paper-strong);
+    font-weight: 900;
+  }
+
+  @media (max-width: 48rem) {
+    .poster-viewer__open {
+      min-height: 25rem;
+    }
+  }
+</style>
+
+<script>
+  document
+    .querySelectorAll<HTMLElement>('[data-poster-open]')
+    .forEach((opener) => {
+      const id = opener.dataset.posterOpen;
+      const dialog = document.querySelector<HTMLDialogElement>(
+        `[data-poster-dialog="${id}"]`,
+      );
+      if (!dialog) return;
+
+      opener.addEventListener('click', () => dialog.showModal());
+      dialog
+        .querySelector('[data-poster-close]')
+        ?.addEventListener('click', () => dialog.close());
+      dialog.addEventListener('click', (event) => {
+        if (event.target === dialog) dialog.close();
+      });
+    });
+</script>

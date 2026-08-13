@@ -1,0 +1,81 @@
+---
+import type { EventViewModel } from '../../lib/view-models';
+
+interface Props {
+  event: EventViewModel;
+  selected?: boolean;
+}
+
+const { event, selected = false } = Astro.props;
+const canonical = new Date(`${event.canonicalDate}T12:00:00Z`);
+const month = new Intl.DateTimeFormat('en-GB', { month: 'short' }).format(
+  canonical,
+);
+const day = new Intl.DateTimeFormat('en-GB', { day: '2-digit' }).format(
+  canonical,
+);
+const weekday = new Intl.DateTimeFormat('en-GB', { weekday: 'short' }).format(
+  canonical,
+);
+---
+
+<button
+  class="event-date-button"
+  type="button"
+  role="tab"
+  id={`rail-${event.id}`}
+  aria-controls={`event-${event.id}`}
+  aria-selected={selected ? 'true' : 'false'}
+  tabindex={selected ? 0 : -1}
+  data-event-tab
+  data-event-id={event.id}
+  data-instant={event.instant}
+  data-end-instant={event.endInstant}
+>
+  <span class="event-date-button__month">{month}</span>
+  <span class="event-date-button__day" data-local-day>{day}</span>
+  <span class="event-date-button__weekday" data-local-weekday>{weekday}</span>
+  <span class="event-date-button__time" data-local-time
+    >{event.canonicalTime} ET</span
+  >
+</button>
+
+<style>
+  .event-date-button {
+    display: grid;
+    min-width: 7.2rem;
+    min-height: 8.5rem;
+    cursor: pointer;
+    padding: 0.7rem;
+    border: 0;
+    border-right: var(--keyline);
+    border-radius: 0;
+    background: var(--vgzt-paper-strong);
+    color: var(--vgzt-ink);
+    text-align: left;
+  }
+
+  .event-date-button[aria-selected='true'] {
+    background: var(--vgzt-orange);
+  }
+
+  .event-date-button__month,
+  .event-date-button__weekday,
+  .event-date-button__time {
+    font-size: 0.69rem;
+    font-weight: 900;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .event-date-button__day {
+    align-self: center;
+    font-size: 2.35rem;
+    font-weight: 1000;
+    line-height: 0.9;
+  }
+
+  .event-date-button__time {
+    align-self: end;
+  }
+</style>

@@ -1,0 +1,158 @@
+---
+import type { EventViewModel } from '../../lib/view-models';
+import EventDateButton from './EventDateButton.astro';
+
+interface Props {
+  events: EventViewModel[];
+  selectedId?: string | null;
+  start: string;
+  end: string;
+}
+
+const { events, selectedId = null, start, end } = Astro.props;
+const months: Array<{ label: string; year: number }> = [];
+const cursor = new Date(`${start.slice(0, 7)}-01T12:00:00Z`);
+const final = new Date(`${end.slice(0, 7)}-01T12:00:00Z`);
+while (cursor <= final) {
+  months.push({
+    label: new Intl.DateTimeFormat('en-GB', { month: 'short' }).format(cursor),
+    year: cursor.getUTCFullYear(),
+  });
+  cursor.setUTCMonth(cursor.getUTCMonth() + 1);
+}
+---
+
+<div class="season-rail-shell">
+  <div class="season-rail-shell__header">
+    <p class="eyebrow">Season rail</p>
+    {
+      events.length > 0 && (
+        <div class="season-rail-shell__controls" aria-label="Event navigation">
+          <button
+            type="button"
+            data-event-previous
+            aria-label="Select previous seminar"
+          >
+            ←
+          </button>
+          <button
+            type="button"
+            data-event-next
+            aria-label="Select next seminar"
+          >
+            →
+          </button>
+        </div>
+      )
+    }
+  </div>
+  {
+    events.length > 0 ? (
+      <div
+        class="season-rail"
+        role="tablist"
+        aria-label="Season seminars"
+        data-season-rail
+      >
+        {events.map((event, index) => (
+          <EventDateButton
+            event={event}
+            selected={selectedId ? event.id === selectedId : index === 0}
+          />
+        ))}
+      </div>
+    ) : (
+      <ol class="season-months" aria-label="Season months">
+        {months.map((month, index) => (
+          <li>
+            <span>{month.label}</span>
+            {(index === 0 || months[index - 1]?.year !== month.year) && (
+              <small>{month.year}</small>
+            )}
+          </li>
+        ))}
+      </ol>
+    )
+  }
+</div>
+
+<style>
+  .season-rail-shell {
+    border: var(--keyline);
+    background: var(--vgzt-paper-strong);
+  }
+
+  .season-rail-shell__header {
+    display: flex;
+    min-height: 3.2rem;
+    padding: 0.55rem 0.75rem;
+    border-bottom: var(--keyline);
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .season-rail-shell__header p {
+    margin: 0;
+  }
+
+  .season-rail-shell__controls {
+    display: flex;
+    gap: 0.4rem;
+  }
+
+  .season-rail-shell__controls button {
+    display: grid;
+    width: 2.3rem;
+    min-height: 2.3rem;
+    cursor: pointer;
+    place-items: center;
+    border: 2px solid currentColor;
+    background: var(--vgzt-paper);
+    font-weight: 1000;
+  }
+
+  .season-rail {
+    display: flex;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scrollbar-color: var(--vgzt-ink) var(--vgzt-paper);
+    scroll-snap-type: x proximity;
+  }
+
+  .season-rail > :global(*) {
+    scroll-snap-align: start;
+  }
+
+  .season-months {
+    display: grid;
+    margin: 0;
+    padding: 0;
+    overflow-x: auto;
+    grid-template-columns: repeat(11, minmax(5.6rem, 1fr));
+    list-style: none;
+  }
+
+  .season-months li {
+    display: grid;
+    min-height: 5.2rem;
+    padding: 0.75rem;
+    border-right: var(--keyline);
+    align-content: space-between;
+  }
+
+  .season-months li:last-child {
+    border-right: 0;
+  }
+
+  .season-months span {
+    font-size: 1.25rem;
+    font-weight: 950;
+    text-transform: uppercase;
+  }
+
+  .season-months small {
+    color: var(--vgzt-muted);
+    font-size: 0.67rem;
+    font-weight: 900;
+  }
+</style>

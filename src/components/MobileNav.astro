@@ -1,0 +1,47 @@
+---
+interface NavigationItem {
+  label: string;
+  href: string;
+}
+
+interface Props {
+  items: NavigationItem[];
+}
+
+const { items } = Astro.props;
+---
+
+<details class="mobile-nav" data-mobile-nav>
+  <summary aria-label="Open site navigation">Menu</summary>
+  <div>
+    <nav aria-label="Mobile navigation">
+      <ul>
+        {
+          items.map((item) => (
+            <li>
+              <a href={item.href}>{item.label}</a>
+            </li>
+          ))
+        }
+        <li><a href="/subscribe/">Join VGZT</a></li>
+      </ul>
+    </nav>
+  </div>
+</details>
+
+<script>
+  document
+    .querySelectorAll<HTMLDetailsElement>('[data-mobile-nav]')
+    .forEach((menu) => {
+      menu.querySelectorAll('a').forEach((link) => {
+        link.addEventListener('click', () => menu.removeAttribute('open'));
+      });
+
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && menu.open) {
+          menu.open = false;
+          menu.querySelector('summary')?.focus();
+        }
+      });
+    });
+</script>

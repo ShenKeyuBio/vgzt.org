@@ -1,0 +1,91 @@
+---
+const filters = [
+  ['all', 'All'],
+  ['job', 'Jobs'],
+  ['phd', 'PhD'],
+  ['postdoc', 'Postdoc'],
+  ['funding', 'Funding'],
+  ['event', 'Events'],
+  ['community', 'Community'],
+] as const;
+---
+
+<div
+  class="opportunity-filters"
+  role="group"
+  aria-label="Filter opportunities"
+  data-opportunity-filters
+>
+  {
+    filters.map(([value, label], index) => (
+      <button
+        type="button"
+        data-filter={value}
+        aria-pressed={index === 0 ? 'true' : 'false'}
+      >
+        {label}
+      </button>
+    ))
+  }
+</div>
+
+<style>
+  .opportunity-filters {
+    display: flex;
+    margin-bottom: 2rem;
+    overflow-x: auto;
+    border: var(--keyline);
+    background: var(--vgzt-paper-strong);
+  }
+
+  button {
+    min-width: max-content;
+    min-height: 3rem;
+    cursor: pointer;
+    padding-inline: 1rem;
+    border: 0;
+    border-right: var(--keyline);
+    border-radius: 0;
+    background: var(--vgzt-paper-strong);
+    font-size: 0.8rem;
+    font-weight: 900;
+  }
+
+  button[aria-pressed='true'] {
+    background: var(--vgzt-orange);
+  }
+</style>
+
+<script>
+  document
+    .querySelectorAll<HTMLElement>('[data-opportunity-filters]')
+    .forEach((filters) => {
+      const buttons = [
+        ...filters.querySelectorAll<HTMLButtonElement>('[data-filter]'),
+      ];
+      const cards = [
+        ...document.querySelectorAll<HTMLElement>('[data-opportunity-type]'),
+      ];
+      const count = document.querySelector<HTMLElement>(
+        '[data-opportunity-count]',
+      );
+
+      buttons.forEach((button) => {
+        button.addEventListener('click', () => {
+          const filter = button.dataset.filter || 'all';
+          buttons.forEach((item) =>
+            item.setAttribute('aria-pressed', String(item === button)),
+          );
+          let visible = 0;
+          cards.forEach((card) => {
+            const show =
+              filter === 'all' || card.dataset.opportunityType === filter;
+            card.hidden = !show;
+            if (show) visible += 1;
+          });
+          if (count)
+            count.textContent = `${visible} active ${visible === 1 ? 'listing' : 'listings'}`;
+        });
+      });
+    });
+</script>

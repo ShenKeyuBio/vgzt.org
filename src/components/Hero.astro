@@ -1,0 +1,77 @@
+---
+import { Image } from 'astro:assets';
+import turingTexture from '../assets/brand/turing-historical-reference.png';
+import BrandMark from './BrandMark.astro';
+
+interface Props {
+  seasonLabel: string;
+  seasonDates: string;
+  description: string;
+  abstractUrl?: string | null;
+  masterLogo?: string | null;
+}
+
+const {
+  seasonLabel,
+  seasonDates,
+  description,
+  abstractUrl = null,
+  masterLogo = null,
+} = Astro.props;
+---
+
+<section class="hero" aria-labelledby="hero-title">
+  <Image
+    class="hero__texture"
+    src={turingTexture}
+    alt=""
+    aria-hidden="true"
+    widths={[768, 1280, 1920]}
+    sizes="100vw"
+    format="webp"
+    loading="eager"
+    fetchpriority="high"
+    data-visual-source="historical-vgzt-reaction-diffusion-reference"
+  />
+  <div class="hero__inner container">
+    <div class="hero__copy">
+      <p class="hero__season">
+        {seasonLabel}
+        <span aria-hidden="true">·</span>
+        {seasonDates}
+      </p>
+      <h1 id="hero-title">Virtual<br />Gastrulation<br />Zoom Talks</h1>
+      <p class="hero__intro">{description}</p>
+      <div class="button-row">
+        {
+          abstractUrl ? (
+            <a
+              class="button button--ink"
+              href={abstractUrl}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              Submit an abstract
+            </a>
+          ) : (
+            <span
+              class="button button--ink"
+              aria-disabled="true"
+              title="Submission link coming soon"
+            >
+              Submit an abstract
+            </span>
+          )
+        }
+        <a class="button" href="/subscribe/">Join VGZT</a>
+      </div>
+    </div>
+
+    <div class="hero__mark" aria-hidden={masterLogo ? undefined : 'true'}>
+      <BrandMark masterLogo={masterLogo} />
+      <p class="hero__mark-caption">
+        Developmental biology, live and worldwide
+      </p>
+    </div>
+  </div>
+</section>

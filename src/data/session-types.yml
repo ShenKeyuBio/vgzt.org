@@ -1,0 +1,29 @@
+sessionTypes:
+  - id: two-speaker
+    label: Two-speaker session
+    speakerCount: 2
+    totalDurationMinutes: 60
+    presentationMinutesPerSpeaker: 25
+    qaMinutesPerSpeaker: 5
+    description: One PI and one student or postdoc.
+
+  - id: keynote
+    label: Keynote
+    speakerCount: 1
+    totalDurationMinutes: 60
+    presentationMinutesPerSpeaker: 50
+    qaMinutesPerSpeaker: 10
+    description: One keynote presentation followed by questions.
+
+timeSlots:
+  - id: eastern
+    label: Eastern session
+    time: '10:00'
+
+  - id: western
+    label: Western session
+    time: '12:30'
+
+  - id: alternative
+    label: Alternative session
+    time: '21:00'

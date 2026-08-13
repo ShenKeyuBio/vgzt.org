@@ -1,0 +1,234 @@
+---
+interface Props {
+  easternTime?: string | undefined;
+  westernTime?: string | undefined;
+  alternativeTime?: string | undefined;
+  twoSpeakerPresentation?: number | undefined;
+  twoSpeakerQa?: number | undefined;
+  keynotePresentation?: number | undefined;
+  keynoteQa?: number | undefined;
+}
+
+const {
+  easternTime = '10:00',
+  westernTime = '12:30',
+  alternativeTime = '21:00',
+  twoSpeakerPresentation = 25,
+  twoSpeakerQa = 5,
+  keynotePresentation = 50,
+  keynoteQa = 10,
+} = Astro.props;
+---
+
+<section class="format" aria-labelledby="format-title">
+  <div class="format__heading container">
+    <p class="eyebrow">How a VGZT hour works</p>
+    <h2 id="format-title">Two formats.<br />One global room.</h2>
+  </div>
+
+  <div class="format__bands">
+    <article class="format__band format__band--blue">
+      <div class="container format__band-inner">
+        <div>
+          <span class="status-badge">Two-speaker session</span>
+          <h3>PI + student or postdoc</h3>
+        </div>
+        <ol aria-label="Two-speaker session timing">
+          <li>
+            <strong>{twoSpeakerPresentation} min</strong><span>Speaker one</span
+            >
+          </li>
+          <li><strong>{twoSpeakerQa} min</strong><span>Q&amp;A</span></li>
+          <li>
+            <strong>{twoSpeakerPresentation} min</strong><span>Speaker two</span
+            >
+          </li>
+          <li><strong>{twoSpeakerQa} min</strong><span>Q&amp;A</span></li>
+        </ol>
+      </div>
+    </article>
+
+    <article class="format__band format__band--orange">
+      <div class="container format__band-inner">
+        <div>
+          <span class="status-badge">Keynote</span>
+          <h3>One speaker, one focused hour</h3>
+        </div>
+        <ol aria-label="Keynote session timing">
+          <li>
+            <strong>{keynotePresentation} min</strong><span>Presentation</span>
+          </li>
+          <li>
+            <strong>{keynoteQa} min</strong><span>Questions and discussion</span
+            >
+          </li>
+        </ol>
+      </div>
+    </article>
+
+    <div class="format__timing">
+      <div class="container format__timing-inner">
+        <p class="eyebrow">
+          Usual Friday starts <span aria-hidden="true">·</span> America/New_York
+        </p>
+        <ul>
+          <li><span>Eastern</span><strong>{easternTime} ET</strong></li>
+          <li><span>Western</span><strong>{westernTime} ET</strong></li>
+          <li><span>Alternative</span><strong>{alternativeTime} ET</strong></li>
+        </ul>
+        <p>
+          Every published event is converted from this IANA timezone to the
+          viewer’s chosen timezone, including daylight-saving changes and
+          next-day rollover.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .format {
+    border-bottom: var(--keyline);
+  }
+
+  .format__heading {
+    padding-block: var(--space-7);
+  }
+
+  .format__heading h2 {
+    margin-bottom: 0;
+  }
+
+  .format__band {
+    padding-block: clamp(2.5rem, 6vw, 5rem);
+    border-top: var(--keyline);
+  }
+
+  .format__band--blue {
+    background: var(--vgzt-blue);
+    color: var(--vgzt-paper-strong);
+  }
+
+  .format__band--orange {
+    background: var(--vgzt-orange);
+  }
+
+  .format__band-inner {
+    display: grid;
+    grid-template-columns: minmax(16rem, 0.72fr) minmax(24rem, 1.28fr);
+    gap: clamp(2rem, 6vw, 7rem);
+    align-items: center;
+  }
+
+  h3 {
+    max-width: 13ch;
+    margin: 1rem 0 0;
+    font-size: clamp(2rem, 4.5vw, 4.3rem);
+  }
+
+  ol {
+    display: grid;
+    margin: 0;
+    padding: 0;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    list-style: none;
+  }
+
+  .format__band--orange ol {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  ol li {
+    display: grid;
+    min-height: 9rem;
+    padding: 1rem;
+    border: 2px solid currentColor;
+    border-right: 0;
+    align-content: space-between;
+  }
+
+  ol li:last-child {
+    border-right: 2px solid currentColor;
+  }
+
+  ol strong {
+    font-size: clamp(1.7rem, 3vw, 2.8rem);
+    font-weight: 1000;
+  }
+
+  ol span {
+    font-size: 0.78rem;
+    font-weight: 850;
+  }
+
+  .format__timing {
+    padding-block: var(--space-6);
+    border-top: var(--keyline);
+    background: var(--vgzt-ink);
+    color: var(--vgzt-paper-strong);
+  }
+
+  .format__timing-inner {
+    display: grid;
+    grid-template-columns: minmax(10rem, 0.65fr) minmax(25rem, 1.35fr) minmax(
+        16rem,
+        0.8fr
+      );
+    gap: 2rem;
+    align-items: center;
+  }
+
+  .format__timing-inner p {
+    margin: 0;
+  }
+
+  .format__timing ul {
+    display: grid;
+    margin: 0;
+    padding: 0;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    list-style: none;
+  }
+
+  .format__timing li {
+    display: grid;
+    padding: 0.5rem 1rem;
+    border-left: 1px solid rgb(255 255 255 / 45%);
+  }
+
+  .format__timing li span {
+    font-size: 0.68rem;
+    font-weight: 850;
+    text-transform: uppercase;
+  }
+
+  .format__timing li strong {
+    font-size: 1.2rem;
+  }
+
+  @media (max-width: 58rem) {
+    .format__band-inner,
+    .format__timing-inner {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 38rem) {
+    ol,
+    .format__band--orange ol {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    ol li:nth-child(2) {
+      border-right: 2px solid currentColor;
+    }
+
+    ol li:nth-child(n + 3) {
+      border-top: 0;
+    }
+
+    .format__timing ul {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

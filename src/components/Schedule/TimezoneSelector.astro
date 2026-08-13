@@ -1,0 +1,110 @@
+---
+interface Props {
+  controlId?: string;
+}
+
+const { controlId = 'schedule-timezone' } = Astro.props;
+const fallbacks = [
+  'America/New_York',
+  'America/Los_Angeles',
+  'Europe/London',
+  'Europe/Berlin',
+  'Asia/Shanghai',
+  'Asia/Tokyo',
+  'Australia/Sydney',
+];
+const zones =
+  typeof Intl.supportedValuesOf === 'function'
+    ? Intl.supportedValuesOf('timeZone')
+    : fallbacks;
+---
+
+<div class="timezone-control" data-timezone-control>
+  <div>
+    <label for={controlId}>Display timezone</label>
+    <p id={`${controlId}-hint`}>
+      Event dates and times update in this browser only.
+    </p>
+  </div>
+  <select
+    id={controlId}
+    aria-describedby={`${controlId}-hint`}
+    data-timezone-select
+  >
+    <option value="auto">My timezone (automatic)</option>
+    {
+      zones.map((zone) => (
+        <option value={zone}>{zone.replaceAll('_', ' ')}</option>
+      ))
+    }
+  </select>
+  <button
+    class="timezone-control__reset"
+    type="button"
+    data-timezone-reset
+    hidden
+  >
+    Use automatic
+  </button>
+  <p class="timezone-control__status" aria-live="polite" data-timezone-status>
+  </p>
+</div>
+
+<style>
+  .timezone-control {
+    display: grid;
+    padding: 1rem;
+    border: var(--keyline);
+    background: var(--vgzt-paper-strong);
+    grid-template-columns: minmax(10rem, 1fr) minmax(14rem, 1.2fr) auto;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  label {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 950;
+  }
+
+  p {
+    margin: 0.15rem 0 0;
+    color: var(--vgzt-muted);
+    font-size: 0.72rem;
+  }
+
+  select,
+  button {
+    min-height: 2.85rem;
+    border: var(--keyline);
+    border-radius: 0;
+    background: var(--vgzt-paper);
+    font-size: 0.85rem;
+    font-weight: 750;
+  }
+
+  select {
+    width: 100%;
+    padding-inline: 0.75rem;
+  }
+
+  button {
+    cursor: pointer;
+    padding-inline: 0.8rem;
+  }
+
+  .timezone-control__status {
+    grid-column: 1 / -1;
+    margin: 0;
+  }
+
+  @media (max-width: 48rem) {
+    .timezone-control {
+      grid-template-columns: 1fr;
+    }
+
+    .timezone-control__status {
+      grid-column: auto;
+    }
+  }
+</style>

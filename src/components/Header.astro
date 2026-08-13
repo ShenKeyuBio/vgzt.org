@@ -1,0 +1,40 @@
+---
+import BrandMark from './BrandMark.astro';
+import MobileNav from './MobileNav.astro';
+
+interface Props {
+  masterLogo?: string | null;
+}
+
+const { masterLogo = null } = Astro.props;
+const navigation = [
+  { label: 'Schedule', href: '/#programme' },
+  { label: 'Abstracts', href: '/abstracts/' },
+  { label: 'Opportunities', href: '/opportunities/' },
+  { label: 'People', href: '/people/' },
+  { label: 'About', href: '/about/' },
+];
+---
+
+<header class="site-header">
+  <div class="site-header__inner container">
+    <a class="site-header__brand" href="/" aria-label="VGZT home">
+      <BrandMark masterLogo={masterLogo} colourDots />
+    </a>
+
+    <nav class="site-header__nav" aria-label="Primary navigation">
+      <ul>
+        {
+          navigation.map((item) => (
+            <li>
+              <a href={item.href}>{item.label}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <a class="button site-header__join" href="/subscribe/">Join VGZT</a>
+    <MobileNav items={navigation} />
+  </div>
+</header>

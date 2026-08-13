@@ -1,0 +1,101 @@
+---
+import { getCollection } from 'astro:content';
+import OpportunityCard from '../components/Opportunities/OpportunityCard.astro';
+import OpportunityFilters from '../components/Opportunities/OpportunityFilters.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getActiveOpportunities } from '../lib/opportunities';
+import {
+  getFooterSocial,
+  getSiteSettings,
+  getSocialSettings,
+} from '../lib/site-data';
+
+const site = getSiteSettings();
+const social = getSocialSettings();
+const entries = await getCollection('opportunities');
+const active = getActiveOpportunities(
+  entries
+    .filter(({ data }) => data.id !== 'collection-empty-state')
+    .map(({ data }) => data),
+);
+---
+
+<BaseLayout
+  title="Opportunities"
+  description="Curated developmental-biology jobs, funding, events, and community announcements."
+  email={site.publicEmail}
+  social={getFooterSocial(social)}
+  masterLogo={site.masterLogo}
+>
+  <header class="page-hero page-hero--blue">
+    <div class="container">
+      <p class="eyebrow">Curated by VGZT</p>
+      <h1>Opportunities for the community.</h1>
+      <p>
+        Developmental-biology jobs, PhD and postdoc positions, funding, events,
+        and community notices entered by the organizers—never scraped.
+      </p>
+    </div>
+  </header>
+
+  <section class="section" aria-labelledby="active-opportunities">
+    <div class="container">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow" data-opportunity-count>
+            {active.length} active {
+              active.length === 1 ? 'listing' : 'listings'
+            }
+          </p>
+          <h2 id="active-opportunities">Current listings.</h2>
+        </div>
+        <p>
+          Expired records stay in source history but are omitted from this
+          active view automatically.
+        </p>
+      </div>
+
+      {
+        active.length > 0 ? (
+          <>
+            <OpportunityFilters />
+            <div class="opportunity-grid">
+              {active.map((item) => (
+                <OpportunityCard {...item} />
+              ))}
+            </div>
+          </>
+        ) : (
+          <div class="empty-state">
+            <p class="eyebrow">No active listings</p>
+            <h3>New opportunities will appear here.</h3>
+            <p>
+              VGZT organizers are not displaying unverified or expired notices.
+              Have a relevant announcement?
+            </p>
+            <a
+              class="button button--ink"
+              href={`mailto:${site.publicEmail}?subject=VGZT%20opportunity`}
+            >
+              Contact the organizers
+            </a>
+          </div>
+        )
+      }
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .opportunity-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  @media (max-width: 45rem) {
+    .opportunity-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

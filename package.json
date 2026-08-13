@@ -1,0 +1,45 @@
+{
+  "name": "vgzt-website",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.19.0",
+  "description": "Official static website for Virtual Gastrulation Zoom Talks",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "node scripts/validate-content.mjs && astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "test": "vitest run tests",
+    "test:watch": "vitest tests",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "report:pending": "node scripts/report-pending.mjs",
+    "content:report": "node scripts/report-pending.mjs",
+    "validate:content": "node scripts/validate-content.mjs",
+    "content:validate": "node scripts/validate-content.mjs",
+    "validate:launch": "node scripts/validate-content.mjs --launch",
+    "content:validate:launch": "node scripts/validate-content.mjs --launch",
+    "worker:check": "pnpm --dir worker run check",
+    "ci": "pnpm run format:check && pnpm run check && pnpm run test && pnpm run build && pnpm --dir worker run check"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.3",
+    "@fontsource-variable/nunito-sans": "^5.2.8",
+    "@js-temporal/polyfill": "^0.5.1",
+    "astro": "^6.0.0",
+    "sharp": "^0.34.5",
+    "yaml": "^2.8.1"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "prettier": "^3.9.6",
+    "prettier-plugin-astro": "^0.14.1",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.10"
+  }
+}

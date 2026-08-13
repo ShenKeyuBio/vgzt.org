@@ -1,0 +1,57 @@
+---
+interface Props {
+  masterLogo?: string | null;
+  colourDots?: boolean;
+  label?: string;
+  class?: string;
+}
+
+const {
+  masterLogo = null,
+  colourDots = false,
+  label = 'Virtual Gastrulation Zoom Talks',
+  class: className = '',
+} = Astro.props;
+---
+
+{
+  masterLogo ? (
+    <img
+      class:list={['brand-logo', className]}
+      src={masterLogo}
+      alt={label}
+      decoding="async"
+    />
+  ) : (
+    <span
+      class:list={[
+        'brand-mark',
+        { 'brand-mark--colour': colourDots },
+        className,
+      ]}
+      role="img"
+      aria-label={`${label} — VGZT text mark`}
+      data-brand-source="replaceable-text-reference"
+    >
+      <span class="brand-mark__letters" aria-hidden="true">
+        <span>VG</span>
+        <span>ZT</span>
+      </span>
+      <span class="brand-mark__dots" aria-hidden="true">
+        <span class="brand-mark__dot" />
+        <span class="brand-mark__dot" />
+        <span class="brand-mark__dot" />
+        <span class="brand-mark__dot" />
+      </span>
+    </span>
+  )
+}
+
+<style>
+  .brand-logo {
+    display: block;
+    width: auto;
+    max-width: 100%;
+    height: auto;
+  }
+</style>
