@@ -19,7 +19,7 @@
     "CONTACT_FROM": "contact@vgzt.org"
   },
   "secrets": {
-    "required": ["TURNSTILE_SECRET", "CONTACT_TO"]
+    "required": ["TURNSTILE_SECRET", "CONTACT_TO", "SLACK_WEBHOOK_URL"]
   },
   "ratelimits": [
     {
