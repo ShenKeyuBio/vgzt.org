@@ -6,7 +6,7 @@
   "packageManager": "pnpm@11.19.0",
   "description": "Official static website for Virtual Gastrulation Zoom Talks",
   "engines": {
-    "node": ">=22.12.0"
+    "node": ">=22.13.0"
   },
   "scripts": {
     "dev": "astro dev",

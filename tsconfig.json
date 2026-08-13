@@ -8,6 +8,6 @@
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true
   },
-  "include": [".astro/types.d.ts", "**/*"],
-  "exclude": ["dist", "worker"]
+  "include": [".astro/types.d.ts", "src/**/*", "tests/**/*", "astro.config.ts"],
+  "exclude": ["dist", "worker", "work", "outputs", "node_modules"]
 }

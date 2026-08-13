@@ -5,10 +5,12 @@
   "compatibility_date": "2026-08-13",
   "compatibility_flags": ["nodejs_compat"],
   "workers_dev": false,
-  "route": {
-    "pattern": "api.vgzt.org/*",
-    "zone_name": "vgzt.org"
-  },
+  "routes": [
+    {
+      "pattern": "api.vgzt.org",
+      "custom_domain": true
+    }
+  ],
   "vars": {
     "ALLOWED_ORIGINS": "https://vgzt.org,https://www.vgzt.org",
     "TURNSTILE_EXPECTED_HOSTNAMES": "vgzt.org,www.vgzt.org",
