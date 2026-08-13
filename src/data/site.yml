@@ -5,5 +5,5 @@ description: A global online developmental biology seminar series.
 currentSeason: season-08
 publicEmail: organizers@vgzt.org
 masterLogo: null
-contactEndpoint: null
-turnstileSiteKey: null
+contactEndpoint: https://api.vgzt.org/contact
+turnstileSiteKey: 0x4AAAAAAEPUwk9XcaS5Tvox

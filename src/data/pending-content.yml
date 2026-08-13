@@ -133,20 +133,20 @@ pending:
     label: Production contact form endpoint
     type: configuration
     intendedLocation: Homepage contact form
-    status: pending
+    status: resolved
     requiredForLaunch: true
     replaceVia: Pages CMS > Site Settings > Contact endpoint
-    resolvedAt: null
+    resolvedAt: 2026-08-13
     notes: The only accepted production value is https://api.vgzt.org/contact.
 
   - key: site.turnstileSiteKey
     label: Production Cloudflare Turnstile site key
     type: configuration
     intendedLocation: Homepage contact form
-    status: pending
+    status: resolved
     requiredForLaunch: true
     replaceVia: Pages CMS > Site Settings > Turnstile site key
-    resolvedAt: null
+    resolvedAt: 2026-08-13
     notes: This is the public site key; the secret belongs only in Worker secrets.
 
   - key: contact.emailDelivery
