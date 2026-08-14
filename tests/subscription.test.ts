@@ -146,10 +146,12 @@ describe('central social configuration', () => {
     expect(getFooterSocial(social)).toContainEqual({
       label: 'Slack',
       url: SLACK_URL,
+      external: true,
     });
     expect(getFooterSocial(social)).toContainEqual({
       label: 'Mailing list',
-      url: null,
+      url: '/subscribe/',
+      external: false,
     });
   });
 });
