@@ -153,21 +153,21 @@ pending:
     label: Organizer email notification delivery configuration
     type: configuration
     intendedLocation: Cloudflare contact Worker
-    status: pending
+    status: resolved
     requiredForLaunch: true
     replaceVia: Follow docs/CLOUDFLARE-SETUP.md; do not store secret values here
-    resolvedAt: null
-    notes: Personal destination addresses must not be committed.
+    resolvedAt: 2026-08-14
+    notes: Production Contact and Join submissions delivered through the organizer email workflow; personal destination addresses remain outside the repository.
 
   - key: contact.slackNotification
     label: Optional Slack notification configuration
     type: configuration
     intendedLocation: Cloudflare contact Worker
-    status: pending
+    status: resolved
     requiredForLaunch: false
     replaceVia: Follow docs/CLOUDFLARE-SETUP.md; do not store webhook values here
-    resolvedAt: null
-    notes: null
+    resolvedAt: 2026-08-14
+    notes: Production Contact and Join submissions were confirmed in the designated private organizer test channel; the webhook remains a Worker secret.
 
   - key: season8.organizers.keyu-shen.portrait
     label: Keyu Shen portrait
