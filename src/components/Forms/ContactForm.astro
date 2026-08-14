@@ -395,6 +395,9 @@ const categories = [
         const body = String(data.get('message') || '').trim();
         const website = String(data.get('website') || '');
         const privacyAccepted = data.get('privacyAccepted') === 'true';
+        const verifiedToken =
+          turnstileToken ||
+          String(data.get('cf-turnstile-response') || '').trim();
         let invalid = false;
 
         if (!name || name.length > 100) {
@@ -419,7 +422,7 @@ const categories = [
           );
           invalid = true;
         }
-        if (!turnstileToken) {
+        if (!verifiedToken) {
           if (status)
             status.textContent =
               'Complete the anti-abuse check, then try again.';
@@ -444,7 +447,7 @@ const categories = [
               message: body,
               website,
               privacyAccepted,
-              turnstileToken,
+              turnstileToken: verifiedToken,
             }),
           });
           const result = (await response.json().catch(() => ({}))) as {

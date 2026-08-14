@@ -446,6 +446,9 @@ const careerStages = [
         const slackEmail = String(data.get('slackEmail') || '').trim();
         const website = String(data.get('website') || '');
         const privacyAccepted = data.get('privacyAccepted') === 'true';
+        const verifiedToken =
+          turnstileToken ||
+          String(data.get('cf-turnstile-response') || '').trim();
         let invalid = false;
 
         if (!name || name.length > 100) {
@@ -478,7 +481,7 @@ const careerStages = [
           );
           invalid = true;
         }
-        if (!turnstileToken) {
+        if (!verifiedToken) {
           if (status)
             status.textContent =
               'Complete the anti-abuse check, then try again.';
@@ -506,7 +509,7 @@ const careerStages = [
               joinMailingList: true,
               website,
               privacyAccepted,
-              turnstileToken,
+              turnstileToken: verifiedToken,
             }),
           });
           const result = (await response.json().catch(() => ({}))) as {
