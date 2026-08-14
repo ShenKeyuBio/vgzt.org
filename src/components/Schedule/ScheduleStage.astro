@@ -312,11 +312,13 @@ const {
           history.replaceState(null, '', url);
         }
         if (focus) tab.focus();
-        tab.scrollIntoView({
-          block: 'nearest',
-          inline: 'nearest',
-          behavior: reducedMotion.matches ? 'auto' : 'smooth',
-        });
+        if (focus || updateUrl) {
+          tab.scrollIntoView({
+            block: 'nearest',
+            inline: 'nearest',
+            behavior: reducedMotion.matches ? 'auto' : 'smooth',
+          });
+        }
       };
 
       const requested = new URLSearchParams(location.search).get('event');
