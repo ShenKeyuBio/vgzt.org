@@ -9,13 +9,19 @@ import {
   getAllowedOrigin,
   isValidPreflight,
 } from "./cors";
-import { safeErrorCode, type ContactLogger } from "./logging";
+import type { JoinSubmission } from "./join";
+import {
+  safeErrorCode,
+  type ContactLogEvent,
+  type ContactLogger,
+} from "./logging";
 import { jsonResponse, successResponse, type ApiErrorBody } from "./responses";
 import type { TurnstileVerificationResult } from "./turnstile";
 import {
   isHoneypotTriggered,
   normalizeEmailForRateLimit,
   validateContactPayload,
+  validateJoinPayload,
 } from "./validation";
 
 export interface ContactExecutionContext {
@@ -24,6 +30,8 @@ export interface ContactExecutionContext {
 
 export interface ContactHandlerConfig {
   allowedOrigins: ReadonlySet<string>;
+  contactTurnstileAction: string;
+  joinTurnstileAction: string;
   bodyLimitBytes?: number;
 }
 
@@ -36,21 +44,66 @@ export interface ContactHandlerDependencies {
     token: string;
     remoteIp: string;
     requestId: string;
+    expectedAction: string;
   }): Promise<TurnstileVerificationResult>;
   sendEmail(
     submission: ContactSubmission,
     requestId: string,
     receivedAt: Date,
   ): Promise<void>;
+  sendJoinEmail(
+    submission: JoinSubmission,
+    requestId: string,
+    receivedAt: Date,
+  ): Promise<void>;
   sendSlack?(submission: ContactSubmission, requestId: string): Promise<void>;
+  sendJoinSlack?(submission: JoinSubmission, requestId: string): Promise<void>;
   log: ContactLogger;
 }
+
+type FormKind = "contact" | "join";
+type FormSubmission =
+  | { kind: "contact"; value: ContactSubmission }
+  | { kind: "join"; value: JoinSubmission };
 
 const ERROR_MESSAGES: Readonly<Record<string, string>> = {
   INVALID_REQUEST: "The request could not be processed.",
   PAYLOAD_TOO_LARGE: "The submitted form is too large.",
   UNSUPPORTED_MEDIA_TYPE: "Submit the form as JSON.",
 };
+
+function formKindForPath(pathname: string): FormKind | null {
+  if (pathname === "/contact") {
+    return "contact";
+  }
+  if (pathname === "/join") {
+    return "join";
+  }
+  return null;
+}
+
+function formEvent(kind: FormKind): ContactLogEvent["event"] {
+  return kind === "contact" ? "contact_submission" : "join_submission";
+}
+
+function logSubmission(
+  dependencies: ContactHandlerDependencies,
+  kind: FormKind,
+  requestId: string,
+  outcome: ContactLogEvent["outcome"],
+  submission?: FormSubmission,
+  errorCode?: string,
+): void {
+  const category =
+    submission?.kind === "contact" ? submission.value.category : undefined;
+  dependencies.log({
+    event: formEvent(kind),
+    requestId,
+    outcome,
+    ...(category === undefined ? {} : { category }),
+    ...(errorCode === undefined ? {} : { errorCode }),
+  });
+}
 
 function errorResponse(
   status: number,
@@ -84,13 +137,71 @@ function bodyErrorResponse(
   return errorResponse(
     error.status,
     error.responseCode,
-    ERROR_MESSAGES[error.responseCode] ?? ERROR_MESSAGES.INVALID_REQUEST ?? "Invalid request.",
+    ERROR_MESSAGES[error.responseCode] ??
+      ERROR_MESSAGES.INVALID_REQUEST ??
+      "Invalid request.",
     requestId,
     allowedOrigin,
   );
 }
 
-export async function handleContactRequest(
+function validateSubmission(
+  kind: FormKind,
+  rawPayload: unknown,
+):
+  | { ok: true; submission: FormSubmission }
+  | { ok: false; fields: Readonly<Record<string, string>> } {
+  if (kind === "contact") {
+    const validation = validateContactPayload(rawPayload);
+    return validation.ok
+      ? { ok: true, submission: { kind, value: validation.value } }
+      : validation;
+  }
+
+  const validation = validateJoinPayload(rawPayload);
+  return validation.ok
+    ? { ok: true, submission: { kind, value: validation.value } }
+    : validation;
+}
+
+function scheduleSlackNotification(
+  submission: FormSubmission,
+  requestId: string,
+  context: ContactExecutionContext,
+  dependencies: ContactHandlerDependencies,
+): void {
+  const onFailure = (error: unknown): void => {
+    logSubmission(
+      dependencies,
+      submission.kind,
+      requestId,
+      "slack_failed",
+      submission,
+      safeErrorCode(error),
+    );
+  };
+
+  if (submission.kind === "contact" && dependencies.sendSlack !== undefined) {
+    const sender = dependencies.sendSlack;
+    context.waitUntil(
+      Promise.resolve()
+        .then(() => sender(submission.value, requestId))
+        .catch(onFailure),
+    );
+    return;
+  }
+
+  if (submission.kind === "join" && dependencies.sendJoinSlack !== undefined) {
+    const sender = dependencies.sendJoinSlack;
+    context.waitUntil(
+      Promise.resolve()
+        .then(() => sender(submission.value, requestId))
+        .catch(onFailure),
+    );
+  }
+}
+
+export async function handleFormRequest(
   request: Request,
   context: ContactExecutionContext,
   config: ContactHandlerConfig,
@@ -99,18 +210,19 @@ export async function handleContactRequest(
   const requestId = dependencies.createRequestId();
   const allowedOrigin = getAllowedOrigin(request, config.allowedOrigins);
   const url = new URL(request.url);
+  const kind = formKindForPath(url.pathname);
+
+  if (kind === null) {
+    return errorResponse(
+      404,
+      "NOT_FOUND",
+      "The requested endpoint does not exist.",
+      requestId,
+      allowedOrigin,
+    );
+  }
 
   try {
-    if (url.pathname !== "/contact") {
-      return errorResponse(
-        404,
-        "NOT_FOUND",
-        "The requested endpoint does not exist.",
-        requestId,
-        allowedOrigin,
-      );
-    }
-
     if (request.method === "OPTIONS") {
       if (allowedOrigin === null || !isValidPreflight(request)) {
         return errorResponse(
@@ -149,29 +261,27 @@ export async function handleContactRequest(
     const remoteIp = request.headers.get("cf-connecting-ip") ?? "unknown";
     let ipAllowed: boolean;
     try {
-      ipAllowed = await dependencies.limitIp(remoteIp);
+      ipAllowed = await dependencies.limitIp(`${kind}:${remoteIp}`);
     } catch (error) {
-      dependencies.log({
-        event: "contact_submission",
+      logSubmission(
+        dependencies,
+        kind,
         requestId,
-        outcome: "rate_limiter_failed",
-        errorCode: safeErrorCode(error),
-      });
+        "rate_limiter_failed",
+        undefined,
+        safeErrorCode(error),
+      );
       return errorResponse(
         503,
         "SERVICE_UNAVAILABLE",
-        "The contact service is temporarily unavailable.",
+        "The form service is temporarily unavailable.",
         requestId,
         allowedOrigin,
       );
     }
 
     if (!ipAllowed) {
-      dependencies.log({
-        event: "contact_submission",
-        requestId,
-        outcome: "rate_limited",
-      });
+      logSubmission(dependencies, kind, requestId, "rate_limited");
       return errorResponse(
         429,
         "RATE_LIMITED",
@@ -197,21 +307,13 @@ export async function handleContactRequest(
     }
 
     if (isHoneypotTriggered(rawPayload)) {
-      dependencies.log({
-        event: "contact_submission",
-        requestId,
-        outcome: "honeypot_discarded",
-      });
+      logSubmission(dependencies, kind, requestId, "honeypot_discarded");
       return successResponse(requestId, allowedOrigin);
     }
 
-    const validation = validateContactPayload(rawPayload);
+    const validation = validateSubmission(kind, rawPayload);
     if (!validation.ok) {
-      dependencies.log({
-        event: "contact_submission",
-        requestId,
-        outcome: "validation_failed",
-      });
+      logSubmission(dependencies, kind, requestId, "validation_failed");
       return errorResponse(
         400,
         "VALIDATION_FAILED",
@@ -221,20 +323,26 @@ export async function handleContactRequest(
         validation.fields,
       );
     }
+    const submission = validation.submission;
 
     const verification = await dependencies.verifyTurnstile({
-      token: validation.value.turnstileToken,
+      token: submission.value.turnstileToken,
       remoteIp,
       requestId,
+      expectedAction:
+        kind === "contact"
+          ? config.contactTurnstileAction
+          : config.joinTurnstileAction,
     });
     if (!verification.ok) {
-      dependencies.log({
-        event: "contact_submission",
+      logSubmission(
+        dependencies,
+        kind,
         requestId,
-        outcome: "verification_failed",
-        category: validation.value.category,
-        errorCode: verification.reason.toUpperCase(),
-      });
+        "verification_failed",
+        submission,
+        verification.reason.toUpperCase(),
+      );
       return errorResponse(
         422,
         "VERIFICATION_FAILED",
@@ -247,32 +355,34 @@ export async function handleContactRequest(
     let emailAllowed: boolean;
     try {
       emailAllowed = await dependencies.limitEmail(
-        normalizeEmailForRateLimit(validation.value.email),
+        `${kind}:${normalizeEmailForRateLimit(submission.value.email)}`,
       );
     } catch (error) {
-      dependencies.log({
-        event: "contact_submission",
+      logSubmission(
+        dependencies,
+        kind,
         requestId,
-        outcome: "rate_limiter_failed",
-        category: validation.value.category,
-        errorCode: safeErrorCode(error),
-      });
+        "rate_limiter_failed",
+        submission,
+        safeErrorCode(error),
+      );
       return errorResponse(
         503,
         "SERVICE_UNAVAILABLE",
-        "The contact service is temporarily unavailable.",
+        "The form service is temporarily unavailable.",
         requestId,
         allowedOrigin,
       );
     }
 
     if (!emailAllowed) {
-      dependencies.log({
-        event: "contact_submission",
+      logSubmission(
+        dependencies,
+        kind,
         requestId,
-        outcome: "rate_limited",
-        category: validation.value.category,
-      });
+        "rate_limited",
+        submission,
+      );
       return errorResponse(
         429,
         "RATE_LIMITED",
@@ -286,19 +396,32 @@ export async function handleContactRequest(
 
     const receivedAt = dependencies.now();
     try {
-      await dependencies.sendEmail(validation.value, requestId, receivedAt);
+      if (submission.kind === "contact") {
+        await dependencies.sendEmail(
+          submission.value,
+          requestId,
+          receivedAt,
+        );
+      } else {
+        await dependencies.sendJoinEmail(
+          submission.value,
+          requestId,
+          receivedAt,
+        );
+      }
     } catch (error) {
-      dependencies.log({
-        event: "contact_submission",
+      logSubmission(
+        dependencies,
+        kind,
         requestId,
-        outcome: "delivery_failed",
-        category: validation.value.category,
-        errorCode: safeErrorCode(error),
-      });
+        "delivery_failed",
+        submission,
+        safeErrorCode(error),
+      );
       return errorResponse(
         503,
         "DELIVERY_UNAVAILABLE",
-        "The message could not be delivered. Try again later.",
+        "The submission could not be delivered. Try again later.",
         requestId,
         allowedOrigin,
         undefined,
@@ -306,41 +429,27 @@ export async function handleContactRequest(
       );
     }
 
-    if (dependencies.sendSlack !== undefined) {
-      const slackTask = Promise.resolve()
-        .then(() => dependencies.sendSlack?.(validation.value, requestId))
-        .catch((error: unknown) => {
-          dependencies.log({
-            event: "contact_submission",
-            requestId,
-            outcome: "slack_failed",
-            category: validation.value.category,
-            errorCode: safeErrorCode(error),
-          });
-        });
-      context.waitUntil(slackTask);
-    }
-
-    dependencies.log({
-      event: "contact_submission",
-      requestId,
-      outcome: "accepted",
-      category: validation.value.category,
-    });
+    scheduleSlackNotification(submission, requestId, context, dependencies);
+    logSubmission(dependencies, kind, requestId, "accepted", submission);
     return successResponse(requestId, allowedOrigin);
   } catch (error) {
-    dependencies.log({
-      event: "contact_submission",
+    logSubmission(
+      dependencies,
+      kind,
       requestId,
-      outcome: "internal_error",
-      errorCode: safeErrorCode(error),
-    });
+      "internal_error",
+      undefined,
+      safeErrorCode(error),
+    );
     return errorResponse(
       500,
       "INTERNAL_ERROR",
-      "The contact service is temporarily unavailable.",
+      "The form service is temporarily unavailable.",
       requestId,
       allowedOrigin,
     );
   }
 }
+
+/** Retained for existing imports while the Worker now serves both form routes. */
+export const handleContactRequest = handleFormRequest;

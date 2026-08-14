@@ -12,7 +12,7 @@ const social = getSocialSettings();
 
 <BaseLayout
   title="Privacy"
-  description="Privacy information for the VGZT website and contact form."
+  description="Privacy information for the VGZT website, contact form, and community join form."
   email={site.publicEmail}
   social={getFooterSocial(social)}
   masterLogo={site.masterLogo}
@@ -43,6 +43,15 @@ const social = getSocialSettings();
         Turnstile supplies anti-abuse verification. The contact service may
         retain operational logs containing a request identifier and outcome, but
         it is designed not to log message content or email addresses.
+      </p>
+
+      <h2>Join form</h2>
+      <p>
+        If you request community access, VGZT processes your name, organization,
+        career stage, contact email, and Slack-linked email. The submission is
+        sent to the organizer email and the designated organizer Slack channel
+        so the team can manually invite you to VGZT Slack and the mailing list.
+        Cloudflare Turnstile supplies anti-abuse verification.
       </p>
 
       <h2>Email and community services</h2>

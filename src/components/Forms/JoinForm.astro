@@ -1,0 +1,538 @@
+---
+interface Props {
+  endpoint?: string | null;
+  turnstileSiteKey?: string | null;
+  email: string;
+}
+
+const { endpoint = null, turnstileSiteKey = null, email } = Astro.props;
+const enabled = Boolean(endpoint && turnstileSiteKey);
+const careerStages = [
+  { value: 'undergraduate', label: 'Undergraduate student' },
+  { value: 'masters', label: "Master's student" },
+  { value: 'phd', label: 'PhD student' },
+  { value: 'postdoc', label: 'Postdoctoral researcher' },
+  { value: 'research-staff', label: 'Research staff' },
+  { value: 'faculty-pi', label: 'Faculty / group leader / PI' },
+  { value: 'professional', label: 'Professional services / industry' },
+  { value: 'other', label: 'Other' },
+];
+---
+
+<section class="join-section" aria-labelledby="join-form-title">
+  <div class="container join-section__grid">
+    <div class="join-section__intro">
+      <p class="eyebrow">One request, both channels</p>
+      <h2 id="join-form-title">Join the VGZT community.</h2>
+      <p>
+        Request access to both the VGZT Slack and mailing list. The organizer
+        team reviews each request and sends invitations manually.
+      </p>
+      <ul class="join-benefits">
+        <li>Seminar announcements and reminders</li>
+        <li>Developmental-biology discussion</li>
+        <li>Opportunities and community news</li>
+      </ul>
+      <p class="join-section__note">
+        Already connected or need help? Email <a href={`mailto:${email}`}
+          >{email}</a
+        >.
+      </p>
+    </div>
+
+    <form
+      class="join-form"
+      method="post"
+      action={endpoint || undefined}
+      data-join-form
+      data-endpoint={endpoint || ''}
+      data-enabled={String(enabled)}
+      novalidate
+    >
+      <div class="join-form__request" aria-label="Requested access">
+        <span>VGZT Slack</span>
+        <span aria-hidden="true">+</span>
+        <span>Mailing list</span>
+      </div>
+
+      <div class="join-form__row">
+        <div class="field">
+          <label for="join-name">Name</label>
+          <input
+            id="join-name"
+            name="name"
+            autocomplete="name"
+            required
+            maxlength="100"
+          />
+          <span class="field__error" id="join-name-error"></span>
+        </div>
+
+        <div class="field">
+          <label for="join-organization">Organization</label>
+          <input
+            id="join-organization"
+            name="organization"
+            autocomplete="organization"
+            required
+            maxlength="160"
+          />
+          <span class="field__error" id="join-organization-error"></span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="join-career-stage">Career stage</label>
+        <select id="join-career-stage" name="careerStage" required>
+          <option value="">Select your career stage</option>
+          {
+            careerStages.map((stage) => (
+              <option value={stage.value}>{stage.label}</option>
+            ))
+          }
+        </select>
+        <span class="field__error" id="join-careerStage-error"></span>
+      </div>
+
+      <div class="join-form__row">
+        <div class="field">
+          <label for="join-email">Contact email</label>
+          <input
+            id="join-email"
+            name="email"
+            type="email"
+            inputmode="email"
+            autocomplete="email"
+            required
+            maxlength="254"
+          />
+          <span class="field__error" id="join-email-error"></span>
+        </div>
+
+        <div class="field">
+          <label for="join-slack-email">Email linked to Slack</label>
+          <input
+            id="join-slack-email"
+            name="slackEmail"
+            type="email"
+            inputmode="email"
+            autocomplete="email"
+            aria-describedby="join-slack-email-hint join-slackEmail-error"
+            required
+            maxlength="254"
+          />
+          <span class="field__hint" id="join-slack-email-hint"
+            >Repeat your contact email if it is the same.</span
+          >
+          <span class="field__error" id="join-slackEmail-error"></span>
+        </div>
+      </div>
+
+      <div class="field field--honeypot" aria-hidden="true">
+        <label for="join-website">Website</label>
+        <input
+          id="join-website"
+          name="website"
+          tabindex="-1"
+          autocomplete="off"
+        />
+      </div>
+
+      <label class="privacy-check" for="join-privacy">
+        <input
+          id="join-privacy"
+          name="privacyAccepted"
+          type="checkbox"
+          required
+          value="true"
+        />
+        <span
+          >I agree that VGZT may use these details to review my request and send
+          Slack and mailing-list invitations. See the <a href="/privacy/"
+            >privacy notice</a
+          >.</span
+        >
+      </label>
+      <span class="field__error" id="join-privacy-error"></span>
+
+      {
+        turnstileSiteKey && (
+          <div
+            class="cf-turnstile"
+            data-sitekey={turnstileSiteKey}
+            data-action="vgzt_join"
+            data-callback="vgztJoinTurnstileComplete"
+            data-expired-callback="vgztJoinTurnstileExpired"
+            data-error-callback="vgztJoinTurnstileExpired"
+          />
+        )
+      }
+
+      {
+        !enabled && (
+          <p class="join-form__unavailable" role="status">
+            The secure join form is being connected. In the meantime, email{' '}
+            <a href={`mailto:${email}`}>{email}</a>.
+          </p>
+        )
+      }
+
+      <div class="join-form__submit-row">
+        <button class="button button--ink" type="submit" disabled={!enabled}>
+          Request both invitations <span aria-hidden="true">→</span>
+        </button>
+        <p
+          class="join-form__status"
+          role="status"
+          aria-live="polite"
+          data-form-status
+        >
+        </p>
+      </div>
+    </form>
+  </div>
+</section>
+
+{
+  turnstileSiteKey && (
+    <script
+      is:inline
+      src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+      async
+      defer
+    />
+  )
+}
+
+<style>
+  .join-section {
+    padding-block: var(--space-8);
+    border-bottom: var(--keyline);
+    background: var(--vgzt-cyan);
+  }
+
+  .join-section__grid {
+    display: grid;
+    grid-template-columns: minmax(17rem, 0.68fr) minmax(28rem, 1.32fr);
+    gap: clamp(2rem, 7vw, 7rem);
+    align-items: start;
+  }
+
+  .join-section__intro {
+    position: sticky;
+    top: 2rem;
+  }
+
+  .join-section__intro h2 {
+    max-width: 9ch;
+    margin-bottom: 1.5rem;
+  }
+
+  .join-section__intro p,
+  .join-benefits {
+    font-weight: 650;
+  }
+
+  .join-benefits {
+    margin-block: 1.5rem;
+    padding-left: 1.2rem;
+  }
+
+  .join-section__note {
+    font-size: 0.88rem;
+  }
+
+  .join-section__note a {
+    font-weight: 900;
+  }
+
+  .join-form {
+    display: grid;
+    padding: clamp(1.25rem, 3vw, 2.5rem);
+    border: var(--keyline);
+    background: var(--vgzt-paper-strong);
+    gap: 1.1rem;
+  }
+
+  .join-form__request {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+    align-items: center;
+    padding-bottom: 1rem;
+    border-bottom: var(--keyline);
+    font-size: 0.78rem;
+    font-weight: 950;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .join-form__request span:not([aria-hidden]) {
+    padding: 0.4rem 0.58rem;
+    border: 2px solid currentColor;
+    background: var(--vgzt-pink);
+  }
+
+  .join-form__row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .field {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .field label {
+    font-size: 0.78rem;
+    font-weight: 950;
+    letter-spacing: 0.04em;
+  }
+
+  .field input,
+  .field select {
+    width: 100%;
+    min-height: 3rem;
+    padding: 0.7rem 0.8rem;
+    border: var(--keyline);
+    border-radius: 0;
+    background: var(--vgzt-paper);
+  }
+
+  .field input[aria-invalid='true'],
+  .field select[aria-invalid='true'] {
+    border-color: var(--vgzt-error);
+    box-shadow: inset 0 0 0 1px var(--vgzt-error);
+  }
+
+  .field__hint {
+    color: var(--vgzt-muted);
+    font-size: 0.72rem;
+  }
+
+  .field__error {
+    min-height: 1em;
+    color: var(--vgzt-error);
+    font-size: 0.72rem;
+    font-weight: 800;
+  }
+
+  .field--honeypot {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+
+  .privacy-check {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.7rem;
+    align-items: start;
+    font-size: 0.8rem;
+    font-weight: 650;
+  }
+
+  .privacy-check input {
+    width: 1.25rem;
+    height: 1.25rem;
+    margin: 0.08rem 0 0;
+    accent-color: var(--vgzt-ink);
+  }
+
+  .join-form__unavailable {
+    margin: 0;
+    padding: 0.8rem;
+    border-left: 0.4rem solid var(--vgzt-orange);
+    background: color-mix(in srgb, var(--vgzt-orange) 24%, var(--vgzt-paper));
+    font-size: 0.83rem;
+    font-weight: 700;
+  }
+
+  .join-form__submit-row {
+    display: flex;
+    min-height: 3rem;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .join-form__status {
+    margin: 0;
+    font-size: 0.8rem;
+    font-weight: 800;
+  }
+
+  @media (max-width: 56rem) {
+    .join-section__grid {
+      grid-template-columns: 1fr;
+    }
+
+    .join-section__intro {
+      position: static;
+    }
+  }
+
+  @media (max-width: 36rem) {
+    .join-form__row {
+      grid-template-columns: 1fr;
+    }
+
+    .join-form__submit-row {
+      display: grid;
+    }
+  }
+</style>
+
+<script>
+  declare global {
+    interface Window {
+      vgztJoinTurnstileComplete?: (token: string) => void;
+      vgztJoinTurnstileExpired?: () => void;
+      turnstile?: { reset: () => void };
+    }
+  }
+
+  document
+    .querySelectorAll<HTMLFormElement>('[data-join-form]')
+    .forEach((form) => {
+      const enabled = form.dataset.enabled === 'true';
+      if (!enabled) return;
+      const status = form.querySelector<HTMLElement>('[data-form-status]');
+      const submit = form.querySelector<HTMLButtonElement>(
+        'button[type="submit"]',
+      );
+      let turnstileToken = '';
+
+      window.vgztJoinTurnstileComplete = (token) => {
+        turnstileToken = token;
+      };
+      window.vgztJoinTurnstileExpired = () => {
+        turnstileToken = '';
+      };
+
+      const clearErrors = () => {
+        form
+          .querySelectorAll('[aria-invalid="true"]')
+          .forEach((field) => field.removeAttribute('aria-invalid'));
+        form
+          .querySelectorAll<HTMLElement>('.field__error')
+          .forEach((error) => (error.textContent = ''));
+      };
+
+      const setError = (name: string, text: string) => {
+        const field = form.elements.namedItem(name) as HTMLElement | null;
+        field?.setAttribute('aria-invalid', 'true');
+        const errorId =
+          name === 'privacyAccepted'
+            ? 'join-privacy-error'
+            : `join-${name}-error`;
+        field?.setAttribute('aria-describedby', errorId);
+        const error = form.querySelector<HTMLElement>(`#${errorId}`);
+        if (error) error.textContent = text;
+      };
+
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        clearErrors();
+        if (status) status.textContent = '';
+
+        const data = new FormData(form);
+        const name = String(data.get('name') || '').trim();
+        const organization = String(data.get('organization') || '').trim();
+        const careerStage = String(data.get('careerStage') || '');
+        const email = String(data.get('email') || '').trim();
+        const slackEmail = String(data.get('slackEmail') || '').trim();
+        const website = String(data.get('website') || '');
+        const privacyAccepted = data.get('privacyAccepted') === 'true';
+        let invalid = false;
+
+        if (!name || name.length > 100) {
+          setError('name', 'Enter your name (up to 100 characters).');
+          invalid = true;
+        }
+        if (!organization || organization.length > 160) {
+          setError(
+            'organization',
+            'Enter your organization (up to 160 characters).',
+          );
+          invalid = true;
+        }
+        if (!careerStage) {
+          setError('careerStage', 'Select your career stage.');
+          invalid = true;
+        }
+        if (!/^\S+@\S+\.\S+$/.test(email) || email.length > 254) {
+          setError('email', 'Enter a valid contact email address.');
+          invalid = true;
+        }
+        if (!/^\S+@\S+\.\S+$/.test(slackEmail) || slackEmail.length > 254) {
+          setError('slackEmail', 'Enter the email address linked to Slack.');
+          invalid = true;
+        }
+        if (!privacyAccepted) {
+          setError(
+            'privacyAccepted',
+            'Confirm that VGZT may use these details for your invitations.',
+          );
+          invalid = true;
+        }
+        if (!turnstileToken) {
+          if (status)
+            status.textContent =
+              'Complete the anti-abuse check, then try again.';
+          invalid = true;
+        }
+        if (invalid) {
+          form.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus();
+          return;
+        }
+
+        if (submit) submit.disabled = true;
+        if (status) status.textContent = 'Sending…';
+
+        try {
+          const response = await fetch(form.dataset.endpoint || '', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              name,
+              organization,
+              careerStage,
+              email,
+              slackEmail,
+              joinSlack: true,
+              joinMailingList: true,
+              website,
+              privacyAccepted,
+              turnstileToken,
+            }),
+          });
+          const result = (await response.json().catch(() => ({}))) as {
+            message?: string;
+          };
+          if (!response.ok)
+            throw new Error(result.message || 'Request could not be sent.');
+
+          form.reset();
+          turnstileToken = '';
+          if (status)
+            status.textContent =
+              'Thanks — your request is with the VGZT organizers.';
+          window.turnstile?.reset();
+        } catch (error) {
+          if (status) {
+            status.textContent =
+              error instanceof Error
+                ? error.message
+                : 'Request could not be sent. Try again.';
+          }
+          window.turnstile?.reset();
+          turnstileToken = '';
+        } finally {
+          if (submit) submit.disabled = false;
+        }
+      });
+    });
+</script>

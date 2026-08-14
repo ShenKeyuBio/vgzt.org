@@ -4,12 +4,29 @@ import {
   type ContactValidationResult,
   type ValidationFailure,
 } from "./contact";
+import type {
+  JoinValidationFailure,
+  JoinValidationResult,
+} from "./join";
 
-const EXPECTED_KEYS = new Set([
+const CONTACT_EXPECTED_KEYS = new Set([
   "name",
   "email",
   "category",
   "message",
+  "privacyAccepted",
+  "website",
+  "turnstileToken",
+]);
+
+const JOIN_EXPECTED_KEYS = new Set([
+  "name",
+  "organization",
+  "careerStage",
+  "email",
+  "slackEmail",
+  "joinSlack",
+  "joinMailingList",
   "privacyAccepted",
   "website",
   "turnstileToken",
@@ -48,6 +65,33 @@ function failure(fields: Record<string, string>): ValidationFailure {
   return { ok: false, fields };
 }
 
+function joinFailure(fields: Record<string, string>): JoinValidationFailure {
+  return { ok: false, fields };
+}
+
+function validateSingleLine(
+  value: unknown,
+  maxCodePoints: number,
+): string | null {
+  if (typeof value !== "string") {
+    return null;
+  }
+
+  const normalized = normalizeSingleLine(value);
+  return normalized.length > 0 &&
+    codePointLength(normalized) <= maxCodePoints &&
+    !SINGLE_LINE_CONTROL_PATTERN.test(normalized)
+    ? normalized
+    : null;
+}
+
+function validateEmail(value: unknown): string | null {
+  const normalized = validateSingleLine(value, 254);
+  return normalized !== null && EMAIL_PATTERN.test(normalized)
+    ? normalized
+    : null;
+}
+
 export function isHoneypotTriggered(value: unknown): boolean {
   return (
     isPlainObject(value) &&
@@ -66,7 +110,9 @@ export function validateContactPayload(value: unknown): ContactValidationResult 
   }
 
   const fields: Record<string, string> = {};
-  const unknownKeys = Object.keys(value).filter((key) => !EXPECTED_KEYS.has(key));
+  const unknownKeys = Object.keys(value).filter(
+    (key) => !CONTACT_EXPECTED_KEYS.has(key),
+  );
   if (unknownKeys.length > 0) {
     fields.form = "The form contains unsupported fields.";
   }
@@ -131,6 +177,95 @@ export function validateContactPayload(value: unknown): ContactValidationResult 
       email,
       category,
       message,
+      privacyAccepted: true,
+      turnstileToken,
+    },
+  };
+}
+
+export function validateJoinPayload(value: unknown): JoinValidationResult {
+  if (!isPlainObject(value)) {
+    return joinFailure({ form: "Submit the join form as a JSON object." });
+  }
+
+  const fields: Record<string, string> = {};
+  const unknownKeys = Object.keys(value).filter(
+    (key) => !JOIN_EXPECTED_KEYS.has(key),
+  );
+  if (unknownKeys.length > 0) {
+    fields.form = "The form contains unsupported fields.";
+  }
+
+  const name = validateSingleLine(value.name, 100);
+  if (name === null) {
+    fields.name = "Enter a name between 1 and 100 characters.";
+  }
+
+  const organization = validateSingleLine(value.organization, 160);
+  if (organization === null) {
+    fields.organization =
+      "Enter an organization between 1 and 160 characters.";
+  }
+
+  const careerStage = validateSingleLine(value.careerStage, 100);
+  if (careerStage === null) {
+    fields.careerStage = "Choose or enter a valid career stage.";
+  }
+
+  const email = validateEmail(value.email);
+  if (email === null) {
+    fields.email = "Enter a valid email address.";
+  }
+
+  const slackEmail = validateEmail(value.slackEmail);
+  if (slackEmail === null) {
+    fields.slackEmail = "Enter the email address linked to Slack.";
+  }
+
+  if (value.joinSlack !== true) {
+    fields.joinSlack = "Confirm that you want to join the VGZT Slack.";
+  }
+
+  if (value.joinMailingList !== true) {
+    fields.joinMailingList =
+      "Confirm that you want to join the VGZT mailing list.";
+  }
+
+  if (value.privacyAccepted !== true) {
+    fields.privacyAccepted = "Confirm the privacy acknowledgement.";
+  }
+
+  if (typeof value.website !== "string" || value.website.trim().length !== 0) {
+    fields.form = "The form could not be validated.";
+  }
+
+  const turnstileToken =
+    typeof value.turnstileToken === "string" ? value.turnstileToken.trim() : "";
+  if (turnstileToken.length === 0 || turnstileToken.length > 2_048) {
+    fields.verification = "Complete the verification and try again.";
+  }
+
+  if (
+    Object.keys(fields).length > 0 ||
+    name === null ||
+    organization === null ||
+    careerStage === null ||
+    email === null ||
+    slackEmail === null
+  ) {
+    return joinFailure(fields);
+  }
+
+  return {
+    ok: true,
+    value: {
+      name,
+      organization,
+      careerStage,
+      email,
+      slackEmail,
+      joinSlack: true,
+      joinMailingList: true,
       privacyAccepted: true,
       turnstileToken,
     },

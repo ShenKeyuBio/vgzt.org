@@ -1,10 +1,10 @@
-# VGZT contact Worker
+# VGZT form Worker
 
-This isolated Cloudflare Worker serves `POST https://api.vgzt.org/contact` for
-the static VGZT website. It does not store submissions or require a database.
-It validates the request, applies Cloudflare-native rate limits, verifies
-Turnstile server-side, awaits an email notification, and can send a
-metadata-only Slack alert on a best-effort basis.
+This isolated Cloudflare Worker serves `POST https://api.vgzt.org/contact` and
+`POST https://api.vgzt.org/join` for the static VGZT website. It does not store
+submissions or require a database. It validates each request, applies
+Cloudflare-native rate limits, verifies Turnstile server-side, awaits an email
+notification, and sends a structured Slack alert on a best-effort basis.
 
 ## Request contract
 
@@ -17,6 +17,23 @@ at 32 KiB. The frontend sends:
   "email": "jane@example.com",
   "category": "general",
   "message": "I have a question about an upcoming seminar.",
+  "privacyAccepted": true,
+  "website": "",
+  "turnstileToken": "token-returned-by-turnstile"
+}
+```
+
+`POST /join` sends the fields needed for manual invitation:
+
+```json
+{
+  "name": "Jane Smith",
+  "organization": "Example University",
+  "careerStage": "postdoc",
+  "email": "jane@example.com",
+  "slackEmail": "jane@example.com",
+  "joinSlack": true,
+  "joinMailingList": true,
   "privacyAccepted": true,
   "website": "",
   "turnstileToken": "token-returned-by-turnstile"
@@ -57,20 +74,20 @@ Turnstile token is single-use and expires after five minutes.
 The Worker requires all of the following:
 
 1. Exact browser origin: `https://vgzt.org` or `https://www.vgzt.org`.
-2. `POST /contact` with JSON only.
+2. `POST /contact` or `POST /join` with JSON only.
 3. A bounded 32 KiB body reader, even when `Content-Length` is absent.
 4. An IP burst limit before body parsing: 10 attempts per minute.
 5. An empty honeypot.
 6. Strict server-side field validation.
-7. A valid Turnstile result for the configured hostname and `vgzt_contact`
-   action.
+7. A valid Turnstile result for the configured hostname and route-specific
+   action: `vgzt_contact` or `vgzt_join`.
 8. An email-key limit after successful verification: 3 attempts per minute.
 
 Rate-limit keys are SHA-256 digests rather than raw IP/email strings. Native
 Workers rate limits are intentionally permissive, eventually consistent, and
 local to a Cloudflare location. They are abuse reduction, not global accounting.
 Do not replace them with isolate-global maps, Cache API counters, or KV counters.
-A zone-level WAF rate-limiting rule for `/contact` is useful additional defence
+A zone-level WAF rate-limiting rule for both form routes is useful additional defence
 if the Cloudflare plan supports it.
 
 CORS is browser containment, not authentication or bot protection. Do not
@@ -80,7 +97,7 @@ change the allowed origin to `*` and do not enable credentialed CORS.
 
 1. In Cloudflare Turnstile, create a production widget for the contact form.
 2. Restrict its hostnames to `vgzt.org` and `www.vgzt.org`.
-3. Render it with action `vgzt_contact`.
+3. Render Contact with action `vgzt_contact` and Join with `vgzt_join`.
 4. Put the public site key in the static site's public configuration.
 5. Set the private Worker secret:
 
@@ -90,8 +107,7 @@ change the allowed origin to `*` and do not enable credentialed CORS.
 
 The Worker calls Siteverify with the response token, `CF-Connecting-IP`, and
 the request UUID as `idempotency_key`. It accepts a token only when `success`
-is true, `hostname` is in the configured set, and `action` is exactly
-`vgzt_contact`.
+is true, `hostname` is in the configured set, and `action` matches the route.
 
 Use a separate Turnstile widget for staging. Cloudflare publishes test keys for
 local and automated testing; never deploy a test secret to production.
@@ -123,7 +139,7 @@ The message is plain text.
 Email Routing handles inbound aliases and forwarding. It is not, by itself,
 the outbound sending mechanism used by this Worker.
 
-## Optional Slack alert
+## Slack alerts
 
 Slack is disabled when `SLACK_WEBHOOK_URL` is absent. To enable it:
 
@@ -131,10 +147,11 @@ Slack is disabled when `SLACK_WEBHOOK_URL` is absent. To enable it:
 pnpm wrangler secret put SLACK_WEBHOOK_URL
 ```
 
-Only standard Slack or Slack Gov HTTPS webhook hosts are accepted. The alert
-contains the category, name, reply-to address, and request ID. It deliberately
-omits the user's message body, IP, Turnstile token, and user agent. All content
-uses Block Kit `plain_text`; user values cannot create mentions or links.
+Only standard Slack or Slack Gov HTTPS webhook hosts are accepted. Contact
+alerts contain the submitted message; Join alerts contain the fields needed for
+manual Slack and mailing-list invitations. Both omit IP, Turnstile token, and
+user agent. All content uses Block Kit `plain_text`; user values cannot create
+mentions or links.
 
 Slack runs under `ExecutionContext.waitUntil()` after email acceptance. Slack
 failure is logged using a non-sensitive error code and never changes the public
@@ -216,8 +233,8 @@ Structured logs contain only:
 
 They do not contain name, email, message, IP, Turnstile token, secret values, or
 webhook response content. Keep the contact privacy notice accurate: submissions
-are delivered to the organizer inbox and may produce an internal metadata-only
-Slack alert.
+are delivered to the organizer inbox and may produce an internal Slack alert
+containing the submitted form details.
 
 ## Delivery guarantee
 

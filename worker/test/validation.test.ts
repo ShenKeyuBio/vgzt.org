@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 
-import { isHoneypotTriggered, validateContactPayload } from "../src/validation";
+import {
+  isHoneypotTriggered,
+  validateContactPayload,
+  validateJoinPayload,
+} from "../src/validation";
 
 function validPayload(
   overrides: Readonly<Record<string, unknown>> = {},
@@ -10,6 +14,24 @@ function validPayload(
     email: "jane@example.com",
     category: "general",
     message: "This is a valid contact message.",
+    privacyAccepted: true,
+    website: "",
+    turnstileToken: "token",
+    ...overrides,
+  };
+}
+
+function validJoinPayload(
+  overrides: Readonly<Record<string, unknown>> = {},
+): Record<string, unknown> {
+  return {
+    name: "Jane Smith",
+    organization: "Example University",
+    careerStage: "Postdoc",
+    email: "jane@example.com",
+    slackEmail: "jane.slack@example.com",
+    joinSlack: true,
+    joinMailingList: true,
     privacyAccepted: true,
     website: "",
     turnstileToken: "token",
@@ -101,5 +123,60 @@ describe("contact payload validation", () => {
     expect(isHoneypotTriggered(validPayload({ website: { value: "bot" } }))).toBe(
       false,
     );
+  });
+});
+
+describe("join payload validation", () => {
+  it("accepts and normalizes all fields needed for manual invitations", () => {
+    const result = validateJoinPayload(
+      validJoinPayload({
+        name: "  Jose\u0301  ",
+        organization: "  Example Institute  ",
+        careerStage: "  PhD student  ",
+      }),
+    );
+
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.value.name).toBe("José");
+      expect(result.value.organization).toBe("Example Institute");
+      expect(result.value.careerStage).toBe("PhD student");
+      expect(result.value.joinSlack).toBe(true);
+      expect(result.value.joinMailingList).toBe(true);
+    }
+  });
+
+  it("requires both requested services and valid primary and Slack emails", () => {
+    const result = validateJoinPayload(
+      validJoinPayload({
+        email: "not-an-email",
+        slackEmail: "also-invalid",
+        joinSlack: false,
+        joinMailingList: false,
+      }),
+    );
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.fields).toMatchObject({
+        email: expect.any(String),
+        slackEmail: expect.any(String),
+        joinSlack: expect.any(String),
+        joinMailingList: expect.any(String),
+      });
+    }
+  });
+
+  it("rejects missing organization/career stage and unknown fields", () => {
+    const result = validateJoinPayload(
+      validJoinPayload({ organization: "", careerStage: "", admin: true }),
+    );
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.fields.organization).toBeDefined();
+      expect(result.fields.careerStage).toBeDefined();
+      expect(result.fields.form).toBe("The form contains unsupported fields.");
+    }
   });
 });

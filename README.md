@@ -4,7 +4,7 @@ This repository contains the official website for Virtual Gastrulation Zoom Talk
 
 The site is a static Astro 6 project. Seminar records, people, seasons, opportunities, abstract-call settings, and public links live in Git-tracked YAML or Markdown. Pages CMS gives volunteer organizers a form-based editor for those files; the published website does not depend on Pages CMS, a database, or a running Astro server.
 
-The contact form is the only server-backed feature. Once the production endpoint and public Turnstile key are configured, it posts to the separately deployed Cloudflare Worker under `worker/` at `https://api.vgzt.org/contact`. Until then it remains visibly unavailable rather than pretending to submit.
+The contact and Join VGZT forms are the only server-backed features. They post to the separately deployed Cloudflare Worker under `worker/` at `https://api.vgzt.org/contact` and `https://api.vgzt.org/join`, with server-side Turnstile verification before organizer email and Slack notification.
 
 ## Start here
 

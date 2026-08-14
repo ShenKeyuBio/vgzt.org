@@ -10,7 +10,7 @@ export type ContactOutcome =
   | "verification_failed";
 
 export interface ContactLogEvent {
-  event: "contact_submission";
+  event: "contact_submission" | "join_submission";
   requestId: string;
   outcome: ContactOutcome;
   category?: string;

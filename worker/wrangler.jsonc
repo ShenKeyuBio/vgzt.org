@@ -3,7 +3,7 @@
   "name": "vgzt-contact",
   "account_id": "fd4eb20c16040711048e738d0445e38b",
   "main": "src/index.ts",
-  "compatibility_date": "2026-08-13",
+  "compatibility_date": "2026-08-14",
   "compatibility_flags": ["nodejs_compat"],
   "workers_dev": false,
   "routes": [
@@ -16,6 +16,7 @@
     "ALLOWED_ORIGINS": "https://vgzt.org,https://www.vgzt.org",
     "TURNSTILE_EXPECTED_HOSTNAMES": "vgzt.org,www.vgzt.org",
     "TURNSTILE_EXPECTED_ACTION": "vgzt_contact",
+    "TURNSTILE_JOIN_EXPECTED_ACTION": "vgzt_join",
     "CONTACT_FROM": "contact@vgzt.org"
   },
   "secrets": {

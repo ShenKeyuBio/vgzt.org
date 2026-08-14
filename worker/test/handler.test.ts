@@ -8,9 +8,11 @@ import {
   type ContactHandlerDependencies,
 } from "../src/handler";
 import type { ContactLogEvent } from "../src/logging";
+import type { JoinSubmission } from "../src/join";
 
 const ALLOWED_ORIGIN = "https://vgzt.org";
 const API_URL = "https://api.vgzt.org/contact";
+const JOIN_API_URL = "https://api.vgzt.org/join";
 
 function validPayload(
   overrides: Readonly<Record<string, unknown>> = {},
@@ -30,8 +32,9 @@ function validPayload(
 function postRequest(
   payload: unknown,
   headers: Readonly<Record<string, string>> = {},
+  url = API_URL,
 ): Request {
-  return new Request(API_URL, {
+  return new Request(url, {
     method: "POST",
     headers: {
       origin: ALLOWED_ORIGIN,
@@ -47,6 +50,7 @@ interface Harness {
   dependencies: ContactHandlerDependencies;
   context: ContactExecutionContext;
   emails: ContactSubmission[];
+  joinEmails: JoinSubmission[];
   logs: ContactLogEvent[];
   pending: Promise<unknown>[];
   calls: {
@@ -54,6 +58,7 @@ interface Harness {
     emailLimit: number;
     verify: number;
     slack: number;
+    joinSlack: number;
   };
 }
 
@@ -61,9 +66,16 @@ function createHarness(
   overrides: Partial<ContactHandlerDependencies> = {},
 ): Harness {
   const emails: ContactSubmission[] = [];
+  const joinEmails: JoinSubmission[] = [];
   const logs: ContactLogEvent[] = [];
   const pending: Promise<unknown>[] = [];
-  const calls = { ipLimit: 0, emailLimit: 0, verify: 0, slack: 0 };
+  const calls = {
+    ipLimit: 0,
+    emailLimit: 0,
+    verify: 0,
+    slack: 0,
+    joinSlack: 0,
+  };
   const dependencies: ContactHandlerDependencies = {
     createRequestId: () => "00000000-0000-4000-8000-000000000001",
     now: () => new Date("2026-08-13T12:00:00.000Z"),
@@ -82,6 +94,9 @@ function createHarness(
     sendEmail: async (submission) => {
       emails.push(submission);
     },
+    sendJoinEmail: async (submission) => {
+      joinEmails.push(submission);
+    },
     log: (event) => logs.push(event),
     ...overrides,
   };
@@ -90,7 +105,15 @@ function createHarness(
       pending.push(promise);
     },
   };
-  return { dependencies, context, emails, logs, pending, calls };
+  return {
+    dependencies,
+    context,
+    emails,
+    joinEmails,
+    logs,
+    pending,
+    calls,
+  };
 }
 
 async function responseJson(response: Response): Promise<Record<string, unknown>> {
@@ -105,7 +128,11 @@ async function handle(request: Request, harness: Harness): Promise<Response> {
   return handleContactRequest(
     request,
     harness.context,
-    { allowedOrigins: new Set([ALLOWED_ORIGIN, "https://www.vgzt.org"]) },
+    {
+      allowedOrigins: new Set([ALLOWED_ORIGIN, "https://www.vgzt.org"]),
+      contactTurnstileAction: "vgzt_contact",
+      joinTurnstileAction: "vgzt_join",
+    },
     harness.dependencies,
   );
 }
@@ -256,7 +283,7 @@ describe("contact handler abuse and delivery flow", () => {
     expect(harness.emails).toHaveLength(0);
   });
 
-  it("awaits email and schedules a metadata-only Slack task", async () => {
+  it("awaits email and schedules a Contact Slack task", async () => {
     const harness = createHarness({
       sendSlack: async () => {
         harness.calls.slack += 1;
@@ -274,6 +301,48 @@ describe("contact handler abuse and delivery flow", () => {
     expect(response.headers.get("x-request-id")).toBe(
       "00000000-0000-4000-8000-000000000001",
     );
+  });
+
+  it("accepts a Join request, verifies the Join action, emails it, and schedules Slack", async () => {
+    let verifiedAction = "";
+    const harness = createHarness({
+      verifyTurnstile: async (input) => {
+        harness.calls.verify += 1;
+        verifiedAction = input.expectedAction;
+        return { ok: true };
+      },
+      sendJoinSlack: async () => {
+        harness.calls.joinSlack += 1;
+      },
+    });
+    const joinPayload = {
+      name: "Jane Smith",
+      organization: "Example University",
+      careerStage: "Postdoc",
+      email: "jane@example.com",
+      slackEmail: "jane.slack@example.com",
+      joinSlack: true,
+      joinMailingList: true,
+      privacyAccepted: true,
+      website: "",
+      turnstileToken: "valid-token",
+    };
+
+    const response = await handle(
+      postRequest(joinPayload, {}, JOIN_API_URL),
+      harness,
+    );
+    await Promise.all(harness.pending);
+
+    expect(response.status).toBe(200);
+    expect(verifiedAction).toBe("vgzt_join");
+    expect(harness.joinEmails).toHaveLength(1);
+    expect(harness.emails).toHaveLength(0);
+    expect(harness.calls.joinSlack).toBe(1);
+    expect(harness.logs.at(-1)).toMatchObject({
+      event: "join_submission",
+      outcome: "accepted",
+    });
   });
 
   it("returns a generic 503 when email delivery fails", async () => {

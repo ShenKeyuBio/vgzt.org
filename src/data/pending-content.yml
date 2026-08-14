@@ -83,21 +83,21 @@ pending:
     label: Canonical VGZT mailing-list subscription URL
     type: url
     intendedLocation: Subscribe page
-    status: pending
-    requiredForLaunch: true
-    replaceVia: Pages CMS > Social Links > Newsletter URL
-    resolvedAt: null
-    notes: Use a canonical provider URL, not an email tracking redirect.
+    status: resolved
+    requiredForLaunch: false
+    replaceVia: The /subscribe/ request form and manual organizer approval workflow
+    resolvedAt: 2026-08-14
+    notes: A direct provider URL is no longer required; visitors request both memberships through the site.
 
   - key: social.slackInviteUrl
     label: Canonical VGZT Slack invitation
     type: url
     intendedLocation: Subscribe page and footer
-    status: pending
-    requiredForLaunch: true
-    replaceVia: Pages CMS > Social Links > Slack invite URL
-    resolvedAt: null
-    notes: null
+    status: resolved
+    requiredForLaunch: false
+    replaceVia: The /subscribe/ request form and manual organizer approval workflow
+    resolvedAt: 2026-08-14
+    notes: Public direct invitations are replaced by organizer-reviewed requests.
 
   - key: social.linkedinUrl
     label: Verified canonical VGZT LinkedIn URL

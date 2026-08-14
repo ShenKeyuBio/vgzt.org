@@ -1,0 +1,37 @@
+---
+import ContactForm from '../components/Forms/ContactForm.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import {
+  getFooterSocial,
+  getSiteSettings,
+  getSocialSettings,
+} from '../lib/site-data';
+
+const site = getSiteSettings();
+const social = getSocialSettings();
+---
+
+<BaseLayout
+  title="Contact"
+  description="Send a message to the VGZT organizer team."
+  email={site.publicEmail}
+  social={getFooterSocial(social)}
+  masterLogo={site.masterLogo}
+>
+  <header class="page-hero page-hero--orange">
+    <div class="container">
+      <p class="eyebrow">Contact VGZT</p>
+      <h1>Start a conversation.</h1>
+      <p>
+        Questions about a talk, abstract, opportunity, or the website are
+        welcome.
+      </p>
+    </div>
+  </header>
+
+  <ContactForm
+    endpoint={site.contactEndpoint}
+    turnstileSiteKey={site.turnstileSiteKey}
+    email={site.publicEmail}
+  />
+</BaseLayout>

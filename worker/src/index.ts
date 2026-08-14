@@ -1,9 +1,9 @@
 import { parseCsvSet } from "./cors";
-import { sendContactEmail } from "./email";
-import { handleContactRequest, type ContactHandlerDependencies } from "./handler";
+import { sendContactEmail, sendJoinEmail } from "./email";
+import { handleFormRequest, type ContactHandlerDependencies } from "./handler";
 import { digestRateLimitKey } from "./hash";
 import { structuredLogger } from "./logging";
-import { sendSlackMetadata } from "./slack";
+import { sendContactSlack, sendJoinSlack } from "./slack";
 import { verifyTurnstile } from "./turnstile";
 
 function getOptionalSlackWebhook(env: Env): string | undefined {
@@ -33,10 +33,17 @@ function createDependencies(env: Env): ContactHandlerDependencies {
       verifyTurnstile(input, {
         secret: env.TURNSTILE_SECRET,
         expectedHostnames,
-        expectedAction: env.TURNSTILE_EXPECTED_ACTION,
+        expectedAction: input.expectedAction,
       }),
     sendEmail: async (submission, requestId, receivedAt) =>
       sendContactEmail(env.CONTACT_EMAIL, submission, {
+        from: env.CONTACT_FROM,
+        to: env.CONTACT_TO,
+        requestId,
+        receivedAt,
+      }),
+    sendJoinEmail: async (submission, requestId, receivedAt) =>
+      sendJoinEmail(env.CONTACT_EMAIL, submission, {
         from: env.CONTACT_FROM,
         to: env.CONTACT_TO,
         requestId,
@@ -52,16 +59,22 @@ function createDependencies(env: Env): ContactHandlerDependencies {
   return {
     ...dependencies,
     sendSlack: async (submission, requestId) =>
-      sendSlackMetadata(slackWebhook, submission, requestId),
+      sendContactSlack(slackWebhook, submission, requestId),
+    sendJoinSlack: async (submission, requestId) =>
+      sendJoinSlack(slackWebhook, submission, requestId),
   };
 }
 
 export default {
   async fetch(request, env, context): Promise<Response> {
-    return handleContactRequest(
+    return handleFormRequest(
       request,
       context,
-      { allowedOrigins: parseCsvSet(env.ALLOWED_ORIGINS) },
+      {
+        allowedOrigins: parseCsvSet(env.ALLOWED_ORIGINS),
+        contactTurnstileAction: env.TURNSTILE_EXPECTED_ACTION,
+        joinTurnstileAction: env.TURNSTILE_JOIN_EXPECTED_ACTION,
+      },
       createDependencies(env),
     );
   },
