@@ -406,7 +406,7 @@ const {
             return;
           const tab = tabs[(currentIndex() + 1) % tabs.length];
           if (tab) selectTab(tab, false, false);
-        }, 8000);
+        }, 5000);
       };
       schedule.addEventListener('pointerenter', stopAutoplay);
       schedule.addEventListener('pointerleave', startAutoplay);

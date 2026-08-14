@@ -175,15 +175,15 @@ p {
 
 .button {
   display: inline-flex;
-  min-height: 3rem;
+  min-height: 3.2rem;
   align-items: center;
   justify-content: center;
-  padding: 0.72rem 1.15rem;
+  padding: 0.82rem 1.3rem;
   border: var(--keyline);
   border-radius: var(--radius-small);
   background: var(--vgzt-paper-strong);
   color: var(--vgzt-ink);
-  font-size: 0.92rem;
+  font-size: 0.98rem;
   font-weight: 900;
   letter-spacing: 0.01em;
   line-height: 1.1;
@@ -232,7 +232,7 @@ p {
 
 .site-header__inner {
   display: grid;
-  min-height: 5rem;
+  min-height: 5.35rem;
   grid-template-columns: auto 1fr auto;
   gap: 2rem;
   align-items: center;
@@ -270,7 +270,7 @@ p {
 }
 
 .site-header__nav a {
-  font-size: 0.94rem;
+  font-size: 1.02rem;
 }
 
 .site-header__nav a:hover,
@@ -279,6 +279,8 @@ p {
 }
 
 .site-header__join {
+  min-height: 3.35rem;
+  padding-inline: 1.4rem;
   border-radius: 999px;
   background: var(--vgzt-pink);
   white-space: nowrap;
@@ -369,7 +371,7 @@ p {
 
 .announcement__inner {
   display: grid;
-  min-height: 2.75rem;
+  min-height: 3.2rem;
   grid-template-columns: auto 1fr auto;
   gap: 1rem;
   align-items: center;
@@ -379,7 +381,7 @@ p {
 .announcement__label {
   padding-right: 0.8rem;
   border-right: 2px solid currentColor;
-  font-size: 0.66rem;
+  font-size: 0.78rem;
   font-weight: 1000;
   letter-spacing: 0.09em;
   line-height: 1;
@@ -388,12 +390,12 @@ p {
 
 .announcement__copy {
   margin: 0;
-  font-size: 0.88rem;
+  font-size: 0.98rem;
   font-weight: 900;
 }
 
 .announcement__action {
-  font-size: 0.85rem;
+  font-size: 0.98rem;
   font-weight: 1000;
   white-space: nowrap;
 }
@@ -463,7 +465,7 @@ p {
 .hero__season {
   display: inline-flex;
   margin-bottom: 1.1rem;
-  padding: 0.38rem 0.62rem;
+  padding: 0.5rem 0.76rem;
   border: 2px solid currentColor;
   background: rgb(251 248 242 / 78%);
   font-weight: 950;
@@ -474,7 +476,7 @@ p {
 }
 
 .hero__season strong {
-  font-size: 1.08rem;
+  font-size: 1.24rem;
   letter-spacing: 0.06em;
 }
 
@@ -587,19 +589,6 @@ p {
 .page-hero p {
   font-size: clamp(1.1rem, 2vw, 1.4rem);
   font-weight: 650;
-}
-
-.maker-watermark {
-  display: inline-block;
-  margin-top: 1rem;
-  padding: 0.26rem 0.42rem;
-  border: 1px solid currentColor;
-  font-size: 0.58rem;
-  font-weight: 950;
-  letter-spacing: 0.14em;
-  line-height: 1;
-  opacity: 0.58;
-  text-transform: uppercase;
 }
 
 .rule-list {
@@ -733,13 +722,19 @@ p {
   font-size: 0.78rem;
 }
 
-.site-footer__bottom .maker-watermark {
-  margin-top: 0;
-}
-
 .footer-links {
   flex-wrap: wrap;
   gap: 1.25rem;
+}
+
+.site-footer__credit {
+  margin: 0.85rem 0 0;
+  font-size: 0.62rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  opacity: 0.48;
+  text-align: right;
+  text-transform: uppercase;
 }
 
 .footer-links a {
