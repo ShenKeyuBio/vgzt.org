@@ -1,0 +1,25 @@
+# Source: https://sites.google.com/view/gastrulationseminars/past-talks (Season 7 > Jan 2026)
+id: season-07-2026-01-22
+season: season-07
+status: published
+date: '2026-01-22'
+time: '12:30'
+timezone: America/New_York
+durationMinutes: 60
+sessionType: two-speaker
+timeSlot: western
+speakers:
+  - person: chen-yuan-kam
+    role: speaker
+    talkTitle: 'Investigating vascular dynamics via 4D imaging of living mouse skin'
+    affiliationOverride: 'UCLA'
+  - person: camilla-autorino
+    role: speaker
+    talkTitle: 'A closed feedback between tissue phase transitions and morphogen gradients drives patterning dynamics'
+    affiliationOverride: 'EMBL'
+poster: ../../assets/posters/season-07/2026-01-22-kam-autorino.jpg
+posterAlt: 'Season 7 VGZT poster for Chen Yuan Kam and Camilla Autorino, 2026-01-22.'
+recordingUrl: null
+recordingLabel: null
+description: null
+featured: false

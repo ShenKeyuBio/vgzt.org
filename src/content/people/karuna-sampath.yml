@@ -1,0 +1,18 @@
+id: karuna-sampath
+name: 'Karuna Sampath'
+preferredName: null
+currentAffiliation: 'Warwick Medical School, University of Warwick'
+title: 'Professor; Research Training Lead'
+portrait: null
+portraitAlt: null
+website: null
+orcid: null
+bluesky: null
+linkedin: null
+bio: null
+historicalSeasons:
+  - 2
+verificationStatus: verified
+sourceUrl: 'https://warwick.ac.uk/fac/sci/med/research/biomedical/labs/ksampath/'
+sourceNote: 'Official Warwick lab page, updated/current.'
+status: published

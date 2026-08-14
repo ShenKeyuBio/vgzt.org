@@ -1,0 +1,18 @@
+id: benoit-sorre
+name: 'Benoit Sorre'
+preferredName: null
+currentAffiliation: 'Institut Curie / CNRS / Sorbonne Université, Physics of Cells and Cancer (UMR168)'
+title: 'CNRS Researcher'
+portrait: null
+portraitAlt: null
+website: null
+orcid: null
+bluesky: null
+linkedin: null
+bio: null
+historicalSeasons:
+  - 1
+verificationStatus: verified
+sourceUrl: 'https://institut-curie.org/person/benoit-sorre'
+sourceNote: 'stem-cell patterning; morphogen dynamics; tissue self-organization'
+status: published

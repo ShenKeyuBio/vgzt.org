@@ -1,0 +1,25 @@
+# Source: https://sites.google.com/view/gastrulationseminars/past-talks (Season 7 > May 2026)
+id: season-07-2026-05-21
+season: season-07
+status: published
+date: '2026-05-21'
+time: '12:30'
+timezone: America/New_York
+durationMinutes: 60
+sessionType: two-speaker
+timeSlot: western
+speakers:
+  - person: soham-basu
+    role: speaker
+    talkTitle: 'Emergent tissue-ECM interactions regulating cnidarian morphogenesis'
+    affiliationOverride: 'Center for Systems Biology Dresden'
+  - person: anestis-tsakiridis
+    role: speaker
+    talkTitle: 'In vitro generation of human axial progenitors'
+    affiliationOverride: 'University of Sheffield'
+poster: ../../assets/posters/season-07/2026-05-21-basu-tsakiridis.jpg
+posterAlt: 'Season 7 VGZT poster for Soham Basu and Anestis Tsakiridis, 2026-05-21.'
+recordingUrl: null
+recordingLabel: null
+description: null
+featured: false

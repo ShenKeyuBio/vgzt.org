@@ -12,7 +12,10 @@ const site = getSiteSettings();
 const social = getSocialSettings();
 const [peopleEntries, seasonEntries, eventEntries] = await Promise.all([
   getCollection('people', ({ data }) => data.status === 'published'),
-  getCollection('seasons', ({ data }) => data.status !== 'draft'),
+  getCollection(
+    'seasons',
+    ({ data }) => data.status !== 'draft' || data.id === site.currentSeason,
+  ),
   getCollection('events', ({ data }) => data.status === 'published'),
 ]);
 const people = peopleEntries.map(({ data }) => ({
@@ -34,7 +37,27 @@ const publishedSpeakerIds = new Set(
     .filter(({ data }) => data.id !== 'collection-empty-state')
     .flatMap(({ data }) => data.speakers.map((speaker) => speaker.person)),
 );
-const speakers = people.filter((person) => publishedSpeakerIds.has(person.id));
+const speakers = people.filter(
+  (person) =>
+    person.historicalSeasons.length > 0 || publishedSpeakerIds.has(person.id),
+);
+const seasonOptionsById = new Map(
+  seasons.map(({ data }) => [
+    data.id,
+    { id: data.id, label: data.label, season: data.season },
+  ]),
+);
+for (const person of speakers) {
+  for (const season of person.historicalSeasons) {
+    const id = `season-${String(season).padStart(2, '0')}`;
+    if (!seasonOptionsById.has(id)) {
+      seasonOptionsById.set(id, { id, label: `Season ${season}`, season });
+    }
+  }
+}
+const seasonOptions = [...seasonOptionsById.values()].sort(
+  (a, b) => b.season - a.season,
+);
 ---
 
 <BaseLayout
@@ -52,6 +75,7 @@ const speakers = people.filter((person) => publishedSpeakerIds.has(person.id));
         Central person records keep names and current profiles consistent while
         preserving event-specific affiliations in the seminar archive.
       </p>
+      <span class="maker-watermark" aria-hidden="true">Site by Keyu Shen</span>
     </div>
   </header>
 
@@ -94,8 +118,8 @@ const speakers = people.filter((person) => publishedSpeakerIds.has(person.id));
           <select data-season-filter>
             <option value="all">All seasons</option>
             {
-              seasons.map(({ data }) => (
-                <option value={data.id}>{data.label}</option>
+              seasonOptions.map((season) => (
+                <option value={season.id}>{season.label}</option>
               ))
             }
           </select>
@@ -114,6 +138,12 @@ const speakers = people.filter((person) => publishedSpeakerIds.has(person.id));
             <div class="people-grid">
               {speakers.map((person) => (
                 <div
+                  data-speaker-card
+                  data-person-seasons={person.historicalSeasons
+                    .map(
+                      (season) => `season-${String(season).padStart(2, '0')}`,
+                    )
+                    .join(' ')}
                   data-person-search={`${person.name} ${person.preferredName || ''} ${person.currentAffiliation || ''}`.toLowerCase()}
                 >
                   <PersonCard
@@ -318,8 +348,15 @@ const speakers = people.filter((person) => publishedSpeakerIds.has(person.id));
         browser
           .querySelectorAll<HTMLElement>('[data-person-search]')
           .forEach((card) => {
-            card.hidden =
+            const searchMismatch =
               term.length > 0 && !card.dataset.personSearch?.includes(term);
+            const seasonMismatch = Boolean(
+              card.hasAttribute('data-speaker-card') &&
+              season &&
+              season.value !== 'all' &&
+              !card.dataset.personSeasons?.split(' ').includes(season.value),
+            );
+            card.hidden = searchMismatch || seasonMismatch;
           });
         browser
           .querySelectorAll<HTMLElement>('[data-season-group]')

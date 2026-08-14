@@ -1,0 +1,19 @@
+id: meng-zhu
+name: 'Meng Zhu'
+preferredName: null
+currentAffiliation: 'Harvard Medical School, Department of Genetics (incoming: Gurdon Institute & Department of Genetics, University of Cambridge)'
+title: 'Research Associate (incoming Principal Investigator from September 2026)'
+portrait: null
+portraitAlt: null
+website: null
+orcid: null
+bluesky: null
+linkedin: null
+bio: null
+historicalSeasons:
+  - 4
+  - 7
+verificationStatus: verified
+sourceUrl: 'https://www.mzhulab.com/lab-members'
+sourceNote: 'Public lab page states Cambridge lab start in September 2026; current affiliation on 2026-08-14 remains Harvard Medical School.'
+status: published

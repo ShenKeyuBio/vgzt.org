@@ -65,6 +65,10 @@ export function buildJoinSlackPayload(
   submission: JoinSubmission,
   requestId: string,
 ): SlackPayload {
+  const requestedServices = [
+    submission.joinSlack ? "Slack" : null,
+    submission.joinMailingList ? "mailing list" : null,
+  ].filter((service): service is string => service !== null);
   return {
     text: "VGZT Join form submission — manual invitation needed",
     blocks: [
@@ -85,13 +89,17 @@ export function buildJoinSlackPayload(
             text: `Career stage: ${submission.careerStage}`,
           },
           { type: "plain_text", text: `Email: ${submission.email}` },
+          ...(submission.slackEmail
+            ? [
+                {
+                  type: "plain_text" as const,
+                  text: `Slack email: ${submission.slackEmail}`,
+                },
+              ]
+            : []),
           {
             type: "plain_text",
-            text: `Slack email: ${submission.slackEmail}`,
-          },
-          {
-            type: "plain_text",
-            text: "Requested: Slack + mailing list",
+            text: `Requested: ${requestedServices.join(" + ")}`,
           },
           { type: "plain_text", text: `Request ID: ${requestId}` },
         ],
@@ -100,7 +108,7 @@ export function buildJoinSlackPayload(
         type: "section",
         text: {
           type: "plain_text",
-          text: "Manual action: invite this person to both VGZT services.",
+          text: `Manual action: invite this person to ${requestedServices.join(" + ")}.`,
         },
       },
     ],

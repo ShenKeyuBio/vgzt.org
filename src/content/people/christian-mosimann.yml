@@ -1,0 +1,18 @@
+id: christian-mosimann
+name: 'Christian Mosimann'
+preferredName: null
+currentAffiliation: 'University of Colorado Anschutz Medical Campus, Department of Pediatrics, Section of Developmental Biology'
+title: 'Professor of Pediatrics; Helen and Arthur E. Johnson Chair for Cardiac Research Director'
+portrait: null
+portraitAlt: null
+website: null
+orcid: null
+bluesky: null
+linkedin: null
+bio: null
+historicalSeasons:
+  - 1
+verificationStatus: verified
+sourceUrl: 'https://www.mosimannlab.org/team.html'
+sourceNote: 'zebrafish/chick cardiovascular development; lineage tracing'
+status: published

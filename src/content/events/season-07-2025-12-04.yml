@@ -1,0 +1,25 @@
+# Source: https://sites.google.com/view/gastrulationseminars/past-talks (Season 7 > Dec 2025)
+id: season-07-2025-12-04
+season: season-07
+status: published
+date: '2025-12-04'
+time: '12:30'
+timezone: America/New_York
+durationMinutes: 60
+sessionType: two-speaker
+timeSlot: western
+speakers:
+  - person: luca-braccioli
+    role: speaker
+    talkTitle: 'From regulatory profiles to inter-tissue communication in gastruloids'
+    affiliationOverride: 'Utrecht University'
+  - person: komal-makwana
+    role: speaker
+    talkTitle: 'Investigating interactions between somites and neural tube using human Trunk-like Structures (hTLS)'
+    affiliationOverride: 'The Francis Crick Institute'
+poster: ../../assets/posters/season-07/2025-12-04-braccioli-makwana.jpg
+posterAlt: 'Season 7 VGZT poster for Luca Braccioli and Komal Makwana, 2025-12-04.'
+recordingUrl: null
+recordingLabel: null
+description: null
+featured: false

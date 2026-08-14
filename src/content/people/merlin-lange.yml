@@ -1,0 +1,18 @@
+id: merlin-lange
+name: 'Merlin Lange'
+preferredName: null
+currentAffiliation: 'Institut de la Vision, Paris'
+title: 'Group Leader / Inserm Researcher'
+portrait: null
+portraitAlt: null
+website: null
+orcid: null
+bluesky: null
+linkedin: null
+bio: null
+historicalSeasons:
+  - 3
+verificationStatus: verified
+sourceUrl: 'https://www.institut-vision.org/index.php/en/researchers/merlin-lange'
+sourceNote: 'Development and evolution of neural/retinal lineages using zebrafish, human tissue, imaging and genomics'
+status: published

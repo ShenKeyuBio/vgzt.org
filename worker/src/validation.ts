@@ -217,18 +217,42 @@ export function validateJoinPayload(value: unknown): JoinValidationResult {
     fields.email = "Enter a valid email address.";
   }
 
-  const slackEmail = validateEmail(value.slackEmail);
-  if (slackEmail === null) {
-    fields.slackEmail = "Enter the email address linked to Slack.";
+  const joinSlack =
+    typeof value.joinSlack === "boolean" ? value.joinSlack : null;
+  const joinMailingList =
+    typeof value.joinMailingList === "boolean"
+      ? value.joinMailingList
+      : null;
+  if (joinSlack === null) {
+    fields.joinSlack = "Choose whether to request VGZT Slack access.";
   }
-
-  if (value.joinSlack !== true) {
-    fields.joinSlack = "Confirm that you want to join the VGZT Slack.";
-  }
-
-  if (value.joinMailingList !== true) {
+  if (joinMailingList === null) {
     fields.joinMailingList =
-      "Confirm that you want to join the VGZT mailing list.";
+      "Choose whether to request the VGZT mailing list.";
+  }
+  if (joinSlack === false && joinMailingList === false) {
+    fields.services = "Request Slack, the mailing list, or both.";
+  }
+
+  const suppliedSlackEmail =
+    typeof value.slackEmail === "string"
+      ? normalizeSingleLine(value.slackEmail)
+      : value.slackEmail === null
+        ? ""
+        : null;
+  const slackEmail =
+    suppliedSlackEmail === ""
+      ? null
+      : suppliedSlackEmail === null
+        ? null
+        : validateEmail(suppliedSlackEmail);
+  if (
+    suppliedSlackEmail === null ||
+    (suppliedSlackEmail !== "" && slackEmail === null)
+  ) {
+    fields.slackEmail = "Enter a valid Slack-linked email address.";
+  } else if (joinSlack === true && slackEmail === null) {
+    fields.slackEmail = "Enter the email address linked to Slack.";
   }
 
   if (value.privacyAccepted !== true) {
@@ -251,7 +275,8 @@ export function validateJoinPayload(value: unknown): JoinValidationResult {
     organization === null ||
     careerStage === null ||
     email === null ||
-    slackEmail === null
+    joinSlack === null ||
+    joinMailingList === null
   ) {
     return joinFailure(fields);
   }
@@ -264,8 +289,8 @@ export function validateJoinPayload(value: unknown): JoinValidationResult {
       careerStage,
       email,
       slackEmail,
-      joinSlack: true,
-      joinMailingList: true,
+      joinSlack,
+      joinMailingList,
       privacyAccepted: true,
       turnstileToken,
     },

@@ -1,0 +1,18 @@
+id: teresa-rayon
+name: 'Teresa Rayón'
+preferredName: null
+currentAffiliation: 'Babraham Institute; Cambridge Stem Cell Institute'
+title: 'Group Leader'
+portrait: null
+portraitAlt: null
+website: null
+orcid: null
+bluesky: null
+linkedin: null
+bio: null
+historicalSeasons:
+  - 4
+verificationStatus: verified
+sourceUrl: 'https://rayonlab.org/people/'
+sourceNote: 'Developmental timing, gene regulation and stem-cell biology'
+status: published

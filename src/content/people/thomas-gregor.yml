@@ -1,0 +1,18 @@
+id: thomas-gregor
+name: 'Thomas Gregor'
+preferredName: null
+currentAffiliation: 'Princeton University; Institut Pasteur, Paris'
+title: 'Professor of Physics and Biophysics; Head, Physics of Biological Function Unit'
+portrait: null
+portraitAlt: null
+website: null
+orcid: null
+bluesky: null
+linkedin: null
+bio: null
+historicalSeasons:
+  - 5
+verificationStatus: verified
+sourceUrl: 'https://phy.princeton.edu/people/thomas-gregor'
+sourceNote: 'Quantitative systems and developmental biology, multicellular pattern formation and developmental gene regulation'
+status: published

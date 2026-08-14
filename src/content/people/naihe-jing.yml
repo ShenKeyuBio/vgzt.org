@@ -1,0 +1,19 @@
+id: naihe-jing
+name: 'Naihe Jing'
+preferredName: null
+currentAffiliation: 'Guangzhou Laboratory, Guangzhou, China'
+title: 'Researcher / Principal Investigator'
+portrait: null
+portraitAlt: null
+website: null
+orcid: null
+bluesky: null
+linkedin: null
+bio: null
+historicalSeasons:
+  - 1
+  - 2
+verificationStatus: verified
+sourceUrl: 'https://yjs.gzhmu.edu.cn/info/1812/7091.htm'
+sourceNote: 'Current Guangzhou Laboratory affiliation confirmed by official/academic listings and recent publications.'
+status: published

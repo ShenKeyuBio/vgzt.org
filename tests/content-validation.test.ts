@@ -106,7 +106,7 @@ function validGraph(): ContentGraph {
       { id: 'alternative', label: 'Alternative session', time: '21:00' },
     ],
     abstractCall: {
-      open: false,
+      state: 'closed',
       season: 'season-08',
       audience: 'Early Career Researchers',
       deadline: null,
@@ -128,6 +128,8 @@ function validGraph(): ContentGraph {
     },
     social: {
       newsletterUrl: null,
+      newsletterEmbedScriptUrl: null,
+      newsletterFormId: null,
       slackInviteUrl: null,
       linkedinUrl: null,
       blueskyUrl: null,

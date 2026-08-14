@@ -1,0 +1,18 @@
+id: mary-mullins
+name: 'Mary Mullins'
+preferredName: null
+currentAffiliation: 'University of Pennsylvania, Perelman School of Medicine'
+title: 'Professor'
+portrait: null
+portraitAlt: null
+website: null
+orcid: null
+bluesky: null
+linkedin: null
+bio: null
+historicalSeasons:
+  - 1
+verificationStatus: verified
+sourceUrl: 'https://www.med.upenn.edu/camb/dsrb-faculty.html'
+sourceNote: 'Verified through Penn developmental/stem-cell/regenerative biology faculty listing and developmental-biology publications.'
+status: published

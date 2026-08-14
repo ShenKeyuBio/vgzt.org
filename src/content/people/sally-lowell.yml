@@ -1,0 +1,18 @@
+id: sally-lowell
+name: 'Sally Lowell'
+preferredName: null
+currentAffiliation: 'University of Edinburgh, School of Biological Sciences / Centre for Regenerative Medicine'
+title: 'Personal Chair of Stem Cell Biology and Early Development'
+portrait: null
+portraitAlt: null
+website: null
+orcid: null
+bluesky: null
+linkedin: null
+bio: null
+historicalSeasons:
+  - 1
+verificationStatus: verified
+sourceUrl: 'https://www.research.ed.ac.uk/en/persons/sally-lowell'
+sourceNote: 'Official University of Edinburgh profile.'
+status: published

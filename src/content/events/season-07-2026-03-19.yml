@@ -1,0 +1,25 @@
+# Source: https://sites.google.com/view/gastrulationseminars/past-talks (Season 7 > Mar 2026)
+id: season-07-2026-03-19
+season: season-07
+status: published
+date: '2026-03-19'
+time: '12:30'
+timezone: America/New_York
+durationMinutes: 60
+sessionType: two-speaker
+timeSlot: western
+speakers:
+  - person: maria-elena-torres-padilla
+    role: speaker
+    talkTitle: 'Epigenetic mechanisms in early mammalian development'
+    affiliationOverride: 'Helmholtz Munich'
+  - person: margherita-perillo
+    role: speaker
+    talkTitle: 'How do simple epithelial tubes develop into complex organs?'
+    affiliationOverride: 'Marine Biological Laboratory'
+poster: ../../assets/posters/season-07/2026-03-19-torres-padilla-perillo.jpg
+posterAlt: 'Season 7 VGZT poster for Maria Elena Torres Padilla and Margherita Perillo, 2026-03-19.'
+recordingUrl: null
+recordingLabel: null
+description: null
+featured: false

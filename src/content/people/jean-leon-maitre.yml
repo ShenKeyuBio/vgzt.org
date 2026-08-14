@@ -1,0 +1,18 @@
+id: jean-leon-maitre
+name: 'Jean-Léon Maître'
+preferredName: null
+currentAffiliation: 'Institut Curie, Genetics and Developmental Biology Unit (CNRS/Inserm)'
+title: 'CNRS Research Director / Team Leader'
+portrait: null
+portraitAlt: null
+website: null
+orcid: null
+bluesky: null
+linkedin: null
+bio: null
+historicalSeasons:
+  - 4
+verificationStatus: verified
+sourceUrl: 'https://institut-curie.org/person/jean-leon-maitre'
+sourceNote: 'Mechanics of mammalian preimplantation development'
+status: published

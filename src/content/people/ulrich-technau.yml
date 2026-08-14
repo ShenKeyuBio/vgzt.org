@@ -1,0 +1,18 @@
+id: ulrich-technau
+name: 'Ulrich Technau'
+preferredName: null
+currentAffiliation: 'University of Vienna, Department of Neurosciences and Developmental Biology'
+title: 'Professor of Developmental Biology; Vice Head of Department'
+portrait: null
+portraitAlt: null
+website: null
+orcid: null
+bluesky: null
+linkedin: null
+bio: null
+historicalSeasons:
+  - 2
+verificationStatus: verified
+sourceUrl: 'https://neurodevbio.univie.ac.at/technau-research/'
+sourceNote: "Original list uses 'Uli'; official University of Vienna page lists Ulrich Technau."
+status: published

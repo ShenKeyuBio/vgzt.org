@@ -18,6 +18,8 @@ export interface SiteSettings {
 
 export interface SocialSettings {
   newsletterUrl: string | null;
+  newsletterEmbedScriptUrl: string | null;
+  newsletterFormId: string | null;
   slackInviteUrl: string | null;
   linkedinUrl: string | null;
   blueskyUrl: string | null;
@@ -57,7 +59,7 @@ export interface AbstractFaqItem {
 }
 
 export interface AbstractCallSettings {
-  open: boolean;
+  state: 'opening-soon' | 'open' | 'closed';
   season: string;
   audience: string;
   deadline: AbstractDeadline | null;
@@ -91,10 +93,19 @@ export function getAbstractCallSettings(): AbstractCallSettings {
 }
 
 export function getFooterSocial(settings: SocialSettings) {
+  const hasNewsletterEmbed = Boolean(
+    settings.newsletterEmbedScriptUrl && settings.newsletterFormId,
+  );
   return [
-    { label: 'Slack', url: settings.slackInviteUrl },
-    { label: 'LinkedIn', url: settings.linkedinUrl },
-    { label: 'Bluesky', url: settings.blueskyUrl },
-    { label: 'X', url: settings.xUrl },
+    {
+      label: 'Mailing list',
+      url:
+        settings.newsletterUrl || (hasNewsletterEmbed ? '/subscribe/' : null),
+      external: Boolean(settings.newsletterUrl),
+    },
+    { label: 'Slack', url: settings.slackInviteUrl, external: true },
+    { label: 'LinkedIn', url: settings.linkedinUrl, external: true },
+    { label: 'Bluesky', url: settings.blueskyUrl, external: true },
+    { label: 'X', url: settings.xUrl, external: true },
   ];
 }

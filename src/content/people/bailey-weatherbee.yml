@@ -1,0 +1,18 @@
+id: bailey-weatherbee
+name: 'Bailey Weatherbee'
+preferredName: null
+currentAffiliation: null
+title: null
+portrait: null
+portraitAlt: null
+website: null
+orcid: null
+bluesky: null
+linkedin: null
+bio: null
+historicalSeasons:
+  - 6
+verificationStatus: needs-review
+sourceUrl: null
+sourceNote: null
+status: draft

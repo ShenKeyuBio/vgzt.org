@@ -1,0 +1,18 @@
+id: can-aztekin
+name: 'Can Aztekin'
+preferredName: null
+currentAffiliation: 'Friedrich Miescher Laboratory of the Max Planck Society, Tübingen'
+title: 'Max Planck Research Group Leader'
+portrait: null
+portraitAlt: null
+website: null
+orcid: null
+bluesky: null
+linkedin: null
+bio: null
+historicalSeasons:
+  - 5
+verificationStatus: verified
+sourceUrl: 'https://www.aztekinlab.com/'
+sourceNote: 'Limb development, signaling centers and regenerative biology'
+status: published

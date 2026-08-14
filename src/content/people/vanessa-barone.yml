@@ -1,0 +1,18 @@
+id: vanessa-barone
+name: 'Vanessa Barone'
+preferredName: null
+currentAffiliation: 'Stanford University, Department of Biology'
+title: 'Assistant Professor of Biology'
+portrait: null
+portraitAlt: null
+website: null
+orcid: null
+bluesky: null
+linkedin: null
+bio: null
+historicalSeasons:
+  - 3
+verificationStatus: verified
+sourceUrl: 'https://biology.stanford.edu/people/vanessa-barone'
+sourceNote: 'Cellular basis of evolution of development; developmental biology and neuroscience'
+status: published

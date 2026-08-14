@@ -4,9 +4,10 @@ import MobileNav from './MobileNav.astro';
 
 interface Props {
   masterLogo?: string | null;
+  seasonNumber?: number | null;
 }
 
-const { masterLogo = null } = Astro.props;
+const { masterLogo = null, seasonNumber = null } = Astro.props;
 const navigation = [
   { label: 'Schedule', href: '/#programme' },
   { label: 'Abstracts', href: '/abstracts/' },
@@ -20,7 +21,11 @@ const navigation = [
 <header class="site-header">
   <div class="site-header__inner container">
     <a class="site-header__brand" href="/" aria-label="VGZT home">
-      <BrandMark masterLogo={masterLogo} colourDots />
+      <BrandMark
+        masterLogo={masterLogo}
+        colourDots
+        seasonNumber={seasonNumber}
+      />
     </a>
 
     <nav class="site-header__nav" aria-label="Primary navigation">
@@ -35,7 +40,9 @@ const navigation = [
       </ul>
     </nav>
 
-    <a class="button site-header__join" href="/subscribe/">Join VGZT</a>
+    <a class="button site-header__join" href="/subscribe/">
+      Subscribe VGZT Talks
+    </a>
     <MobileNav items={navigation} />
   </div>
 </header>

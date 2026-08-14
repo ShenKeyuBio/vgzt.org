@@ -3,16 +3,20 @@ import { chooseTimeZone, isValidTimeZone } from './time';
 export const POSTER_FALLBACK_PATH = '/assets/poster-placeholder.svg';
 export const TIME_ZONE_STORAGE_KEY = 'vgzt-timezone';
 
+export type AbstractCallStatus = 'opening-soon' | 'open' | 'closed';
+
 export interface AbstractCallConfig {
-  open: boolean;
+  state: AbstractCallStatus;
   formUrl: string | null;
 }
 
 export interface AbstractCallState {
-  mode: 'closed' | 'open' | 'open-pending-link';
+  mode: AbstractCallStatus;
   showBanner: boolean;
   canSubmit: boolean;
   ctaUrl: string | null;
+  ctaLabel: string | null;
+  external: boolean;
 }
 
 export interface ResolvedPoster<T> {
@@ -34,26 +38,48 @@ export function safeHttpsUrl(value: string | null | undefined): string | null {
 export function getAbstractCallState(
   config: AbstractCallConfig,
 ): AbstractCallState {
-  if (!config.open) {
+  if (config.state === 'closed') {
     return {
       mode: 'closed',
       showBanner: false,
       canSubmit: false,
       ctaUrl: null,
+      ctaLabel: null,
+      external: false,
+    };
+  }
+
+  if (config.state === 'opening-soon') {
+    return {
+      mode: 'opening-soon',
+      showBanner: true,
+      canSubmit: false,
+      ctaUrl: '/abstracts/',
+      ctaLabel: 'View abstract call',
+      external: false,
     };
   }
 
   const ctaUrl = safeHttpsUrl(config.formUrl);
   if (ctaUrl === null) {
     return {
-      mode: 'open-pending-link',
+      mode: 'open',
       showBanner: true,
       canSubmit: false,
-      ctaUrl: null,
+      ctaUrl: '/abstracts/',
+      ctaLabel: 'View abstract call',
+      external: false,
     };
   }
 
-  return { mode: 'open', showBanner: true, canSubmit: true, ctaUrl };
+  return {
+    mode: 'open',
+    showBanner: true,
+    canSubmit: true,
+    ctaUrl,
+    ctaLabel: 'Submit an abstract',
+    external: true,
+  };
 }
 
 export function resolvePoster<T>(

@@ -1,0 +1,18 @@
+id: tom-wyatt
+name: 'Tom Wyatt'
+preferredName: null
+currentAffiliation: 'Cyclana Bio'
+title: 'Founding Scientist'
+portrait: null
+portraitAlt: null
+website: null
+orcid: null
+bluesky: null
+linkedin: null
+bio: null
+historicalSeasons:
+  - 3
+verificationStatus: verified
+sourceUrl: 'https://www.cyclanabio.com/team-4'
+sourceNote: 'Cell/tissue mechanics and developmental mechanobiology; now applying quantitative cell biology in biotech'
+status: published

@@ -1,0 +1,18 @@
+id: leo-guignard
+name: 'Léo Guignard'
+preferredName: null
+currentAffiliation: 'Aix-Marseille Université / CNRS — Institut de Biologie du Développement de Marseille (IBDM)'
+title: 'Researcher & Lecturer; Team Leader'
+portrait: null
+portraitAlt: null
+website: null
+orcid: null
+bluesky: null
+linkedin: null
+bio: null
+historicalSeasons:
+  - 5
+verificationStatus: verified
+sourceUrl: 'https://www.ibdm.univ-amu.fr/fr/member/leo-guignard/'
+sourceNote: 'Computational developmental biology, morphogenesis, embryo image analysis and developmental reproducibility'
+status: published

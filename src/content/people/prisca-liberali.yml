@@ -1,0 +1,18 @@
+id: prisca-liberali
+name: 'Prisca Liberali'
+preferredName: null
+currentAffiliation: 'ETH Zurich, Department of Biosystems Science and Engineering; Friedrich Miescher Institute for Biomedical Research'
+title: 'Full Professor of Multicellular Systems; Senior Group Leader'
+portrait: null
+portraitAlt: null
+website: null
+orcid: null
+bluesky: null
+linkedin: null
+bio: null
+historicalSeasons:
+  - 2
+verificationStatus: verified
+sourceUrl: 'https://bsse.ethz.ch/research/research-groups/multicellular-systems-lab.html'
+sourceNote: 'Official ETH page; dual appointment with FMI.'
+status: published

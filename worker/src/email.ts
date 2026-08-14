@@ -49,6 +49,10 @@ export function buildJoinEmail(
   submission: JoinSubmission,
   options: BuildEmailOptions,
 ): ContactEmailMessage {
+  const requestedServices = [
+    submission.joinSlack ? "VGZT Slack" : null,
+    submission.joinMailingList ? "VGZT mailing list" : null,
+  ].filter((service): service is string => service !== null);
   const text = [
     "New VGZT join request",
     "",
@@ -58,13 +62,15 @@ export function buildJoinEmail(
     `Organization: ${submission.organization}`,
     `Career stage: ${submission.careerStage}`,
     `Email: ${submission.email}`,
-    `Slack-linked email: ${submission.slackEmail}`,
-    "Requested: VGZT Slack and mailing list",
+    ...(submission.slackEmail
+      ? [`Slack-linked email: ${submission.slackEmail}`]
+      : []),
+    `Requested: ${requestedServices.join(" + ")}`,
     "Privacy acknowledgement: confirmed",
     "",
     "Manual action required",
     "----------------------",
-    "Invite this person to the VGZT Slack and mailing list.",
+    `Invite this person to: ${requestedServices.join(" + ")}.`,
   ].join("\n");
 
   return {

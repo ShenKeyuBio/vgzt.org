@@ -1,0 +1,18 @@
+id: tatiana-lebedeva
+name: 'Tatiana Lebedeva'
+preferredName: null
+currentAffiliation: 'Friedrich Schiller University Jena, Institute of Zoology and Evolutionary Research'
+title: 'Researcher'
+portrait: null
+portraitAlt: null
+website: null
+orcid: null
+bluesky: null
+linkedin: null
+bio: null
+historicalSeasons:
+  - 3
+verificationStatus: verified
+sourceUrl: 'https://pubmed.ncbi.nlm.nih.gov/42310447/'
+sourceNote: 'Current Jena affiliation verified from 2026 Nature paper; exact institutional rank not confirmed.'
+status: published

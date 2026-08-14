@@ -1,0 +1,18 @@
+id: agata-horackova
+name: 'Agáta Horáčková'
+preferredName: null
+currentAffiliation: 'Charles University, Faculty of Science — Department of Zoology'
+title: 'Researcher (exact rank not listed on current faculty page)'
+portrait: null
+portraitAlt: null
+website: null
+orcid: null
+bluesky: null
+linkedin: null
+bio: null
+historicalSeasons:
+  - 6
+verificationStatus: verified
+sourceUrl: 'https://natur.cuni.cz/en/person?poid=1341114760843175'
+sourceNote: 'Current Charles University affiliation verified; exact employment rank is not shown on the faculty profile.'
+status: published

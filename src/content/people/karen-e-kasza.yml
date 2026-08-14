@@ -1,0 +1,18 @@
+id: karen-e-kasza
+name: 'Karen E. Kasza'
+preferredName: null
+currentAffiliation: 'Columbia University'
+title: 'Associate Professor of Mechanical Engineering'
+portrait: null
+portraitAlt: null
+website: null
+orcid: null
+bluesky: null
+linkedin: null
+bio: null
+historicalSeasons:
+  - 2
+verificationStatus: verified
+sourceUrl: 'https://www.me.columbia.edu/faculty/karen-kasza'
+sourceNote: 'Official Columbia faculty profile.'
+status: published

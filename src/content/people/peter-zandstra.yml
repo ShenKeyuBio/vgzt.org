@@ -1,0 +1,18 @@
+id: peter-zandstra
+name: 'Peter Zandstra'
+preferredName: null
+currentAffiliation: 'University of British Columbia'
+title: 'Vice-President, Research & Innovation; University Professor'
+portrait: null
+portraitAlt: null
+website: null
+orcid: null
+bluesky: null
+linkedin: null
+bio: null
+historicalSeasons:
+  - 1
+verificationStatus: verified
+sourceUrl: 'https://research.ubc.ca/about-vpri/staff-directory/peter-zandstra'
+sourceNote: 'Current UBC role confirmed in 2026.'
+status: published

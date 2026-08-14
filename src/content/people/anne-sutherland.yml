@@ -1,0 +1,18 @@
+id: anne-sutherland
+name: 'Anne Sutherland'
+preferredName: null
+currentAffiliation: 'University of Virginia, Department of Cell Biology'
+title: 'Associate Professor, Cell Biology'
+portrait: null
+portraitAlt: null
+website: null
+orcid: null
+bluesky: null
+linkedin: null
+bio: null
+historicalSeasons:
+  - 1
+verificationStatus: verified
+sourceUrl: 'https://med.virginia.edu/cell-biology/our-research/development-and-regeneration/?facbio=1&id=1731127'
+sourceNote: "Official page uses 'Ann E. Sutherland'; matches developmental-biology speaker."
+status: published

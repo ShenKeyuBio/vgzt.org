@@ -1,0 +1,18 @@
+id: cassandra-extavour
+name: 'Cassandra Extavour'
+preferredName: null
+currentAffiliation: 'Harvard University'
+title: 'Timken Professor of Organismic and Evolutionary Biology and Molecular and Cellular Biology; HHMI Investigator'
+portrait: null
+portraitAlt: null
+website: null
+orcid: null
+bluesky: null
+linkedin: null
+bio: null
+historicalSeasons:
+  - 7
+verificationStatus: verified
+sourceUrl: 'https://www.oeb.harvard.edu/people/cassandra-g-extavour'
+sourceNote: 'Evolutionary developmental biology, germ-cell specification and reproductive development'
+status: published

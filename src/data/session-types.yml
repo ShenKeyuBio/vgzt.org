@@ -1,4 +1,12 @@
 sessionTypes:
+  - id: single-speaker
+    label: Single-speaker session
+    speakerCount: 1
+    totalDurationMinutes: 60
+    presentationMinutesPerSpeaker: 50
+    qaMinutesPerSpeaker: 10
+    description: One seminar presentation followed by questions.
+
   - id: two-speaker
     label: Two-speaker session
     speakerCount: 2

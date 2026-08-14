@@ -1,0 +1,25 @@
+# Source: https://sites.google.com/view/gastrulationseminars/past-talks (Season 7 > Feb 2026)
+id: season-07-2026-02-05
+season: season-07
+status: published
+date: '2026-02-05'
+time: '12:30'
+timezone: America/New_York
+durationMinutes: 60
+sessionType: two-speaker
+timeSlot: western
+speakers:
+  - person: evgeny-kvon
+    role: speaker
+    talkTitle: 'Long-Range Gene Regulation in Development and Disease'
+    affiliationOverride: 'UC Irvine'
+  - person: silas-boye-nissen
+    role: speaker
+    talkTitle: 'Cluster Assembly Dynamics Drive Fidelity of Planar Cell Polarity Polarization'
+    affiliationOverride: 'Stanford University'
+poster: ../../assets/posters/season-07/2026-02-05-kvon-boye-nissen.jpg
+posterAlt: 'Season 7 VGZT poster for Evgeny Kvon and Silas Boye Nissen, 2026-02-05.'
+recordingUrl: null
+recordingLabel: null
+description: null
+featured: false

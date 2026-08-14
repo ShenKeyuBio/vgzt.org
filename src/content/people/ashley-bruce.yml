@@ -1,0 +1,18 @@
+id: ashley-bruce
+name: 'Ashley Bruce'
+preferredName: null
+currentAffiliation: 'University of Toronto, Department of Cell & Systems Biology'
+title: 'Professor and Graduate Chair'
+portrait: null
+portraitAlt: null
+website: null
+orcid: null
+bluesky: null
+linkedin: null
+bio: null
+historicalSeasons:
+  - 1
+verificationStatus: verified
+sourceUrl: 'https://csb.utoronto.ca/faculty/ashley-bruce/'
+sourceNote: 'zebrafish morphogenesis, epiboly, gastrulation'
+status: published

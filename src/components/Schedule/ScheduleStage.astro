@@ -5,39 +5,62 @@ import SeasonRail from './SeasonRail.astro';
 import TimezoneSelector from './TimezoneSelector.astro';
 
 interface Props {
+  sectionId: string;
+  seasonLabel: string;
   events: EventViewModel[];
   start: string;
   end: string;
   selectedId?: string | null | undefined;
+  archive?: boolean;
+  active?: boolean;
+  fallbackMessage?: string | null;
 }
 
-const { events, start, end, selectedId = null } = Astro.props;
+const {
+  sectionId,
+  seasonLabel,
+  events,
+  start,
+  end,
+  selectedId = null,
+  archive = false,
+  active = true,
+  fallbackMessage = null,
+} = Astro.props;
 ---
 
 <section
   class="section schedule-section"
-  id="programme"
-  aria-labelledby="programme-title"
+  id={sectionId}
+  aria-labelledby={`${sectionId}-title`}
   data-schedule
+  data-archive-autoplay={archive && events.length > 1 ? 'true' : 'false'}
+  hidden={!active}
 >
   <div class="container">
     <div class="section-heading">
       <div>
-        <p class="eyebrow">Season 8 programme</p>
-        <h2 id="programme-title">The poster stage.</h2>
+        <p class="eyebrow">{seasonLabel} {archive ? 'archive' : 'programme'}</p>
+        <h2 id={`${sectionId}-title`}>The poster stage.</h2>
       </div>
       <p>
         Select a seminar to see its poster, speakers, and the correct date and
-        time wherever you are. Sessions never auto-rotate.
+        time wherever you are. {
+          archive
+            ? 'Archive highlights advance slowly until you interact.'
+            : 'Published sessions appear as organizers confirm them.'
+        }
       </p>
     </div>
 
+    {fallbackMessage && <p class="schedule-notice">{fallbackMessage}</p>}
     <TimezoneSelector />
     <SeasonRail
       events={events}
       selectedId={selectedId}
       start={start}
       end={end}
+      autoplay={archive && events.length > 1}
     />
     {
       events.length > 0 ? (
@@ -46,7 +69,7 @@ const { events, start, end, selectedId = null } = Astro.props;
         <div class="schedule-empty">
           <div class="schedule-empty__copy">
             <p class="eyebrow">Programme status</p>
-            <h3>Season 8 programme coming soon.</h3>
+            <h3>{seasonLabel} programme coming soon.</h3>
             <p>
               Published seminar dates and posters will appear here as organizers
               confirm them. No provisional sessions are shown as real events.
@@ -71,6 +94,14 @@ const { events, start, end, selectedId = null } = Astro.props;
 
   .schedule-section :global(.timezone-control) {
     margin-bottom: 1rem;
+  }
+
+  .schedule-notice {
+    margin: 0 0 1rem;
+    padding: 0.9rem 1rem;
+    border: var(--keyline);
+    background: var(--vgzt-yellow);
+    font-weight: 850;
   }
 
   .schedule-empty {
@@ -258,7 +289,14 @@ const { events, start, end, selectedId = null } = Astro.props;
       ];
       if (tabs.length === 0) return;
 
-      const selectTab = (tab: HTMLButtonElement, focus = false) => {
+      const reducedMotion = window.matchMedia(
+        '(prefers-reduced-motion: reduce)',
+      );
+      const selectTab = (
+        tab: HTMLButtonElement,
+        focus = false,
+        updateUrl = true,
+      ) => {
         const id = tab.dataset.eventId;
         tabs.forEach((item) => {
           const active = item === tab;
@@ -268,17 +306,16 @@ const { events, start, end, selectedId = null } = Astro.props;
         panels.forEach(
           (panel) => (panel.hidden = panel.dataset.eventPanel !== id),
         );
-        if (id)
-          history.replaceState(
-            null,
-            '',
-            `${location.pathname}?event=${encodeURIComponent(id)}${location.hash}`,
-          );
+        if (id && updateUrl) {
+          const url = new URL(location.href);
+          url.searchParams.set('event', id);
+          history.replaceState(null, '', url);
+        }
         if (focus) tab.focus();
         tab.scrollIntoView({
           block: 'nearest',
           inline: 'nearest',
-          behavior: 'smooth',
+          behavior: reducedMotion.matches ? 'auto' : 'smooth',
         });
       };
 
@@ -322,5 +359,74 @@ const { events, start, end, selectedId = null } = Astro.props;
           const tab = tabs[(currentIndex() + 1) % tabs.length];
           if (tab) selectTab(tab, true);
         });
+
+      const playback = schedule.querySelector<HTMLButtonElement>(
+        '[data-archive-playback]',
+      );
+      let autoplay: number | undefined;
+      let manuallyPaused = false;
+      const stopAutoplay = () => {
+        if (autoplay !== undefined) window.clearInterval(autoplay);
+        autoplay = undefined;
+      };
+      const updatePlayback = () => {
+        if (!playback) return;
+        if (reducedMotion.matches) {
+          playback.disabled = true;
+          playback.textContent = 'Motion off';
+          playback.setAttribute('aria-pressed', 'true');
+          playback.setAttribute(
+            'aria-label',
+            'Archive autoplay disabled by reduced-motion preference',
+          );
+          return;
+        }
+        playback.disabled = false;
+        playback.textContent = manuallyPaused ? 'Play' : 'Pause';
+        playback.setAttribute('aria-pressed', String(manuallyPaused));
+        playback.setAttribute(
+          'aria-label',
+          manuallyPaused ? 'Play archive autoplay' : 'Pause archive autoplay',
+        );
+      };
+      const startAutoplay = () => {
+        stopAutoplay();
+        if (
+          schedule.dataset.archiveAutoplay !== 'true' ||
+          reducedMotion.matches ||
+          manuallyPaused
+        )
+          return;
+        autoplay = window.setInterval(() => {
+          if (
+            schedule.hidden ||
+            schedule.matches(':hover') ||
+            schedule.contains(document.activeElement)
+          )
+            return;
+          const tab = tabs[(currentIndex() + 1) % tabs.length];
+          if (tab) selectTab(tab, false, false);
+        }, 8000);
+      };
+      schedule.addEventListener('pointerenter', stopAutoplay);
+      schedule.addEventListener('pointerleave', startAutoplay);
+      schedule.addEventListener('focusin', stopAutoplay);
+      schedule.addEventListener('focusout', (event) => {
+        if (!schedule.contains(event.relatedTarget as Node | null))
+          startAutoplay();
+      });
+      schedule.addEventListener('touchstart', stopAutoplay, { passive: true });
+      playback?.addEventListener('click', () => {
+        manuallyPaused = !manuallyPaused;
+        updatePlayback();
+        if (manuallyPaused) stopAutoplay();
+        else startAutoplay();
+      });
+      reducedMotion.addEventListener('change', () => {
+        updatePlayback();
+        startAutoplay();
+      });
+      updatePlayback();
+      startAutoplay();
     });
 </script>

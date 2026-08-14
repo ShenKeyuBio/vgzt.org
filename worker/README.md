@@ -40,6 +40,10 @@ at 32 KiB. The frontend sends:
 }
 ```
 
+`joinSlack` and `joinMailingList` are the visitor's actual selections and at
+least one must be `true`. `slackEmail` may be `null` when only the mailing list
+is requested.
+
 `category` must be one of:
 
 - `general`

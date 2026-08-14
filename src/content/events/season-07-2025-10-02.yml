@@ -1,0 +1,25 @@
+# Source: https://sites.google.com/view/gastrulationseminars/past-talks (Season 7 > Oct 2025)
+id: season-07-2025-10-02
+season: season-07
+status: published
+date: '2025-10-02'
+time: '12:30'
+timezone: America/New_York
+durationMinutes: 60
+sessionType: two-speaker
+timeSlot: western
+speakers:
+  - person: antonia-weberling
+    role: speaker
+    talkTitle: 'Epiblast morphogenesis in amniotes – adding a squamate perspective'
+    affiliationOverride: 'University of Oxford'
+  - person: sanjay-narayanaswamy
+    role: speaker
+    talkTitle: 'Notch coordinates self-organization of germ layers and axial polarity in cnidarian gastruloids'
+    affiliationOverride: 'University of Vienna'
+poster: ../../assets/posters/season-07/2025-10-02-weberling-narayanaswamy.jpg
+posterAlt: 'Season 7 VGZT poster for Antonia Weberling and Sanjay Narayanaswamy, 2025-10-02.'
+recordingUrl: null
+recordingLabel: null
+description: null
+featured: false

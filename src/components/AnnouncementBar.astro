@@ -1,39 +1,36 @@
 ---
+import type { AbstractCallState } from '../lib/config';
+
 interface Props {
-  open: boolean;
+  state: AbstractCallState;
   seasonLabel: string;
   audience: string;
-  formUrl?: string | null;
 }
 
-const { open, seasonLabel, audience, formUrl = null } = Astro.props;
+const { state, seasonLabel, audience } = Astro.props;
+const label =
+  state.mode === 'opening-soon'
+    ? 'Abstract call · opening soon'
+    : 'Call for abstracts · open';
 ---
 
 {
-  open && (
+  state.showBanner && (
     <aside class="announcement" aria-label="Call for abstracts">
       <div class="announcement__inner container">
-        <span class="announcement__label">Call for abstracts</span>
+        <span class="announcement__label">{label}</span>
         <p class="announcement__copy">
           {seasonLabel} <span aria-hidden="true">·</span> {audience}
         </p>
-        {formUrl ? (
+        {state.ctaUrl && state.ctaLabel && (
           <a
             class="announcement__action"
-            href={formUrl}
-            rel="noopener noreferrer"
-            target="_blank"
+            href={state.ctaUrl}
+            rel={state.external ? 'noopener noreferrer' : undefined}
+            target={state.external ? '_blank' : undefined}
           >
-            Submit an abstract <span aria-hidden="true">→</span>
+            {state.ctaLabel} <span aria-hidden="true">→</span>
           </a>
-        ) : (
-          <span
-            class="announcement__action"
-            aria-disabled="true"
-            title="Submission link coming soon"
-          >
-            Submission link coming soon
-          </span>
         )}
       </div>
     </aside>

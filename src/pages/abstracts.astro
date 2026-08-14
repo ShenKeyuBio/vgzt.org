@@ -65,10 +65,10 @@ const deadline = call.deadline
             >
               Submit your abstract
             </a>
-          ) : state.showBanner ? (
-            <span class="button button--ink" aria-disabled="true">
-              Submission link coming soon
-            </span>
+          ) : state.mode === 'opening-soon' ? (
+            <span class="status-badge">Submissions opening soon</span>
+          ) : state.mode === 'open' ? (
+            <span class="status-badge">Submission form being finalized</span>
           ) : (
             <span class="status-badge">Call currently closed</span>
           )
@@ -82,7 +82,18 @@ const deadline = call.deadline
       <div>
         <p class="eyebrow">Call status</p>
         <dl class="call-status">
-          <div><dt>Status</dt><dd>{call.open ? 'Open' : 'Closed'}</dd></div>
+          <div>
+            <dt>Status</dt>
+            <dd>
+              {
+                state.mode === 'opening-soon'
+                  ? 'Opening soon'
+                  : state.mode === 'open'
+                    ? 'Open'
+                    : 'Closed'
+              }
+            </dd>
+          </div>
           <div><dt>Season</dt><dd>{seasonLabel}</dd></div>
           <div><dt>Audience</dt><dd>{call.audience}</dd></div>
           <div>

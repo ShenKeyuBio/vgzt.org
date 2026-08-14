@@ -1,0 +1,18 @@
+id: andrew-countryman
+name: 'Andrew Countryman'
+preferredName: null
+currentAffiliation: 'Columbia University — Department of Biomedical Engineering, Kasza Lab'
+title: 'Graduate Research Fellow / PhD student'
+portrait: null
+portraitAlt: null
+website: null
+orcid: null
+bluesky: null
+linkedin: null
+bio: null
+historicalSeasons:
+  - 5
+verificationStatus: verified
+sourceUrl: 'https://www.kaszalab.com/people'
+sourceNote: 'Official Kasza Lab profile supports current doctoral/research-fellow status; secondary placeholder Nature URL should be replaced if exact paper URL is needed.'
+status: published

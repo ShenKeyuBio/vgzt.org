@@ -12,7 +12,7 @@ const social = getSocialSettings();
 
 <BaseLayout
   title="Privacy"
-  description="Privacy information for the VGZT website, contact form, and community join form."
+  description="Privacy information for the VGZT website, contact form, and subscription form."
   email={site.publicEmail}
   social={getFooterSocial(social)}
   masterLogo={site.masterLogo}
@@ -45,13 +45,15 @@ const social = getSocialSettings();
         it is designed not to log message content or email addresses.
       </p>
 
-      <h2>Join form</h2>
+      <h2>Subscription form and manual requests</h2>
       <p>
-        If you request community access, VGZT processes your name, organization,
-        career stage, contact email, and Slack-linked email. The submission is
-        sent to the organizer email and the designated organizer Slack channel
-        so the team can manually invite you to VGZT Slack and the mailing list.
-        Cloudflare Turnstile supplies anti-abuse verification.
+        The primary subscription flow keeps your entries in your browser and
+        only shows the relevant external signup options. If you explicitly send
+        a manual request, VGZT processes your name, organization, career stage,
+        contact email, selected services, and any Slack-linked email you
+        provide. That request is sent to the organizer email and designated
+        organizer Slack channel. Cloudflare Turnstile supplies anti-abuse
+        verification for this manual pathway.
       </p>
 
       <h2>Email and community services</h2>

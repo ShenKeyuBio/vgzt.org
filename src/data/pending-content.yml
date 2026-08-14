@@ -83,11 +83,11 @@ pending:
     label: Canonical VGZT mailing-list subscription URL
     type: url
     intendedLocation: Subscribe page
-    status: resolved
+    status: pending
     requiredForLaunch: false
-    replaceVia: The /subscribe/ request form and manual organizer approval workflow
-    resolvedAt: 2026-08-14
-    notes: A direct provider URL is no longer required; visitors request both memberships through the site.
+    replaceVia: Pages CMS > Social Links > Newsletter subscription URL
+    resolvedAt: null
+    notes: No public signup URL has been supplied. The configured EmailOctopus embed is active, so this does not block subscriptions.
 
   - key: social.slackInviteUrl
     label: Canonical VGZT Slack invitation
@@ -95,39 +95,39 @@ pending:
     intendedLocation: Subscribe page and footer
     status: resolved
     requiredForLaunch: false
-    replaceVia: The /subscribe/ request form and manual organizer approval workflow
+    replaceVia: Pages CMS > Social Links > VGZT Slack invitation URL
     resolvedAt: 2026-08-14
-    notes: Public direct invitations are replaced by organizer-reviewed requests.
+    notes: The canonical direct Slack invitation is configured centrally.
 
   - key: social.linkedinUrl
     label: Verified canonical VGZT LinkedIn URL
     type: url
     intendedLocation: Footer
-    status: pending
+    status: resolved
     requiredForLaunch: false
     replaceVia: Pages CMS > Social Links > LinkedIn URL
-    resolvedAt: null
-    notes: Historical references exist, but the production destination still requires approval.
+    resolvedAt: 2026-08-14
+    notes: Canonical organization URL supplied by the organizer.
 
   - key: social.blueskyUrl
     label: Verified canonical VGZT Bluesky URL
     type: url
     intendedLocation: Footer
-    status: pending
+    status: resolved
     requiredForLaunch: false
     replaceVia: Pages CMS > Social Links > Bluesky URL
-    resolvedAt: null
-    notes: Historical references exist, but the production destination still requires approval.
+    resolvedAt: 2026-08-14
+    notes: Canonical profile URL supplied by the organizer.
 
   - key: social.xUrl
     label: Verified canonical VGZT X URL
     type: url
     intendedLocation: Footer
-    status: pending
+    status: resolved
     requiredForLaunch: false
     replaceVia: Pages CMS > Social Links > X URL
-    resolvedAt: null
-    notes: Historical references exist, but the production destination still requires approval.
+    resolvedAt: 2026-08-14
+    notes: Canonical profile URL supplied by the organizer.
 
   - key: site.contactEndpoint
     label: Production contact form endpoint

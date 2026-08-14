@@ -1,0 +1,25 @@
+# Source: https://sites.google.com/view/gastrulationseminars/past-talks (Season 7 > Nov 2025)
+id: season-07-2025-11-06
+season: season-07
+status: published
+date: '2025-11-06'
+time: '12:30'
+timezone: America/New_York
+durationMinutes: 60
+sessionType: two-speaker
+timeSlot: western
+speakers:
+  - person: david-oriola-santandreu
+    role: speaker
+    talkTitle: 'Cell-cell communication and mechanical forces control the timing of symmetry breaking in gastruloids'
+    affiliationOverride: 'Universitat Politècnica de Catalunya · BarcelonaTech'
+  - person: nicole-a-edwards
+    role: speaker
+    talkTitle: 'Discovering the developmental basis of trachea-esophageal congenital anomalies: evidence for endosomeopathies'
+    affiliationOverride: "Cincinnati Children's"
+poster: ../../assets/posters/season-07/2025-11-06-oriola-edwards.jpg
+posterAlt: 'Season 7 VGZT poster for David Oriola Santandreu and Nicole A Edwards, 2025-11-06.'
+recordingUrl: null
+recordingLabel: null
+description: null
+featured: false

@@ -1,0 +1,18 @@
+id: ben-steventon
+name: 'Ben Steventon'
+preferredName: null
+currentAffiliation: 'University of Cambridge, Department of Genetics'
+title: 'Professor of Developmental Biology'
+portrait: null
+portraitAlt: null
+website: null
+orcid: null
+bluesky: null
+linkedin: null
+bio: null
+historicalSeasons:
+  - 2
+verificationStatus: verified
+sourceUrl: 'https://www.gen.cam.ac.uk/people/ben-steventon'
+sourceNote: 'Official Cambridge profile.'
+status: published

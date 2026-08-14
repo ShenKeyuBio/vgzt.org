@@ -1,0 +1,18 @@
+id: david-shook
+name: 'David Shook'
+preferredName: null
+currentAffiliation: 'University of Virginia, DeSimone Laboratory'
+title: 'Senior Scientist / Research Scientist'
+portrait: null
+portraitAlt: null
+website: null
+orcid: null
+bluesky: null
+linkedin: null
+bio: null
+historicalSeasons:
+  - 3
+verificationStatus: verified
+sourceUrl: 'https://www.desimonelaboratory.org/'
+sourceNote: 'Xenopus morphogenesis, gastrulation and developmental biomechanics'
+status: published

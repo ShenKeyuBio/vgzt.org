@@ -3,10 +3,22 @@ interface Props {
   endpoint?: string | null;
   turnstileSiteKey?: string | null;
   email: string;
+  slackInviteUrl?: string | null;
+  newsletterUrl?: string | null;
+  newsletterEmbedScriptUrl?: string | null;
+  newsletterFormId?: string | null;
 }
 
-const { endpoint = null, turnstileSiteKey = null, email } = Astro.props;
-const enabled = Boolean(endpoint && turnstileSiteKey);
+const {
+  endpoint = null,
+  turnstileSiteKey = null,
+  email,
+  slackInviteUrl = null,
+  newsletterUrl = null,
+  newsletterEmbedScriptUrl = null,
+  newsletterFormId = null,
+} = Astro.props;
+const fallbackEnabled = Boolean(endpoint && turnstileSiteKey);
 const careerStages = [
   { value: 'undergraduate', label: 'Undergraduate student' },
   { value: 'masters', label: "Master's student" },
@@ -22,11 +34,11 @@ const careerStages = [
 <section class="join-section" aria-labelledby="join-form-title">
   <div class="container join-section__grid">
     <div class="join-section__intro">
-      <p class="eyebrow">One request, both channels</p>
-      <h2 id="join-form-title">Join the VGZT community.</h2>
+      <p class="eyebrow">Choose how to stay connected</p>
+      <h2 id="join-form-title">Subscribe VGZT Talks.</h2>
       <p>
-        Request access to both the VGZT Slack and mailing list. The organizer
-        team reviews each request and sends invitations manually.
+        Choose Slack, seminar emails, or both. Your details stay in this page
+        unless you explicitly ask the organizers for help.
       </p>
       <ul class="join-benefits">
         <li>Seminar announcements and reminders</li>
@@ -43,17 +55,40 @@ const careerStages = [
     <form
       class="join-form"
       method="post"
-      action={endpoint || undefined}
+      action="/subscribe/"
       data-join-form
       data-endpoint={endpoint || ''}
-      data-enabled={String(enabled)}
+      data-slack-url={slackInviteUrl || ''}
+      data-newsletter-url={newsletterUrl || ''}
+      data-newsletter-embed-script-url={newsletterEmbedScriptUrl || ''}
+      data-newsletter-form-id={newsletterFormId || ''}
       novalidate
     >
-      <div class="join-form__request" aria-label="Requested access">
-        <span>VGZT Slack</span>
-        <span aria-hidden="true">+</span>
-        <span>Mailing list</span>
-      </div>
+      <fieldset
+        class="join-form__choices"
+        aria-describedby="join-services-error"
+      >
+        <legend>What would you like to subscribe to?</legend>
+        <label for="join-slack">
+          <input
+            id="join-slack"
+            name="joinSlack"
+            type="checkbox"
+            value="true"
+          />
+          <span>Join VGZT Slack</span>
+        </label>
+        <label for="join-mailing-list">
+          <input
+            id="join-mailing-list"
+            name="joinMailingList"
+            type="checkbox"
+            value="true"
+          />
+          <span>Subscribe to VGZT mailing list</span>
+        </label>
+      </fieldset>
+      <span class="field__error" id="join-services-error"></span>
 
       <div class="join-form__row">
         <div class="field">
@@ -118,11 +153,10 @@ const careerStages = [
             inputmode="email"
             autocomplete="email"
             aria-describedby="join-slack-email-hint join-slackEmail-error"
-            required
             maxlength="254"
           />
           <span class="field__hint" id="join-slack-email-hint"
-            >Repeat your contact email if it is the same.</span
+            >Required only when joining Slack; otherwise leave it blank.</span
           >
           <span class="field__error" id="join-slackEmail-error"></span>
         </div>
@@ -147,39 +181,17 @@ const careerStages = [
           value="true"
         />
         <span
-          >I agree that VGZT may use these details to review my request and send
-          Slack and mailing-list invitations. See the <a href="/privacy/"
+          >I agree that, if I send a manual request, VGZT may use these details
+          to arrange the selected invitation(s). See the <a href="/privacy/"
             >privacy notice</a
           >.</span
         >
       </label>
       <span class="field__error" id="join-privacy-error"></span>
 
-      {
-        turnstileSiteKey && (
-          <div
-            class="cf-turnstile"
-            data-sitekey={turnstileSiteKey}
-            data-action="vgzt_join"
-            data-callback="vgztJoinTurnstileComplete"
-            data-expired-callback="vgztJoinTurnstileExpired"
-            data-error-callback="vgztJoinTurnstileExpired"
-          />
-        )
-      }
-
-      {
-        !enabled && (
-          <p class="join-form__unavailable" role="status">
-            The secure join form is being connected. In the meantime, email{' '}
-            <a href={`mailto:${email}`}>{email}</a>.
-          </p>
-        )
-      }
-
       <div class="join-form__submit-row">
-        <button class="button button--ink" type="submit" disabled={!enabled}>
-          Request both invitations <span aria-hidden="true">→</span>
+        <button class="button button--ink" type="submit">
+          Subscribe VGZT Talks <span aria-hidden="true">→</span>
         </button>
         <p
           class="join-form__status"
@@ -189,15 +201,127 @@ const careerStages = [
         >
         </p>
       </div>
+
+      <section
+        id="subscription-options"
+        class="subscription-result"
+        aria-labelledby="subscription-result-title"
+        aria-live="polite"
+        tabindex="-1"
+        data-subscription-result
+        hidden
+      >
+        <p class="eyebrow">Your subscription options</p>
+        <h3 id="subscription-result-title">
+          Continue with your selected service.
+        </h3>
+
+        <div class="subscription-result__actions">
+          <div data-slack-result hidden>
+            <a
+              class="button button--ink"
+              href={slackInviteUrl || undefined}
+              target="_blank"
+              rel="noopener noreferrer"
+              data-slack-action
+              hidden={!slackInviteUrl}
+            >
+              Join VGZT Slack <span aria-hidden="true">↗</span>
+              <span class="visually-hidden"> (opens in a new tab)</span>
+            </a>
+            <p data-slack-unavailable hidden={Boolean(slackInviteUrl)}>
+              The Slack invitation is temporarily unavailable.
+            </p>
+          </div>
+
+          <div data-newsletter-result hidden>
+            <a
+              class="button button--ink"
+              href={newsletterUrl || undefined}
+              target="_blank"
+              rel="noopener noreferrer"
+              data-newsletter-action
+              hidden={!newsletterUrl}
+            >
+              Subscribe to the mailing list <span aria-hidden="true">↗</span>
+              <span class="visually-hidden"> (opens in a new tab)</span>
+            </a>
+            <p
+              class="subscription-result__coming-soon"
+              data-newsletter-coming-soon
+              hidden={Boolean(newsletterUrl)}
+            >
+              Mailing list signup coming soon
+            </p>
+            <div
+              class="subscription-result__embed"
+              data-newsletter-embed
+              tabindex="-1"
+              hidden
+            >
+              <p data-newsletter-loading role="status">
+                Loading mailing list signup…
+              </p>
+              <p data-newsletter-failed role="status" hidden>
+                The mailing list form could not load. Please try again or email{
+                  ' '
+                }
+                <a href={`mailto:${email}`}>{email}</a>.
+              </p>
+              <noscript>
+                JavaScript is required for the mailing list form. Email{' '}
+                <a href={`mailto:${email}`}>{email}</a> for help.
+              </noscript>
+            </div>
+          </div>
+        </div>
+
+        <div class="manual-fallback">
+          <p>
+            <strong>Not working?</strong> Ask the VGZT organizers to invite you manually.
+          </p>
+          {
+            fallbackEnabled ? (
+              <>
+                <div
+                  class="manual-fallback__turnstile"
+                  data-turnstile-container
+                  data-sitekey={turnstileSiteKey}
+                  hidden
+                />
+                <button
+                  class="button button--quiet"
+                  type="button"
+                  data-manual-fallback
+                >
+                  Send a request to the organizers
+                </button>
+              </>
+            ) : (
+              <p>
+                The secure request form is being connected. Email{' '}
+                <a href={`mailto:${email}`}>{email}</a> instead.
+              </p>
+            )
+          }
+          <p
+            class="join-form__status"
+            role="status"
+            aria-live="polite"
+            data-fallback-status
+          >
+          </p>
+        </div>
+      </section>
     </form>
   </div>
 </section>
 
 {
-  turnstileSiteKey && (
+  fallbackEnabled && (
     <script
       is:inline
-      src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+      src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
       async
       defer
     />
@@ -254,23 +378,41 @@ const careerStages = [
     gap: 1.1rem;
   }
 
-  .join-form__request {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.55rem;
-    align-items: center;
-    padding-bottom: 1rem;
+  .join-form__choices {
+    display: grid;
+    margin: 0;
+    padding: 0 0 1rem;
+    border: 0;
     border-bottom: var(--keyline);
+    gap: 0.7rem;
+  }
+
+  .join-form__choices legend {
+    margin-bottom: 0.75rem;
     font-size: 0.78rem;
     font-weight: 950;
     letter-spacing: 0.04em;
     text-transform: uppercase;
   }
 
-  .join-form__request span:not([aria-hidden]) {
-    padding: 0.4rem 0.58rem;
-    border: 2px solid currentColor;
-    background: var(--vgzt-pink);
+  .join-form__choices label {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.65rem;
+    align-items: center;
+    font-weight: 850;
+  }
+
+  .join-form__choices input,
+  .privacy-check input {
+    width: 1.25rem;
+    height: 1.25rem;
+    margin: 0;
+    accent-color: var(--vgzt-ink);
+  }
+
+  .join-form__choices[aria-invalid='true'] {
+    border-color: var(--vgzt-error);
   }
 
   .join-form__row {
@@ -336,19 +478,7 @@ const careerStages = [
   }
 
   .privacy-check input {
-    width: 1.25rem;
-    height: 1.25rem;
-    margin: 0.08rem 0 0;
-    accent-color: var(--vgzt-ink);
-  }
-
-  .join-form__unavailable {
-    margin: 0;
-    padding: 0.8rem;
-    border-left: 0.4rem solid var(--vgzt-orange);
-    background: color-mix(in srgb, var(--vgzt-orange) 24%, var(--vgzt-paper));
-    font-size: 0.83rem;
-    font-weight: 700;
+    margin-top: 0.08rem;
   }
 
   .join-form__submit-row {
@@ -362,6 +492,55 @@ const careerStages = [
     margin: 0;
     font-size: 0.8rem;
     font-weight: 800;
+  }
+
+  .subscription-result {
+    display: grid;
+    margin-top: 0.5rem;
+    padding: clamp(1rem, 3vw, 1.6rem);
+    border: var(--keyline);
+    background: color-mix(in srgb, var(--vgzt-pink) 38%, var(--vgzt-paper));
+    gap: 1rem;
+  }
+
+  .subscription-result[hidden],
+  .subscription-result [hidden] {
+    display: none;
+  }
+
+  .subscription-result h3,
+  .subscription-result p {
+    margin: 0;
+  }
+
+  .subscription-result__actions {
+    display: grid;
+    gap: 0.8rem;
+  }
+
+  .subscription-result__coming-soon {
+    padding: 0.85rem;
+    border-left: 0.4rem solid var(--vgzt-orange);
+    background: var(--vgzt-paper);
+    font-weight: 900;
+  }
+
+  .subscription-result__embed {
+    min-height: 7rem;
+    padding: 0.85rem;
+    border: 2px solid var(--vgzt-ink);
+    background: var(--vgzt-paper);
+  }
+
+  .manual-fallback {
+    display: grid;
+    padding-top: 1rem;
+    border-top: 2px solid var(--vgzt-ink);
+    gap: 0.8rem;
+  }
+
+  .manual-fallback__turnstile {
+    min-height: 4.1rem;
   }
 
   @media (max-width: 56rem) {
@@ -386,30 +565,78 @@ const careerStages = [
 </style>
 
 <script>
-  declare global {
-    interface Window {
-      vgztJoinTurnstileComplete?: (token: string) => void;
-      vgztJoinTurnstileExpired?: () => void;
-      turnstile?: { reset: () => void };
-    }
+  import { resolveSubscriptionFlow } from '../../lib/subscription';
+
+  interface TurnstileApi {
+    render: (
+      container: HTMLElement,
+      options: {
+        sitekey: string;
+        action: string;
+        callback: (token: string) => void;
+        'expired-callback': () => void;
+        'error-callback': () => void;
+      },
+    ) => string;
+    reset: (widgetId?: string) => void;
+  }
+
+  interface PendingSubmission {
+    name: string;
+    organization: string;
+    careerStage: string;
+    email: string;
+    slackEmail: string | null;
+    joinSlack: boolean;
+    joinMailingList: boolean;
+    website: string;
+    privacyAccepted: true;
   }
 
   document
     .querySelectorAll<HTMLFormElement>('[data-join-form]')
     .forEach((form) => {
-      const enabled = form.dataset.enabled === 'true';
-      if (!enabled) return;
       const status = form.querySelector<HTMLElement>('[data-form-status]');
-      const submit = form.querySelector<HTMLButtonElement>(
-        'button[type="submit"]',
+      const resultPanel = form.querySelector<HTMLElement>(
+        '[data-subscription-result]',
       );
-      let turnstileToken = '';
-
-      window.vgztJoinTurnstileComplete = (token) => {
-        turnstileToken = token;
+      const fallbackStatus = form.querySelector<HTMLElement>(
+        '[data-fallback-status]',
+      );
+      const fallbackButton = form.querySelector<HTMLButtonElement>(
+        '[data-manual-fallback]',
+      );
+      const turnstileContainer = form.querySelector<HTMLElement>(
+        '[data-turnstile-container]',
+      );
+      const newsletterEmbed = form.querySelector<HTMLElement>(
+        '[data-newsletter-embed]',
+      );
+      const newsletterLoading = form.querySelector<HTMLElement>(
+        '[data-newsletter-loading]',
+      );
+      const newsletterFailed = form.querySelector<HTMLElement>(
+        '[data-newsletter-failed]',
+      );
+      const links = {
+        slackInviteUrl: form.dataset.slackUrl || null,
+        newsletterUrl: form.dataset.newsletterUrl || null,
+        newsletterEmbedScriptUrl: form.dataset.newsletterEmbedScriptUrl || null,
+        newsletterFormId: form.dataset.newsletterFormId || null,
       };
-      window.vgztJoinTurnstileExpired = () => {
-        turnstileToken = '';
+      let pendingSubmission: PendingSubmission | null = null;
+      let turnstileToken = '';
+      let turnstileWidgetId: string | undefined;
+      const getTurnstile = (): TurnstileApi | null => {
+        const candidate: unknown = Reflect.get(window, 'turnstile');
+        return typeof candidate === 'object' &&
+          candidate !== null &&
+          'render' in candidate &&
+          typeof candidate.render === 'function' &&
+          'reset' in candidate &&
+          typeof candidate.reset === 'function'
+          ? (candidate as TurnstileApi)
+          : null;
       };
 
       const clearErrors = () => {
@@ -422,19 +649,82 @@ const careerStages = [
       };
 
       const setError = (name: string, text: string) => {
-        const field = form.elements.namedItem(name) as HTMLElement | null;
+        const field =
+          name === 'services'
+            ? form.querySelector<HTMLElement>('.join-form__choices')
+            : (form.elements.namedItem(name) as HTMLElement | null);
         field?.setAttribute('aria-invalid', 'true');
         const errorId =
-          name === 'privacyAccepted'
-            ? 'join-privacy-error'
-            : `join-${name}-error`;
+          name === 'services'
+            ? 'join-services-error'
+            : name === 'privacyAccepted'
+              ? 'join-privacy-error'
+              : `join-${name}-error`;
         field?.setAttribute('aria-describedby', errorId);
         const error = form.querySelector<HTMLElement>(`#${errorId}`);
         if (error) error.textContent = text;
       };
 
-      form.addEventListener('submit', async (event) => {
-        event.preventDefault();
+      const ensureTurnstile = () => {
+        const turnstile = getTurnstile();
+        if (turnstileWidgetId || !turnstileContainer || !turnstile) {
+          return;
+        }
+        const sitekey = turnstileContainer.dataset.sitekey;
+        if (!sitekey) return;
+        turnstileWidgetId = turnstile.render(turnstileContainer, {
+          sitekey,
+          action: 'vgzt_join',
+          callback: (token) => {
+            turnstileToken = token;
+            if (fallbackStatus) fallbackStatus.textContent = '';
+          },
+          'expired-callback': () => {
+            turnstileToken = '';
+          },
+          'error-callback': () => {
+            turnstileToken = '';
+          },
+        });
+      };
+
+      const focusNewsletterEmbed = () => {
+        const focusTarget = newsletterEmbed?.querySelector<HTMLElement>(
+          'input:not([type="hidden"]), iframe, select, textarea, button, a[href]',
+        );
+        (focusTarget || newsletterEmbed)?.focus();
+      };
+
+      const ensureNewsletterEmbed = () => {
+        if (!newsletterEmbed) return;
+        if (newsletterEmbed.querySelector('[data-newsletter-embed-script]')) {
+          focusNewsletterEmbed();
+          return;
+        }
+        if (!links.newsletterEmbedScriptUrl || !links.newsletterFormId) {
+          if (newsletterLoading) newsletterLoading.hidden = true;
+          if (newsletterFailed) newsletterFailed.hidden = false;
+          return;
+        }
+
+        const script = document.createElement('script');
+        script.async = true;
+        script.src = links.newsletterEmbedScriptUrl;
+        script.dataset.form = links.newsletterFormId;
+        script.dataset.newsletterEmbedScript = '';
+        script.addEventListener('load', () => {
+          if (newsletterLoading) newsletterLoading.hidden = true;
+          focusNewsletterEmbed();
+        });
+        script.addEventListener('error', () => {
+          if (newsletterLoading) newsletterLoading.hidden = true;
+          if (newsletterFailed) newsletterFailed.hidden = false;
+          newsletterEmbed.focus();
+        });
+        newsletterEmbed.append(script);
+      };
+
+      const readAndValidate = (): PendingSubmission | null => {
         clearErrors();
         if (status) status.textContent = '';
 
@@ -444,13 +734,21 @@ const careerStages = [
         const careerStage = String(data.get('careerStage') || '');
         const email = String(data.get('email') || '').trim();
         const slackEmail = String(data.get('slackEmail') || '').trim();
+        const joinSlack = data.get('joinSlack') === 'true';
+        const joinMailingList = data.get('joinMailingList') === 'true';
         const website = String(data.get('website') || '');
         const privacyAccepted = data.get('privacyAccepted') === 'true';
-        const verifiedToken =
-          turnstileToken ||
-          String(data.get('cf-turnstile-response') || '').trim();
+        const flow = resolveSubscriptionFlow(
+          'primary',
+          { joinSlack, joinMailingList },
+          links,
+        );
         let invalid = false;
 
+        if (!flow.valid) {
+          setError('services', flow.message);
+          invalid = true;
+        }
         if (!name || name.length > 100) {
           setError('name', 'Enter your name (up to 100 characters).');
           invalid = true;
@@ -470,71 +768,185 @@ const careerStages = [
           setError('email', 'Enter a valid contact email address.');
           invalid = true;
         }
-        if (!/^\S+@\S+\.\S+$/.test(slackEmail) || slackEmail.length > 254) {
+        if (
+          (joinSlack && !/^\S+@\S+\.\S+$/.test(slackEmail)) ||
+          slackEmail.length > 254
+        ) {
           setError('slackEmail', 'Enter the email address linked to Slack.');
+          invalid = true;
+        }
+        if (slackEmail && !joinSlack && !/^\S+@\S+\.\S+$/.test(slackEmail)) {
+          setError(
+            'slackEmail',
+            'Enter a valid email address or leave it blank.',
+          );
           invalid = true;
         }
         if (!privacyAccepted) {
           setError(
             'privacyAccepted',
-            'Confirm that VGZT may use these details for your invitations.',
+            'Confirm how your details may be used for a manual request.',
           );
           invalid = true;
         }
-        if (!verifiedToken) {
-          if (status)
-            status.textContent =
-              'Complete the anti-abuse check, then try again.';
-          invalid = true;
-        }
+
         if (invalid) {
           form.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus();
+          return null;
+        }
+
+        return {
+          name,
+          organization,
+          careerStage,
+          email,
+          slackEmail: slackEmail || null,
+          joinSlack,
+          joinMailingList,
+          website,
+          privacyAccepted: true,
+        };
+      };
+
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const submission = readAndValidate();
+        if (!submission) return;
+
+        const flow = resolveSubscriptionFlow(
+          'primary',
+          {
+            joinSlack: submission.joinSlack,
+            joinMailingList: submission.joinMailingList,
+          },
+          links,
+        );
+        if (!flow.valid) return;
+
+        const slackResult = form.querySelector<HTMLElement>(
+          '[data-slack-result]',
+        );
+        const slackAction = form.querySelector<HTMLElement>(
+          '[data-slack-action]',
+        );
+        const slackUnavailable = form.querySelector<HTMLElement>(
+          '[data-slack-unavailable]',
+        );
+        const newsletterResult = form.querySelector<HTMLElement>(
+          '[data-newsletter-result]',
+        );
+        const newsletterAction = form.querySelector<HTMLElement>(
+          '[data-newsletter-action]',
+        );
+        const newsletterComingSoon = form.querySelector<HTMLElement>(
+          '[data-newsletter-coming-soon]',
+        );
+
+        if (slackResult) slackResult.hidden = !submission.joinSlack;
+        if (slackAction) slackAction.hidden = flow.slackUrl === null;
+        if (slackUnavailable) slackUnavailable.hidden = flow.slackUrl !== null;
+        if (newsletterResult)
+          newsletterResult.hidden = flow.newsletter === null;
+        if (newsletterAction)
+          newsletterAction.hidden = flow.newsletter?.state !== 'available';
+        if (newsletterComingSoon)
+          newsletterComingSoon.hidden =
+            flow.newsletter?.state !== 'coming-soon';
+        if (newsletterEmbed)
+          newsletterEmbed.hidden = flow.newsletter?.state !== 'embedded';
+
+        pendingSubmission = submission;
+        if (fallbackStatus) fallbackStatus.textContent = '';
+        if (resultPanel) {
+          resultPanel.hidden = false;
+          resultPanel.focus();
+        }
+        if (flow.newsletter?.state === 'embedded') {
+          ensureNewsletterEmbed();
+        }
+      });
+
+      form.addEventListener('input', (event) => {
+        const target = event.target;
+        if (
+          !(target instanceof HTMLInputElement) &&
+          !(target instanceof HTMLSelectElement)
+        ) {
+          return;
+        }
+        if (
+          target.name === 'cf-turnstile-response' ||
+          target.closest('[data-turnstile-container]')
+        ) {
+          return;
+        }
+        if (!pendingSubmission) return;
+        pendingSubmission = null;
+        turnstileToken = '';
+        if (resultPanel) resultPanel.hidden = true;
+        if (turnstileContainer) turnstileContainer.hidden = true;
+        if (fallbackStatus) fallbackStatus.textContent = '';
+        if (fallbackButton) fallbackButton.disabled = false;
+        getTurnstile()?.reset(turnstileWidgetId);
+      });
+
+      fallbackButton?.addEventListener('click', async () => {
+        if (!pendingSubmission) return;
+        const flow = resolveSubscriptionFlow(
+          'manual-fallback',
+          {
+            joinSlack: pendingSubmission.joinSlack,
+            joinMailingList: pendingSubmission.joinMailingList,
+          },
+          links,
+        );
+        if (!flow.valid || !flow.notifyOrganizers) return;
+
+        if (!turnstileToken) {
+          if (turnstileContainer) turnstileContainer.hidden = false;
+          ensureTurnstile();
+          if (fallbackStatus)
+            fallbackStatus.textContent =
+              'Complete the anti-abuse check, then click the request button again.';
           return;
         }
 
-        if (submit) submit.disabled = true;
-        if (status) status.textContent = 'Sending…';
+        fallbackButton.disabled = true;
+        if (fallbackStatus) fallbackStatus.textContent = 'Sending…';
 
         try {
           const response = await fetch(form.dataset.endpoint || '', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              name,
-              organization,
-              careerStage,
-              email,
-              slackEmail,
-              joinSlack: true,
-              joinMailingList: true,
-              website,
-              privacyAccepted,
-              turnstileToken: verifiedToken,
+              ...pendingSubmission,
+              turnstileToken,
             }),
           });
-          const result = (await response.json().catch(() => ({}))) as {
+          const responseBody = (await response.json().catch(() => ({}))) as {
             message?: string;
           };
-          if (!response.ok)
-            throw new Error(result.message || 'Request could not be sent.');
+          if (!response.ok) {
+            throw new Error(
+              responseBody.message || 'Request could not be sent.',
+            );
+          }
 
-          form.reset();
+          if (fallbackStatus)
+            fallbackStatus.textContent =
+              'Thanks — your request has been sent to the VGZT organizers.';
           turnstileToken = '';
-          if (status)
-            status.textContent =
-              'Thanks — your request is with the VGZT organizers.';
-          window.turnstile?.reset();
+          getTurnstile()?.reset(turnstileWidgetId);
         } catch (error) {
-          if (status) {
-            status.textContent =
+          if (fallbackStatus) {
+            fallbackStatus.textContent =
               error instanceof Error
                 ? error.message
                 : 'Request could not be sent. Try again.';
           }
-          window.turnstile?.reset();
           turnstileToken = '';
-        } finally {
-          if (submit) submit.disabled = false;
+          getTurnstile()?.reset(turnstileWidgetId);
+          fallbackButton.disabled = false;
         }
       });
     });

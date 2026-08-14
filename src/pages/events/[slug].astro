@@ -17,7 +17,7 @@ import type { EventViewModel } from '../../lib/view-models';
 export const getStaticPaths = (async () => {
   const [eventEntries, peopleEntries] = await Promise.all([
     getCollection('events', ({ data }) => data.status === 'published'),
-    getCollection('people', ({ data }) => data.status === 'published'),
+    getCollection('people'),
   ]);
   const people = new Map(peopleEntries.map(({ data }) => [data.id, data]));
   const settings = getSessionSettings();

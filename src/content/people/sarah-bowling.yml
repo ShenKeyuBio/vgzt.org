@@ -1,0 +1,18 @@
+id: sarah-bowling
+name: 'Sarah Bowling'
+preferredName: null
+currentAffiliation: 'Stanford University School of Medicine, Department of Developmental Biology'
+title: 'Assistant Professor of Developmental Biology'
+portrait: null
+portraitAlt: null
+website: null
+orcid: null
+bluesky: null
+linkedin: null
+bio: null
+historicalSeasons:
+  - 1
+verificationStatus: verified
+sourceUrl: 'https://med.stanford.edu/profiles/sarah-bowling'
+sourceNote: 'Official Stanford profile.'
+status: published

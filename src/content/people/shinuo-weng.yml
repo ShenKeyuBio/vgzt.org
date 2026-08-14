@@ -1,0 +1,18 @@
+id: shinuo-weng
+name: 'Shinuo Weng'
+preferredName: null
+currentAffiliation: 'Department of Mechanical Engineering, Johns Hopkins University'
+title: 'Assistant Professor'
+portrait: null
+portraitAlt: null
+website: null
+orcid: null
+bluesky: null
+linkedin: null
+bio: null
+historicalSeasons:
+  - 6
+verificationStatus: verified
+sourceUrl: 'https://engineering.jhu.edu/faculty/shinuo-weng/'
+sourceNote: 'Tissue morphogenesis, developmental mechanobiology and epithelial mechanics'
+status: published

@@ -1,0 +1,25 @@
+# Source: https://sites.google.com/view/gastrulationseminars/past-talks (Season 7 > Feb 2026)
+id: season-07-2026-02-19
+season: season-07
+status: published
+date: '2026-02-19'
+time: '12:30'
+timezone: America/New_York
+durationMinutes: 60
+sessionType: two-speaker
+timeSlot: western
+speakers:
+  - person: margarete-diaz-cuadros
+    role: speaker
+    talkTitle: 'A genetic redox bottleneck constrains human developmental rate'
+    affiliationOverride: 'Massachusetts General Hospital · Harvard Medical School'
+  - person: raquel-fueyo
+    role: speaker
+    talkTitle: 'Impact of a human-specific endogenous retrovirus on preimplantation development'
+    affiliationOverride: 'Max Planck Institute for Molecular Genetics'
+poster: ../../assets/posters/season-07/2026-02-19-diaz-cuadros-fueyo.jpg
+posterAlt: 'Season 7 VGZT poster for Margarete Diaz Cuadros and Raquel Fueyo, 2026-02-19.'
+recordingUrl: null
+recordingLabel: null
+description: null
+featured: false

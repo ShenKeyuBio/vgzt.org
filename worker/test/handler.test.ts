@@ -303,7 +303,7 @@ describe("contact handler abuse and delivery flow", () => {
     );
   });
 
-  it("accepts a Join request, verifies the Join action, emails it, and schedules Slack", async () => {
+  it("sends the explicit manual fallback to /join after Turnstile verification", async () => {
     let verifiedAction = "";
     const harness = createHarness({
       verifyTurnstile: async (input) => {

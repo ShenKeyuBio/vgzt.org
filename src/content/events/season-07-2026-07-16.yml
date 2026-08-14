@@ -1,0 +1,21 @@
+# Source: https://sites.google.com/view/gastrulationseminars/past-talks (Season 7 > Jul 2026)
+id: season-07-2026-07-16
+season: season-07
+status: published
+date: '2026-07-16'
+time: '12:30'
+timezone: America/New_York
+durationMinutes: 60
+sessionType: keynote
+timeSlot: western
+speakers:
+  - person: jennifer-nichols
+    role: keynote
+    talkTitle: 'Embryos, stem cells and gastruloid manipulation'
+    affiliationOverride: 'University of Edinburgh'
+poster: ../../assets/posters/season-07/2026-07-16-nichols.jpg
+posterAlt: 'Season 7 VGZT poster for Jennifer Nichols, 2026-07-16.'
+recordingUrl: null
+recordingLabel: null
+description: null
+featured: false

@@ -1,0 +1,18 @@
+id: jay-shendure
+name: 'Jay Shendure'
+preferredName: null
+currentAffiliation: 'University of Washington School of Medicine; Howard Hughes Medical Institute'
+title: 'Professor of Genome Sciences; HHMI Investigator'
+portrait: null
+portraitAlt: null
+website: null
+orcid: null
+bluesky: null
+linkedin: null
+bio: null
+historicalSeasons:
+  - 4
+verificationStatus: verified
+sourceUrl: 'https://shendurelab.github.io/people/'
+sourceNote: 'Developmental lineage tracing, single-cell genomics and functional genomics'
+status: published

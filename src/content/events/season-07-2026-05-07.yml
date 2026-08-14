@@ -1,0 +1,25 @@
+# Source: https://sites.google.com/view/gastrulationseminars/past-talks (Season 7 > May 2026)
+id: season-07-2026-05-07
+season: season-07
+status: published
+date: '2026-05-07'
+time: '12:30'
+timezone: America/New_York
+durationMinutes: 60
+sessionType: two-speaker
+timeSlot: western
+speakers:
+  - person: rui-yan
+    role: speaker
+    talkTitle: 'Multiscale mechanisms of foregut morphogenesis'
+    affiliationOverride: 'Harvard University'
+  - person: bruno-c-vellutini
+    role: speaker
+    talkTitle: 'How novel morphogenetic processes evolve'
+    affiliationOverride: 'Federal University of Minas Gerais (UFMG)'
+poster: ../../assets/posters/season-07/2026-05-07-yan-vellutini.jpg
+posterAlt: 'Season 7 VGZT poster for Rui Yan and Bruno C Vellutini, 2026-05-07.'
+recordingUrl: null
+recordingLabel: null
+description: null
+featured: false

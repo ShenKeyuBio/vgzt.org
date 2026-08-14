@@ -1,0 +1,21 @@
+# Source: https://sites.google.com/view/gastrulationseminars/past-talks (Season 7 > Jun 2026)
+id: season-07-2026-06-18
+season: season-07
+status: published
+date: '2026-06-18'
+time: '12:30'
+timezone: America/New_York
+durationMinutes: 60
+sessionType: single-speaker
+timeSlot: western
+speakers:
+  - person: hannah-long
+    role: speaker
+    talkTitle: 'Modelling facial variation from the dish to fish – how the DNA variants shape morphology in evolution and disease'
+    affiliationOverride: 'University of Edinburgh'
+poster: ../../assets/posters/season-07/2026-06-18-long.jpg
+posterAlt: 'Season 7 VGZT poster for Hannah Long, 2026-06-18.'
+recordingUrl: null
+recordingLabel: null
+description: null
+featured: false

@@ -1,0 +1,18 @@
+id: jon-muncie
+name: 'Jon Muncie'
+preferredName: null
+currentAffiliation: 'Gladstone Institutes, Bruneau Lab'
+title: 'Scientist'
+portrait: null
+portraitAlt: null
+website: null
+orcid: null
+bluesky: null
+linkedin: null
+bio: null
+historicalSeasons:
+  - 1
+verificationStatus: verified
+sourceUrl: 'https://bruneaulab.gladstone.org/meet-the-lab-1'
+sourceNote: 'Current professional name appears as Jon Muncie-Vasic / Jonathon M. Muncie-Vasic; matched by developmental-biology publications.'
+status: published

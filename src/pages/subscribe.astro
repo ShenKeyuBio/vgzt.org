@@ -14,20 +14,21 @@ const joinEndpoint =
 ---
 
 <BaseLayout
-  title="Join VGZT"
-  description="Request access to the VGZT Slack community and mailing list."
+  title="Subscribe VGZT Talks"
+  description="Choose VGZT Slack, seminar email updates, or both."
   email={site.publicEmail}
   social={getFooterSocial(social)}
   masterLogo={site.masterLogo}
 >
   <header class="page-hero page-hero--pink">
     <div class="container">
-      <p class="eyebrow">Join the community</p>
+      <p class="eyebrow">Subscribe VGZT Talks</p>
       <h1>Stay connected with VGZT.</h1>
       <p>
-        One short form requests both VGZT Slack access and seminar updates by
-        email.
+        Choose the channels that suit you, then continue directly to the
+        relevant signup option.
       </p>
+      <span class="maker-watermark" aria-hidden="true">Site by Keyu Shen</span>
     </div>
   </header>
 
@@ -35,5 +36,9 @@ const joinEndpoint =
     endpoint={joinEndpoint}
     turnstileSiteKey={site.turnstileSiteKey}
     email={site.publicEmail}
+    slackInviteUrl={social.slackInviteUrl}
+    newsletterUrl={social.newsletterUrl}
+    newsletterEmbedScriptUrl={social.newsletterEmbedScriptUrl}
+    newsletterFormId={social.newsletterFormId}
   />
 </BaseLayout>

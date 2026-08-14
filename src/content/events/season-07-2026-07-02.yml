@@ -1,0 +1,25 @@
+# Source: https://sites.google.com/view/gastrulationseminars/past-talks (Season 7 > Jul 2026)
+id: season-07-2026-07-02
+season: season-07
+status: published
+date: '2026-07-02'
+time: '12:30'
+timezone: America/New_York
+durationMinutes: 60
+sessionType: two-speaker
+timeSlot: western
+speakers:
+  - person: silvia-santos
+    role: speaker
+    talkTitle: 'Decoding cellular signals during early human development'
+    affiliationOverride: 'The Francis Crick Institute'
+  - person: diana-pinheiro
+    role: speaker
+    talkTitle: 'Embryonic Origami: The emergence of fate and form in vertebrate gastrulation'
+    affiliationOverride: 'Research Institute of Molecular Pathology (IMP)'
+poster: ../../assets/posters/season-07/2026-07-02-santos-pinheiro.jpg
+posterAlt: 'Season 7 VGZT poster for Silvia Santos and Diana Pinheiro, 2026-07-02.'
+recordingUrl: null
+recordingLabel: null
+description: null
+featured: false

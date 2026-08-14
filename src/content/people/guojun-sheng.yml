@@ -1,0 +1,19 @@
+id: guojun-sheng
+name: 'Guojun Sheng'
+preferredName: null
+currentAffiliation: 'International Research Center for Medical Sciences (IRCMS), Kumamoto University'
+title: 'Professor'
+portrait: null
+portraitAlt: null
+website: null
+orcid: null
+bluesky: null
+linkedin: null
+bio: null
+historicalSeasons:
+  - 1
+  - 7
+verificationStatus: verified
+sourceUrl: 'https://ircms.kumamoto-u.ac.jp/members/pis/guojun_sheng/'
+sourceNote: 'avian early embryogenesis; EMT; mesoderm and hematovascular development'
+status: published

@@ -1,0 +1,18 @@
+id: pierre-osteil
+name: 'Pierre Osteil'
+preferredName: null
+currentAffiliation: 'Université Clermont Auvergne / GReD'
+title: 'Maître de conférences'
+portrait: null
+portraitAlt: null
+website: null
+orcid: null
+bluesky: null
+linkedin: null
+bio: null
+historicalSeasons:
+  - 4
+verificationStatus: verified
+sourceUrl: 'https://cv.hal.science/pierre-osteil'
+sourceNote: 'Mammalian embryology, organogenesis and stem-cell embryo models'
+status: published

@@ -1,8 +1,8 @@
 id: sanskriti-saxena
 name: Sanskriti Saxena
 preferredName: null
-currentAffiliation: null
-title: null
+currentAffiliation: Van Andel Institute
+title: PhD Student
 portrait: null
 portraitAlt: null
 website: null
@@ -10,4 +10,8 @@ orcid: null
 bluesky: null
 linkedin: null
 bio: null
-status: draft
+historicalSeasons: []
+verificationStatus: verified
+sourceUrl: null
+sourceNote: Season 8 organizer details supplied directly by VGZT.
+status: published

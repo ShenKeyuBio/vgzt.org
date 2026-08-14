@@ -1,0 +1,18 @@
+id: nate-lord
+name: 'Nate Lord'
+preferredName: null
+currentAffiliation: 'University of Pittsburgh, Department of Computational and Systems Biology'
+title: 'Assistant Professor'
+portrait: null
+portraitAlt: null
+website: null
+orcid: null
+bluesky: null
+linkedin: null
+bio: null
+historicalSeasons:
+  - 1
+verificationStatus: verified
+sourceUrl: 'https://www.gradbiomed.pitt.edu/person/nathan-lord'
+sourceNote: "Official Pitt profile; Nathan 'Nate' Lord."
+status: published

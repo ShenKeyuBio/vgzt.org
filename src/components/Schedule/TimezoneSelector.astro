@@ -1,22 +1,11 @@
 ---
+import { CURATED_TIME_ZONE_OPTIONS } from '../../lib/timezone-options';
+
 interface Props {
   controlId?: string;
 }
 
 const { controlId = 'schedule-timezone' } = Astro.props;
-const fallbacks = [
-  'America/New_York',
-  'America/Los_Angeles',
-  'Europe/London',
-  'Europe/Berlin',
-  'Asia/Shanghai',
-  'Asia/Tokyo',
-  'Australia/Sydney',
-];
-const zones =
-  typeof Intl.supportedValuesOf === 'function'
-    ? Intl.supportedValuesOf('timeZone')
-    : fallbacks;
 ---
 
 <div class="timezone-control" data-timezone-control>
@@ -33,8 +22,8 @@ const zones =
   >
     <option value="auto">My timezone (automatic)</option>
     {
-      zones.map((zone) => (
-        <option value={zone}>{zone.replaceAll('_', ' ')}</option>
+      CURATED_TIME_ZONE_OPTIONS.map((option) => (
+        <option value={option.value}>{option.label}</option>
       ))
     }
   </select>

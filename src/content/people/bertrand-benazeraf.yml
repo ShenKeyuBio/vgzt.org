@@ -1,0 +1,18 @@
+id: bertrand-benazeraf
+name: 'Bertrand Bénazéraf'
+preferredName: null
+currentAffiliation: 'Centre de Biologie Intégrative (CBI), CNRS / Université de Toulouse'
+title: 'Researcher / Team Leader'
+portrait: null
+portraitAlt: null
+website: null
+orcid: null
+bluesky: null
+linkedin: null
+bio: null
+historicalSeasons:
+  - 2
+verificationStatus: verified
+sourceUrl: 'https://cbi-toulouse.fr/en/equipe/hypermorph-en/'
+sourceNote: 'Official CBI team page.'
+status: published

@@ -1,0 +1,25 @@
+# Source: https://sites.google.com/view/gastrulationseminars/past-talks (Season 7 > May 2026)
+id: season-07-2026-05-13
+season: season-07
+status: published
+date: '2026-05-13'
+time: '04:00'
+timezone: America/New_York
+durationMinutes: 60
+sessionType: two-speaker
+timeSlot: custom
+speakers:
+  - person: clare-buckley
+    role: speaker
+    talkTitle: 'Understanding Force Propagation within the Zebrafish Neural Tube'
+    affiliationOverride: 'University of Manchester'
+  - person: mel-white
+    role: speaker
+    talkTitle: 'Quails across the scales: Quantitative live imaging of neural tube formation'
+    affiliationOverride: 'The University of Queensland'
+poster: ../../assets/posters/season-07/2026-05-13-buckley-white.jpg
+posterAlt: 'Season 7 VGZT poster for Clare Buckley and Mel White, 2026-05-13.'
+recordingUrl: null
+recordingLabel: null
+description: null
+featured: false

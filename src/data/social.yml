@@ -1,5 +1,7 @@
 newsletterUrl: null
-slackInviteUrl: null
-linkedinUrl: null
-blueskyUrl: null
-xUrl: null
+newsletterEmbedScriptUrl: https://eomail5.com/form/4af754d8-9823-11f1-8450-adb50bbcb42e.js
+newsletterFormId: 4af754d8-9823-11f1-8450-adb50bbcb42e
+slackInviteUrl: https://join.slack.com/t/gastrulationseminars/shared_invite/zt-3ygitwchd-AD29YjXgMZ7Md~RpDggsww
+linkedinUrl: https://www.linkedin.com/company/virtual-gastrulation-zoom-talks-vgzt/
+blueskyUrl: https://bsky.app/profile/vgzt2021.bsky.social
+xUrl: https://x.com/VGZT2020_21

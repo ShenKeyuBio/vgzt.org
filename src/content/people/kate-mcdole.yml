@@ -1,0 +1,18 @@
+id: kate-mcdole
+name: 'Kate McDole'
+preferredName: null
+currentAffiliation: 'MRC Laboratory of Molecular Biology (MRC LMB), Cambridge'
+title: 'Group Leader'
+portrait: null
+portraitAlt: null
+website: null
+orcid: null
+bluesky: null
+linkedin: null
+bio: null
+historicalSeasons:
+  - 1
+verificationStatus: verified
+sourceUrl: 'https://mrclmb.ac.uk/research-leaders/kate-mcdole/'
+sourceNote: 'early mammalian embryo morphogenesis; light-sheet imaging; mechanobiology'
+status: published

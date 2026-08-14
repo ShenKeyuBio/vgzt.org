@@ -1,0 +1,18 @@
+id: iftach-nachman
+name: 'Iftach Nachman'
+preferredName: null
+currentAffiliation: 'Tel Aviv University, Department of Biochemistry and Molecular Biology / School of Neurobiology, Biochemistry and Biophysics'
+title: 'Associate Professor'
+portrait: null
+portraitAlt: null
+website: null
+orcid: null
+bluesky: null
+linkedin: null
+bio: null
+historicalSeasons:
+  - 1
+verificationStatus: verified
+sourceUrl: 'https://safrabio.cs.tau.ac.il/iftach_nachman_promoted_to_associate_professor_march2024'
+sourceNote: 'early developmental cell-fate decisions; gastruloids; stem-cell embryo models'
+status: published

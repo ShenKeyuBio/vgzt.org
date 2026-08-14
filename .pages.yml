@@ -175,11 +175,19 @@ content:
           - name: newsletterUrl
             label: Newsletter subscription URL
             component: nullable_https_url
-            description: 'Leave empty until the canonical HTTPS destination is verified. Do not paste an email tracking redirect.'
+            description: 'Optional direct subscription URL. Leave empty while the EmailOctopus embed is used.'
+          - name: newsletterEmbedScriptUrl
+            label: Newsletter embed script URL
+            component: nullable_https_url
+            description: 'EmailOctopus embed script loaded only when a visitor selects the mailing list on the Subscribe page.'
+          - name: newsletterFormId
+            label: Newsletter form ID
+            type: string
+            description: 'Provider form identifier used by the EmailOctopus embed.'
           - name: slackInviteUrl
             label: VGZT Slack invitation URL
             component: nullable_https_url
-            description: 'Leave empty until the canonical community invitation is verified.'
+            description: 'Canonical invite used by the Subscribe page and footer.'
           - name: linkedinUrl
             label: LinkedIn URL
             component: nullable_https_url
@@ -198,11 +206,20 @@ content:
         operations:
           delete: false
         fields:
-          - name: open
-            label: Show the call as open
-            type: boolean
-            default: false
-            description: 'Before enabling, verify the season, deadline, eligibility copy, and canonical submission URL.'
+          - name: state
+            label: Abstract call state
+            type: select
+            required: true
+            default: opening-soon
+            description: 'Opening soon links to the public details page. Select open only after the canonical submission URL is verified.'
+            options:
+              values:
+                - name: opening-soon
+                  label: Opening soon
+                - name: open
+                  label: Open for submissions
+                - name: closed
+                  label: Closed
           - name: season
             label: Season
             type: reference
@@ -601,6 +618,8 @@ content:
             required: true
             options:
               values:
+                - name: single-speaker
+                  label: Single-speaker session
                 - name: two-speaker
                   label: Two-speaker session
                 - name: keynote
@@ -748,14 +767,14 @@ content:
             default: null
             description: 'Leave empty until confirmed. Event-specific historical affiliations belong on the event override.'
             options:
-              maxlength: 160
+              maxlength: 200
           - name: title
             label: Current title / role
             type: string
             default: null
             description: 'Leave empty until approved.'
             options:
-              maxlength: 120
+              maxlength: 160
           - name: portrait
             label: Approved portrait
             type: image
@@ -794,6 +813,36 @@ content:
             description: 'Optional approved biography; do not infer one from external profiles.'
             options:
               maxlength: 2000
+          - name: historicalSeasons
+            label: Historical VGZT seasons
+            type: number
+            list: true
+            default: []
+            description: 'Verified season appearances used by the People archive filter. Keep each season number unique.'
+            options:
+              min: 1
+              max: 99
+          - name: verificationStatus
+            label: Profile verification
+            type: select
+            required: true
+            default: needs-review
+            options:
+              values:
+                - name: verified
+                  label: Verified
+                - name: needs-review
+                  label: Needs review
+          - name: sourceUrl
+            label: Verification source
+            component: nullable_https_url
+            description: 'Strongest source supporting the current title and affiliation; not displayed publicly.'
+          - name: sourceNote
+            label: Verification note
+            type: text
+            default: null
+            options:
+              maxlength: 500
           - name: status
             component: publication_status
 

@@ -1,0 +1,18 @@
+id: michael-veeman
+name: 'Michael Veeman'
+preferredName: null
+currentAffiliation: 'Kansas State University, Division of Biology'
+title: 'Associate Professor; Director of Graduate Studies'
+portrait: null
+portraitAlt: null
+website: null
+orcid: null
+bluesky: null
+linkedin: null
+bio: null
+historicalSeasons:
+  - 2
+verificationStatus: verified
+sourceUrl: 'https://www.k-state.edu/biology/about/people/faculty/index.html'
+sourceNote: 'Official K-State faculty directory.'
+status: published

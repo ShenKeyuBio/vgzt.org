@@ -1,0 +1,21 @@
+# Source: https://sites.google.com/view/gastrulationseminars/past-talks (Season 7 > Dec 2025)
+id: season-07-2025-12-18
+season: season-07
+status: published
+date: '2025-12-18'
+time: '12:30'
+timezone: America/New_York
+durationMinutes: 60
+sessionType: keynote
+timeSlot: western
+speakers:
+  - person: olivier-pourquie
+    role: keynote
+    talkTitle: 'Recapitulating human somitogenesis in vitro'
+    affiliationOverride: "Harvard Medical School · Brigham and Women's Hospital"
+poster: ../../assets/posters/season-07/2025-12-18-pourquie.jpg
+posterAlt: 'Season 7 VGZT poster for Olivier Pourquie, 2025-12-18.'
+recordingUrl: null
+recordingLabel: null
+description: null
+featured: false

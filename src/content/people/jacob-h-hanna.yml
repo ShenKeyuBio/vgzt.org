@@ -1,0 +1,19 @@
+id: jacob-h-hanna
+name: 'Jacob H. Hanna'
+preferredName: null
+currentAffiliation: 'Weizmann Institute of Science, Department of Molecular Genetics'
+title: 'Professor / Principal Investigator'
+portrait: null
+portraitAlt: null
+website: null
+orcid: null
+bluesky: null
+linkedin: null
+bio: null
+historicalSeasons:
+  - 2
+  - 4
+verificationStatus: verified
+sourceUrl: 'https://www.weizmann.ac.il/molgen/hanna/'
+sourceNote: 'Official Weizmann lab page.'
+status: published

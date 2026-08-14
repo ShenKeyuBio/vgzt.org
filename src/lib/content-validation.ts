@@ -85,7 +85,7 @@ export interface TimeSlotRecord {
 }
 
 export interface AbstractCallRecord {
-  open: boolean;
+  state: 'opening-soon' | 'open' | 'closed';
   season: string;
   audience: string;
   deadline: { date: string; time: string; timezone: string } | null;
@@ -109,6 +109,8 @@ export interface SiteRecord {
 
 export interface SocialRecord {
   newsletterUrl: string | null;
+  newsletterEmbedScriptUrl: string | null;
+  newsletterFormId: string | null;
   slackInviteUrl: string | null;
   linkedinUrl: string | null;
   blueskyUrl: string | null;
@@ -597,8 +599,27 @@ export function validateContentGraph(
       'Turnstile site key must be null or a non-empty public key.',
     );
   }
-  for (const [key, value] of Object.entries(graph.social)) {
-    checkNullableUrl(issues, `src/data/social.yml:${key}`, value);
+  for (const key of [
+    'newsletterUrl',
+    'newsletterEmbedScriptUrl',
+    'slackInviteUrl',
+    'linkedinUrl',
+    'blueskyUrl',
+    'xUrl',
+  ] as const) {
+    checkNullableUrl(issues, `src/data/social.yml:${key}`, graph.social[key]);
+  }
+  if (
+    graph.social.newsletterFormId !== null &&
+    (typeof graph.social.newsletterFormId !== 'string' ||
+      !/^[a-z0-9-]{1,100}$/iu.test(graph.social.newsletterFormId))
+  ) {
+    add(
+      issues,
+      'invalid_configuration',
+      'src/data/social.yml:newsletterFormId',
+      'Newsletter form ID must be null or a short provider form identifier.',
+    );
   }
 
   for (const [index, event] of graph.events.entries()) {
@@ -740,7 +761,8 @@ export function validateContentGraph(
         );
       } else if (
         event.status === 'published' &&
-        person.status !== 'published'
+        person.status !== 'published' &&
+        season?.status !== 'archived'
       ) {
         add(
           issues,
@@ -759,7 +781,10 @@ export function validateContentGraph(
           `${sessionType.label} requires exactly ${sessionType.speakerCount} speaker(s).`,
         );
       }
-      if (event.sessionType === 'two-speaker') {
+      if (
+        event.sessionType === 'two-speaker' &&
+        season?.status !== 'archived'
+      ) {
         const piCount = event.speakers.filter(
           ({ role }) => role === 'pi',
         ).length;
@@ -870,12 +895,12 @@ export function validateContentGraph(
       `Unknown season reference "${graph.abstractCall.season}".`,
     );
   }
-  if (typeof graph.abstractCall.open !== 'boolean') {
+  if (!['opening-soon', 'open', 'closed'].includes(graph.abstractCall.state)) {
     add(
       issues,
       'invalid_configuration',
-      'src/data/abstract-call.yml:open',
-      'Open must be true or false.',
+      'src/data/abstract-call.yml:state',
+      'State must be opening-soon, open, or closed.',
     );
   }
   checkRequiredText(
@@ -1097,7 +1122,10 @@ export function validateContentGraph(
         'The current season must be published for launch.',
       );
     }
-    if (graph.abstractCall.open && graph.abstractCall.formUrl === null) {
+    if (
+      graph.abstractCall.state === 'open' &&
+      graph.abstractCall.formUrl === null
+    ) {
       add(
         issues,
         'launch_blocker',

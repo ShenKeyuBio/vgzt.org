@@ -1,0 +1,21 @@
+# Source: https://sites.google.com/view/gastrulationseminars/past-talks (Season 7 > Jun 2026)
+id: season-07-2026-06-04
+season: season-07
+status: published
+date: '2026-06-04'
+time: '12:30'
+timezone: America/New_York
+durationMinutes: 60
+sessionType: single-speaker
+timeSlot: western
+speakers:
+  - person: liangwen-zhong
+    role: speaker
+    talkTitle: 'H2A.J Regulates Trophoblast Ribosome Biogenesis in Early Human Development'
+    affiliationOverride: 'Yale University'
+poster: ../../assets/posters/season-07/2026-06-04-zhong.jpg
+posterAlt: 'Season 7 VGZT poster for Liangwen Zhong, 2026-06-04.'
+recordingUrl: null
+recordingLabel: null
+description: null
+featured: false

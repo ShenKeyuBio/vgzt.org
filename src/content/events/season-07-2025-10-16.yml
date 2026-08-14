@@ -1,0 +1,25 @@
+# Source: https://sites.google.com/view/gastrulationseminars/past-talks (Season 7 > Oct 2025)
+id: season-07-2025-10-16
+season: season-07
+status: published
+date: '2025-10-16'
+time: '12:30'
+timezone: America/New_York
+durationMinutes: 60
+sessionType: two-speaker
+timeSlot: western
+speakers:
+  - person: hidenobu-miyazawa
+    role: speaker
+    talkTitle: 'A non-canonical role of metabolism in regulation of developmental timing'
+    affiliationOverride: 'EMBL'
+  - person: girish-kale
+    role: speaker
+    talkTitle: 'Divergent evolutionary strategies pre-empt tissue collision in gastrulation'
+    affiliationOverride: 'University of Hohenheim'
+poster: ../../assets/posters/season-07/2025-10-16-miyazawa-kale.jpg
+posterAlt: 'Season 7 VGZT poster for Hidenobu Miyazawa and Girish Kale, 2025-10-16.'
+recordingUrl: null
+recordingLabel: null
+description: null
+featured: false

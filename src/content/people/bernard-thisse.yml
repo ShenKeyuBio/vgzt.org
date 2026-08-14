@@ -1,0 +1,18 @@
+id: bernard-thisse
+name: 'Bernard Thisse'
+preferredName: null
+currentAffiliation: 'University of Virginia School of Medicine, Department of Cell Biology'
+title: 'Professor'
+portrait: null
+portraitAlt: null
+website: null
+orcid: null
+bluesky: null
+linkedin: null
+bio: null
+historicalSeasons:
+  - 2
+verificationStatus: verified
+sourceUrl: 'https://www.sciencedirect.com/author/7003749768/bernard-v-thisse'
+sourceNote: 'Current affiliation corroborated by publication/profile sources; exact UVA faculty page not surfaced.'
+status: published

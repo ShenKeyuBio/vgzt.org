@@ -1,0 +1,21 @@
+# Source: https://sites.google.com/view/gastrulationseminars/past-talks (Season 7 > Jul 2026)
+id: season-07-2026-07-08
+season: season-07
+status: published
+date: '2026-07-08'
+time: '04:00'
+timezone: America/New_York
+durationMinutes: 60
+sessionType: keynote
+timeSlot: custom
+speakers:
+  - person: thomas-lecuit
+    role: keynote
+    talkTitle: 'The interplay between geometry and mechanics during Drosophila gastrulation'
+    affiliationOverride: 'Aix-Marseille Université · Collège de France'
+poster: ../../assets/posters/season-07/2026-07-08-lecuit.png
+posterAlt: 'Season 7 VGZT poster for Thomas Lecuit, 2026-07-08.'
+recordingUrl: null
+recordingLabel: null
+description: null
+featured: false

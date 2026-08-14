@@ -1,0 +1,25 @@
+# Source: https://sites.google.com/view/gastrulationseminars/past-talks (Season 7 > Apr 2026)
+id: season-07-2026-04-16
+season: season-07
+status: published
+date: '2026-04-16'
+time: '12:30'
+timezone: America/New_York
+durationMinutes: 60
+sessionType: two-speaker
+timeSlot: western
+speakers:
+  - person: meng-zhu
+    role: speaker
+    talkTitle: 'Oxygen as a Developmental Zeitgeber'
+    affiliationOverride: 'Harvard University'
+  - person: pulin-li
+    role: speaker
+    talkTitle: 'Using synthetic biology to inform development: reconstructing spatiotemporal dynamics of cell-cell communication'
+    affiliationOverride: 'MIT'
+poster: ../../assets/posters/season-07/2026-04-16-zhu-li.jpg
+posterAlt: 'Season 7 VGZT poster for Meng Zhu and Pulin Li, 2026-04-16.'
+recordingUrl: null
+recordingLabel: null
+description: null
+featured: false

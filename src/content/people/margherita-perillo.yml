@@ -1,0 +1,18 @@
+id: margherita-perillo
+name: 'Margherita Perillo'
+preferredName: null
+currentAffiliation: 'Marine Biological Laboratory, Bell Center'
+title: 'Research Scientist'
+portrait: null
+portraitAlt: null
+website: null
+orcid: null
+bluesky: null
+linkedin: null
+bio: null
+historicalSeasons:
+  - 7
+verificationStatus: verified
+sourceUrl: 'https://new-www.mbl.edu/education/comparative-developmental-biology'
+sourceNote: 'Sea-star evolutionary developmental biology, morphogenesis and germ-layer patterning'
+status: published

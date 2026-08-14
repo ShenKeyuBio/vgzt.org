@@ -1,0 +1,18 @@
+id: alexandra-vetrova
+name: 'Alexandra Vetrova'
+preferredName: null
+currentAffiliation: 'Koltzov Institute of Developmental Biology RAS, Laboratory of Morphogenesis Evolution; Department of Embryology, Saint Petersburg State University'
+title: 'Researcher'
+portrait: null
+portraitAlt: null
+website: null
+orcid: null
+bluesky: null
+linkedin: null
+bio: null
+historicalSeasons:
+  - 2
+verificationStatus: verified
+sourceUrl: 'https://pubmed.ncbi.nlm.nih.gov/39823995/'
+sourceNote: '2025 developmental-biology paper provides current affiliations and matches topic.'
+status: published

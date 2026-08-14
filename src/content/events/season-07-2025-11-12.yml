@@ -1,0 +1,25 @@
+# Source: https://sites.google.com/view/gastrulationseminars/past-talks (Season 7 > Nov 2025)
+id: season-07-2025-11-12
+season: season-07
+status: published
+date: '2025-11-12'
+time: '04:00'
+timezone: America/New_York
+durationMinutes: 60
+sessionType: two-speaker
+timeSlot: custom
+speakers:
+  - person: sameer-thukral
+    role: speaker
+    talkTitle: 'A mechanically distinct yolk compartment constrains blastoderm and gastrulation'
+    affiliationOverride: 'RIKEN'
+  - person: axel-h-newton
+    role: speaker
+    talkTitle: 'Defining the mechanisms driving accelerated neural crest development in marsupials'
+    affiliationOverride: 'The University of Melbourne'
+poster: ../../assets/posters/season-07/2025-11-12-thukral-newton.jpg
+posterAlt: 'Season 7 VGZT poster for Sameer Thukral and Axel H Newton, 2025-11-12.'
+recordingUrl: null
+recordingLabel: null
+description: null
+featured: false

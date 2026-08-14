@@ -1,14 +1,17 @@
 ---
 import { getCollection } from 'astro:content';
-import AnnouncementBar from '../components/AnnouncementBar.astro';
 import ContactForm from '../components/Forms/ContactForm.astro';
 import Hero from '../components/Hero.astro';
 import OrganizerGrid from '../components/People/OrganizerGrid.astro';
-import ScheduleStage from '../components/Schedule/ScheduleStage.astro';
+import ProgrammeSchedule from '../components/Schedule/ProgrammeSchedule.astro';
 import SeasonFormat from '../components/SeasonFormat.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getAbstractCallState, resolvePoster } from '../lib/config';
 import { selectDefaultEvent } from '../lib/event-selection';
+import {
+  defaultProgrammeSeasonId,
+  programmeSeasonIds,
+} from '../lib/season-programme';
 import {
   getAbstractCallSettings,
   getFooterSocial,
@@ -27,7 +30,7 @@ const abstractState = getAbstractCallState(abstractCall);
 
 const [seasons, people, eventEntries] = await Promise.all([
   getCollection('seasons'),
-  getCollection('people', ({ data }) => data.status === 'published'),
+  getCollection('people'),
   getCollection('events', ({ data }) => data.status === 'published'),
 ]);
 
@@ -56,7 +59,7 @@ const timeSlotsById = new Map(
 const publishedEvents = eventEntries
   .filter(({ data }) => data.id !== 'collection-empty-state')
   .filter(({ data }) => data.date !== null && data.time !== null)
-  .map((entry): EventViewModel => {
+  .map((entry): { seasonId: string; event: EventViewModel } => {
     const event = entry.data;
     if (event.date === null || event.time === null)
       throw new Error('Published event has no date/time.');
@@ -77,33 +80,60 @@ const publishedEvents = eventEntries
       };
     });
     return {
-      id: event.id,
-      slug: event.id,
-      instant: canonicalEventInstant(scheduled).toString(),
-      endInstant: eventEndInstant(scheduled).toString(),
-      canonicalDate: event.date,
-      canonicalTime: event.time,
-      timezone: event.timezone,
-      durationMinutes: event.durationMinutes,
-      sessionType:
-        sessionTypesById.get(event.sessionType)?.label || event.sessionType,
-      timeSlot:
-        timeSlotsById.get(
-          event.timeSlot as 'eastern' | 'western' | 'alternative',
-        )?.label || event.timeSlot,
-      posterSrc: typeof poster.src === 'string' ? poster.src : poster.src.src,
-      posterAlt: poster.alt,
-      speakers,
-      recordingUrl: event.recordingUrl,
+      seasonId: event.season,
+      event: {
+        id: event.id,
+        slug: event.id,
+        instant: canonicalEventInstant(scheduled).toString(),
+        endInstant: eventEndInstant(scheduled).toString(),
+        canonicalDate: event.date,
+        canonicalTime: event.time,
+        timezone: event.timezone,
+        durationMinutes: event.durationMinutes,
+        sessionType:
+          sessionTypesById.get(event.sessionType)?.label || event.sessionType,
+        timeSlot:
+          timeSlotsById.get(
+            event.timeSlot as 'eastern' | 'western' | 'alternative',
+          )?.label || event.timeSlot,
+        posterSrc: typeof poster.src === 'string' ? poster.src : poster.src.src,
+        posterAlt: poster.alt,
+        speakers,
+        recordingUrl: event.recordingUrl,
+      },
     };
   })
-  .sort((a, b) => a.instant.localeCompare(b.instant));
+  .sort((a, b) => a.event.instant.localeCompare(b.event.instant));
 
-const selectedEvent = selectDefaultEvent(
-  eventEntries
-    .filter(({ data }) => data.id !== 'collection-empty-state')
-    .map(({ data }) => data),
+const programmeIds = programmeSeasonIds(
+  site.currentSeason,
+  seasons.map(({ data }) => data),
+  eventEntries.map(({ data }) => data),
 );
+const defaultProgrammeSeason = defaultProgrammeSeasonId(
+  site.currentSeason,
+  seasons.map(({ data }) => data),
+  eventEntries.map(({ data }) => data),
+);
+const programmeSeasons = programmeIds.map((seasonId) => {
+  const season = seasons.find(({ data }) => data.id === seasonId);
+  if (!season) throw new Error(`Programme season "${seasonId}" was not found.`);
+  const seasonEntries = eventEntries
+    .filter(({ data }) => data.season === seasonId)
+    .filter(({ data }) => data.id !== 'collection-empty-state');
+  return {
+    id: season.data.id,
+    label: season.data.label,
+    start: season.data.start,
+    end: season.data.end,
+    status: season.data.status,
+    events: publishedEvents
+      .filter((item) => item.seasonId === seasonId)
+      .map((item) => item.event),
+    selectedId:
+      selectDefaultEvent(seasonEntries.map(({ data }) => data))?.id ?? null,
+  };
+});
 const seasonDates = `${new Intl.DateTimeFormat('en-GB', { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(`${currentSeason.data.start}T12:00:00Z`))}–${new Intl.DateTimeFormat('en-GB', { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(`${currentSeason.data.end}T12:00:00Z`))}`;
 const eastern = timeSlotsById.get('eastern');
 const western = timeSlotsById.get('western');
@@ -119,24 +149,20 @@ const keynote = sessionTypesById.get('keynote');
   social={getFooterSocial(social)}
   masterLogo={site.masterLogo}
 >
-  <AnnouncementBar
-    open={abstractState.showBanner}
-    seasonLabel={currentSeason.data.label}
-    audience={abstractCall.audience}
-    formUrl={abstractState.ctaUrl}
-  />
   <Hero
+    seasonNumber={currentSeason.data.season}
     seasonLabel={currentSeason.data.label}
     seasonDates={seasonDates}
     description="A global online seminar series for developmental biology—bringing emerging researchers and established investigators into one lively scientific room."
     abstractUrl={abstractState.ctaUrl}
+    abstractLabel={abstractState.ctaLabel}
+    abstractExternal={abstractState.external}
     masterLogo={site.masterLogo}
   />
-  <ScheduleStage
-    events={publishedEvents}
-    selectedId={selectedEvent?.id}
-    start={currentSeason.data.start}
-    end={currentSeason.data.end}
+  <ProgrammeSchedule
+    seasons={programmeSeasons}
+    defaultSeasonId={defaultProgrammeSeason}
+    currentSeasonId={site.currentSeason}
   />
   <SeasonFormat
     easternTime={eastern?.time}

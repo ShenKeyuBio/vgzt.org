@@ -69,8 +69,8 @@ const people = defineCollection({
         id,
         name: z.string().trim().min(1).max(100),
         preferredName: nullableShortText(100),
-        currentAffiliation: nullableShortText(160),
-        title: nullableShortText(120),
+        currentAffiliation: nullableShortText(200),
+        title: nullableShortText(160),
         portrait: image()
           .refine(
             (value) => /\.(?:png|jpe?g|webp)$/i.test(value.src),
@@ -88,6 +88,15 @@ const people = defineCollection({
         bluesky: nullableHttpsUrl,
         linkedin: nullableHttpsUrl,
         bio: nullableShortText(2_000),
+        historicalSeasons: z
+          .array(z.number().int().min(1).max(99))
+          .max(20)
+          .default([]),
+        verificationStatus: z
+          .enum(['verified', 'needs-review'])
+          .default('needs-review'),
+        sourceUrl: nullableHttpsUrl,
+        sourceNote: nullableShortText(500),
         status: z.enum(['draft', 'published']).default('draft'),
       })
       .superRefine((person, context) => {
@@ -97,6 +106,17 @@ const people = defineCollection({
             path: ['portraitAlt'],
             message:
               'Portrait alt text is required when a portrait is supplied.',
+          });
+        }
+
+        if (
+          new Set(person.historicalSeasons).size !==
+          person.historicalSeasons.length
+        ) {
+          context.addIssue({
+            code: 'custom',
+            path: ['historicalSeasons'],
+            message: 'Historical season numbers must be unique.',
           });
         }
       }),
@@ -170,7 +190,10 @@ const events = defineCollection({
         speakers: z.array(eventSpeaker).max(2).default([]),
         poster: image()
           .refine(
-            (value) => /\.(?:png|jpe?g|webp)$/i.test(value.src),
+            (value) =>
+              typeof value === 'string'
+                ? /\.(?:png|jpe?g|webp)$/i.test(value)
+                : ['png', 'jpg', 'jpeg', 'webp'].includes(value.format),
             'Use a PNG, JPEG, or WebP poster.',
           )
           .nullable()

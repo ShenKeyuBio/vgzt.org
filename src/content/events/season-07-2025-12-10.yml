@@ -1,0 +1,25 @@
+# Source: https://sites.google.com/view/gastrulationseminars/past-talks (Season 7 > Dec 2025)
+id: season-07-2025-12-10
+season: season-07
+status: published
+date: '2025-12-10'
+time: '04:00'
+timezone: America/New_York
+durationMinutes: 60
+sessionType: two-speaker
+timeSlot: custom
+speakers:
+  - person: guojun-sheng
+    role: speaker
+    talkTitle: 'Pre-gastrulation developmental arrest in birds'
+    affiliationOverride: null
+  - person: jennifer-zenker
+    role: speaker
+    talkTitle: 'Pluripotency – a microtubule cytoskeleton-regulated state?'
+    affiliationOverride: 'Monash University · Australian Regenerative Medicine Institute'
+poster: ../../assets/posters/season-07/2025-12-10-sheng-zenker.jpg
+posterAlt: 'Season 7 VGZT poster for Guojun Sheng and Jennifer Zenker, 2025-12-10.'
+recordingUrl: null
+recordingLabel: null
+description: null
+featured: false

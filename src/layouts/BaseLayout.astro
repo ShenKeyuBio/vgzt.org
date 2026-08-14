@@ -1,11 +1,16 @@
 ---
+import { getEntry } from 'astro:content';
 import '../styles/global.css';
+import AnnouncementBar from '../components/AnnouncementBar.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import { getAbstractCallState } from '../lib/config';
+import { getAbstractCallSettings, getSiteSettings } from '../lib/site-data';
 
 interface SocialItem {
   label: string;
   url?: string | null;
+  external?: boolean;
 }
 
 interface Props {
@@ -35,6 +40,13 @@ const fullTitle =
     ? 'VGZT — Virtual Gastrulation Zoom Talks'
     : `${title} — VGZT`;
 const socialImage = image ? new URL(image, Astro.site).toString() : null;
+const siteSettings = getSiteSettings();
+const abstractCall = getAbstractCallSettings();
+const abstractState = getAbstractCallState(abstractCall);
+const [currentSeason, abstractSeason] = await Promise.all([
+  getEntry('seasons', siteSettings.currentSeason),
+  getEntry('seasons', abstractCall.season),
+]);
 ---
 
 <!doctype html>
@@ -65,10 +77,23 @@ const socialImage = image ? new URL(image, Astro.site).toString() : null;
   </head>
   <body>
     <a class="skip-link" href="#main-content">Skip to main content</a>
-    <Header masterLogo={masterLogo} />
+    <AnnouncementBar
+      state={abstractState}
+      seasonLabel={abstractSeason?.data.label || abstractCall.season}
+      audience={abstractCall.audience}
+    />
+    <Header
+      masterLogo={masterLogo}
+      seasonNumber={currentSeason?.data.season ?? null}
+    />
     <main id="main-content" tabindex="-1">
       <slot />
     </main>
-    <Footer email={email} social={social} masterLogo={masterLogo} />
+    <Footer
+      email={email}
+      social={social}
+      masterLogo={masterLogo}
+      seasonNumber={currentSeason?.data.season ?? null}
+    />
   </body>
 </html>

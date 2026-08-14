@@ -7,15 +7,17 @@ import SocialLinks from './SocialLinks.astro';
 interface SocialItem {
   label: string;
   url?: string | null;
+  external?: boolean;
 }
 
 interface Props {
   email: string;
   social: SocialItem[];
   masterLogo?: string | null;
+  seasonNumber?: number | null;
 }
 
-const { email, social, masterLogo = null } = Astro.props;
+const { email, social, masterLogo = null, seasonNumber = null } = Astro.props;
 const year = new Date().getUTCFullYear();
 ---
 
@@ -33,7 +35,11 @@ const year = new Date().getUTCFullYear();
   <div class="container">
     <div class="site-footer__top">
       <div class="site-footer__brand">
-        <BrandMark masterLogo={masterLogo} colourDots />
+        <BrandMark
+          masterLogo={masterLogo}
+          colourDots
+          seasonNumber={seasonNumber}
+        />
         <p>
           Virtual Gastrulation Zoom Talks connects the developmental-biology
           community worldwide.
@@ -49,11 +55,12 @@ const year = new Date().getUTCFullYear();
     </div>
     <div class="site-footer__bottom">
       <span>© {year} Virtual Gastrulation Zoom Talks</span>
+      <span class="maker-watermark">Website by Keyu Shen</span>
       <ul class="footer-links">
         <li><a href="/privacy/">Privacy</a></li>
         <li><a href="/about/">About</a></li>
         <li><a href="/contact/">Contact</a></li>
-        <li><a href="/subscribe/">Join VGZT</a></li>
+        <li><a href="/subscribe/">Subscribe VGZT Talks</a></li>
       </ul>
     </div>
   </div>

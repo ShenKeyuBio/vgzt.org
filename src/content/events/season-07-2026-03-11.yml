@@ -1,0 +1,25 @@
+# Source: https://sites.google.com/view/gastrulationseminars/past-talks (Season 7 > Mar 2026)
+id: season-07-2026-03-11
+season: season-07
+status: published
+date: '2026-03-11'
+time: '05:00'
+timezone: America/New_York
+durationMinutes: 60
+sessionType: two-speaker
+timeSlot: custom
+speakers:
+  - person: sundar-naganathan
+    role: speaker
+    talkTitle: 'A physical process terminates convergence flows in zebrafish embryos'
+    affiliationOverride: 'TIFR'
+  - person: ruth-arkell
+    role: speaker
+    talkTitle: 'Disruption of lineage allocation and fate via loss of canonical WNT co-repression underlies ZIC3-associated congenital heart defects'
+    affiliationOverride: 'Australian National University'
+poster: ../../assets/posters/season-07/2026-03-11-naganathan-arkell.jpg
+posterAlt: 'Season 7 VGZT poster for Sundar Naganathan and Ruth Arkell, 2026-03-11.'
+recordingUrl: null
+recordingLabel: null
+description: null
+featured: false

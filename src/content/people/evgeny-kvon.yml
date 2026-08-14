@@ -1,0 +1,18 @@
+id: evgeny-kvon
+name: 'Evgeny Kvon'
+preferredName: null
+currentAffiliation: 'Department of Developmental and Cell Biology, University of California, Irvine'
+title: 'Associate Professor'
+portrait: null
+portraitAlt: null
+website: null
+orcid: null
+bluesky: null
+linkedin: null
+bio: null
+historicalSeasons:
+  - 7
+verificationStatus: verified
+sourceUrl: 'https://www.kvonlab.org/members'
+sourceNote: 'Kvon Lab lists Associate Professor; a departmental page may still show the earlier Assistant Professor title.'
+status: published

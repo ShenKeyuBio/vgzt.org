@@ -1,0 +1,18 @@
+id: nathaniel-clarke
+name: 'Nathaniel Clarke'
+preferredName: null
+currentAffiliation: 'University of Miami — Department of Biology'
+title: 'Assistant Professor'
+portrait: null
+portraitAlt: null
+website: null
+orcid: null
+bluesky: null
+linkedin: null
+bio: null
+historicalSeasons:
+  - 5
+verificationStatus: verified
+sourceUrl: 'https://clarkelab.com/team/'
+sourceNote: 'Cellular and developmental biology, evo-devo, animal multicellularity and cell adhesion'
+status: published

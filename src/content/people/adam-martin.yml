@@ -1,0 +1,18 @@
+id: adam-martin
+name: 'Adam Martin'
+preferredName: null
+currentAffiliation: 'Massachusetts Institute of Technology, Department of Biology'
+title: 'Salvador E. Luria Professor'
+portrait: null
+portraitAlt: null
+website: null
+orcid: null
+bluesky: null
+linkedin: null
+bio: null
+historicalSeasons:
+  - 2
+verificationStatus: verified
+sourceUrl: 'https://biology.mit.edu/profile/adam-c-martin/'
+sourceNote: 'Official MIT profile.'
+status: published

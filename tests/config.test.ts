@@ -10,7 +10,7 @@ describe('abstract-call display state', () => {
   it('hides the banner while the call is closed', () => {
     expect(
       getAbstractCallState({
-        open: false,
+        state: 'closed',
         formUrl: 'https://example.org/form',
       }),
     ).toEqual({
@@ -18,28 +18,50 @@ describe('abstract-call display state', () => {
       showBanner: false,
       canSubmit: false,
       ctaUrl: null,
+      ctaLabel: null,
+      external: false,
+    });
+  });
+
+  it('links the opening-soon state to the public details page', () => {
+    expect(
+      getAbstractCallState({ state: 'opening-soon', formUrl: null }),
+    ).toEqual({
+      mode: 'opening-soon',
+      showBanner: true,
+      canSubmit: false,
+      ctaUrl: '/abstracts/',
+      ctaLabel: 'View abstract call',
+      external: false,
     });
   });
 
   it('enables the CTA only for an open call with a valid HTTPS URL', () => {
     expect(
-      getAbstractCallState({ open: true, formUrl: 'https://example.org/form' }),
+      getAbstractCallState({
+        state: 'open',
+        formUrl: 'https://example.org/form',
+      }),
     ).toMatchObject({
       mode: 'open',
       showBanner: true,
       canSubmit: true,
       ctaUrl: 'https://example.org/form',
+      ctaLabel: 'Submit an abstract',
+      external: true,
     });
   });
 
   it.each([null, '#', 'javascript:void(0)', 'http://example.org/form'])(
-    'keeps an open call visible but non-clickable for unresolved URL %s',
+    'keeps an open call visible without exposing an invalid submission URL %s',
     (formUrl) => {
-      expect(getAbstractCallState({ open: true, formUrl })).toEqual({
-        mode: 'open-pending-link',
+      expect(getAbstractCallState({ state: 'open', formUrl })).toEqual({
+        mode: 'open',
         showBanner: true,
         canSubmit: false,
-        ctaUrl: null,
+        ctaUrl: '/abstracts/',
+        ctaLabel: 'View abstract call',
+        external: false,
       });
     },
   );

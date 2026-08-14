@@ -1,0 +1,25 @@
+# Source: https://sites.google.com/view/gastrulationseminars/past-talks (Season 7 > Jan 2026)
+id: season-07-2026-01-08
+season: season-07
+status: published
+date: '2026-01-08'
+time: '12:30'
+timezone: America/New_York
+durationMinutes: 60
+sessionType: two-speaker
+timeSlot: western
+speakers:
+  - person: jan-jakub-zylicz
+    role: speaker
+    talkTitle: 'Epi-metabolic regulation of early development'
+    affiliationOverride: 'reNEW'
+  - person: anahi-binagui-casas
+    role: speaker
+    talkTitle: 'Studying the lineage potential of in vitro derived neuromesodermal progenitors'
+    affiliationOverride: 'University of Edinburgh'
+poster: ../../assets/posters/season-07/2026-01-08-zylicz-binagui-casas.jpg
+posterAlt: 'Season 7 VGZT poster for Jan Jakub Zylicz and Anahi Binagui Casas, 2026-01-08.'
+recordingUrl: null
+recordingLabel: null
+description: null
+featured: false

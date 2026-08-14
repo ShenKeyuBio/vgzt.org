@@ -1,0 +1,18 @@
+id: barbora-strakova
+name: 'Barbora Straková'
+preferredName: null
+currentAffiliation: 'Wesleyan University, Tezak Lab, Department of Biology'
+title: 'Postdoctoral Researcher'
+portrait: null
+portraitAlt: null
+website: null
+orcid: null
+bluesky: null
+linkedin: null
+bio: null
+historicalSeasons:
+  - 6
+verificationStatus: verified
+sourceUrl: 'https://www.tezaklab.com/team/'
+sourceNote: 'Wesleyan Biology names her as a Tezak Lab postdoc; Tezak Lab profile and publications directly match developmental biology/sex determination.'
+status: published

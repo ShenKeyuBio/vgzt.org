@@ -1,0 +1,25 @@
+# Source: https://sites.google.com/view/gastrulationseminars/past-talks (Season 7 > Nov 2025)
+id: season-07-2025-11-20
+season: season-07
+status: published
+date: '2025-11-20'
+time: '12:30'
+timezone: America/New_York
+durationMinutes: 60
+sessionType: two-speaker
+timeSlot: western
+speakers:
+  - person: allison-kann
+    role: speaker
+    talkTitle: 'A dynamic repertoire of wound closure strategies precedes whole-body regeneration'
+    affiliationOverride: 'Harvard University'
+  - person: joana-mendonca-da-silva
+    role: speaker
+    talkTitle: 'Hormonal regulation during gastrulation: an estrogen receptor story'
+    affiliationOverride: 'EMBL'
+poster: ../../assets/posters/season-07/2025-11-20-kann-da-silva.jpg
+posterAlt: 'Season 7 VGZT poster for Allison Kann and Joana Mendonca Da Silva, 2025-11-20.'
+recordingUrl: null
+recordingLabel: null
+description: null
+featured: false

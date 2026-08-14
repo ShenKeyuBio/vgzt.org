@@ -1,0 +1,18 @@
+id: john-wallingford
+name: 'John Wallingford'
+preferredName: null
+currentAffiliation: 'The University of Texas at Austin, Department of Molecular Biosciences'
+title: 'Professor of Molecular Biosciences'
+portrait: null
+portraitAlt: null
+website: null
+orcid: null
+bluesky: null
+linkedin: null
+bio: null
+historicalSeasons:
+  - 1
+verificationStatus: verified
+sourceUrl: 'https://molecularbiosci.utexas.edu/news/accolades/ut-biologist-awarded-prestigious-guggenheim-fellowship'
+sourceNote: 'embryonic morphogenesis; planar cell polarity; Xenopus; birth defects'
+status: published

@@ -1,0 +1,18 @@
+id: gavin-schlissel
+name: 'Gavin Schlissel'
+preferredName: null
+currentAffiliation: 'Stanford University School of Medicine'
+title: 'Assistant Professor of Chemical and Systems Biology'
+portrait: null
+portraitAlt: null
+website: null
+orcid: null
+bluesky: null
+linkedin: null
+bio: null
+historicalSeasons:
+  - 6
+verificationStatus: verified
+sourceUrl: 'https://med.stanford.edu/profiles/gavin-schlissel'
+sourceNote: 'Developmental signalling, morphogen transport and extracellular-matrix control of animal patterning'
+status: published

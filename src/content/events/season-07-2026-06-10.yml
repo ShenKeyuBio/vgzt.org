@@ -1,0 +1,25 @@
+# Source: https://sites.google.com/view/gastrulationseminars/past-talks (Season 7 > Jun 2026)
+id: season-07-2026-06-10
+season: season-07
+status: published
+date: '2026-06-10'
+time: '04:00'
+timezone: America/New_York
+durationMinutes: 60
+sessionType: two-speaker
+timeSlot: custom
+speakers:
+  - person: ksenia-skvortsova
+    role: speaker
+    talkTitle: 'Of Fat-Tailed Dunnarts, Mice and Men: epigenetic regulation in embryonic development'
+    affiliationOverride: 'Garvan Institute of Medical Research'
+  - person: osvaldo-contreras
+    role: speaker
+    talkTitle: 'DNA Replication Stress Effects on Pluripotency Loss and Differentiation'
+    affiliationOverride: 'UNSW Sydney'
+poster: ../../assets/posters/season-07/2026-06-10-skvortsova-contreras.jpg
+posterAlt: 'Season 7 VGZT poster for Ksenia Skvortsova and Osvaldo Contreras, 2026-06-10.'
+recordingUrl: null
+recordingLabel: null
+description: null
+featured: false

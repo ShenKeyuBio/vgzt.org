@@ -4,18 +4,24 @@ import turingTexture from '../assets/brand/turing-historical-reference.png';
 import BrandMark from './BrandMark.astro';
 
 interface Props {
+  seasonNumber: number;
   seasonLabel: string;
   seasonDates: string;
   description: string;
   abstractUrl?: string | null;
+  abstractLabel?: string | null;
+  abstractExternal?: boolean;
   masterLogo?: string | null;
 }
 
 const {
+  seasonNumber,
   seasonLabel,
   seasonDates,
   description,
   abstractUrl = null,
+  abstractLabel = null,
+  abstractExternal = false,
   masterLogo = null,
 } = Astro.props;
 ---
@@ -36,42 +42,35 @@ const {
   <div class="hero__inner container">
     <div class="hero__copy">
       <p class="hero__season">
-        {seasonLabel}
-        <span aria-hidden="true">·</span>
-        {seasonDates}
+        <strong>{seasonLabel}</strong>
+        <span class="hero__season-divider" aria-hidden="true">·</span>
+        <span class="hero__season-dates">{seasonDates}</span>
       </p>
       <h1 id="hero-title">Virtual<br />Gastrulation<br />Zoom Talks</h1>
       <p class="hero__intro">{description}</p>
       <div class="button-row">
         {
-          abstractUrl ? (
+          abstractUrl && abstractLabel ? (
             <a
               class="button button--ink"
               href={abstractUrl}
-              rel="noopener noreferrer"
-              target="_blank"
+              rel={abstractExternal ? 'noopener noreferrer' : undefined}
+              target={abstractExternal ? '_blank' : undefined}
             >
-              Submit an abstract
+              {abstractLabel}
             </a>
-          ) : (
-            <span
-              class="button button--ink"
-              aria-disabled="true"
-              title="Submission link coming soon"
-            >
-              Submit an abstract
-            </span>
-          )
+          ) : null
         }
-        <a class="button" href="/subscribe/">Join VGZT</a>
+        <a class="button" href="/subscribe/">Subscribe VGZT Talks</a>
       </div>
     </div>
 
     <div class="hero__mark" aria-hidden={masterLogo ? undefined : 'true'}>
-      <BrandMark masterLogo={masterLogo} />
+      <BrandMark masterLogo={masterLogo} seasonNumber={seasonNumber} />
       <p class="hero__mark-caption">
         Developmental biology, live and worldwide
       </p>
+      <span class="maker-watermark" aria-hidden="true">Site by Keyu Shen</span>
     </div>
   </div>
 </section>

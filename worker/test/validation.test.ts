@@ -146,7 +146,37 @@ describe("join payload validation", () => {
     }
   });
 
-  it("requires both requested services and valid primary and Slack emails", () => {
+  it("accepts a Slack-only manual invitation request", () => {
+    const result = validateJoinPayload(
+      validJoinPayload({ joinSlack: true, joinMailingList: false }),
+    );
+
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.value.joinSlack).toBe(true);
+      expect(result.value.joinMailingList).toBe(false);
+      expect(result.value.slackEmail).toBe("jane.slack@example.com");
+    }
+  });
+
+  it("accepts a mailing-list-only request without a Slack email", () => {
+    const result = validateJoinPayload(
+      validJoinPayload({
+        slackEmail: null,
+        joinSlack: false,
+        joinMailingList: true,
+      }),
+    );
+
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.value.joinSlack).toBe(false);
+      expect(result.value.joinMailingList).toBe(true);
+      expect(result.value.slackEmail).toBeNull();
+    }
+  });
+
+  it("requires at least one requested service and validates supplied emails", () => {
     const result = validateJoinPayload(
       validJoinPayload({
         email: "not-an-email",
@@ -161,9 +191,20 @@ describe("join payload validation", () => {
       expect(result.fields).toMatchObject({
         email: expect.any(String),
         slackEmail: expect.any(String),
-        joinSlack: expect.any(String),
-        joinMailingList: expect.any(String),
+        services: expect.any(String),
       });
+    }
+  });
+
+  it("requires actual boolean service selections", () => {
+    const result = validateJoinPayload(
+      validJoinPayload({ joinSlack: "true", joinMailingList: 1 }),
+    );
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.fields.joinSlack).toBeDefined();
+      expect(result.fields.joinMailingList).toBeDefined();
     }
   });
 

@@ -1,0 +1,18 @@
+id: jianping-fu
+name: 'Jianping Fu'
+preferredName: null
+currentAffiliation: 'University of Michigan'
+title: 'Professor of Mechanical Engineering, Biomedical Engineering, and Cell & Developmental Biology'
+portrait: null
+portraitAlt: null
+website: null
+orcid: null
+bluesky: null
+linkedin: null
+bio: null
+historicalSeasons:
+  - 1
+verificationStatus: verified
+sourceUrl: 'https://www.me.engin.umich.edu/people/faculty/jianping-fu/'
+sourceNote: 'stem-cell bioengineering; developmental bioengineering; embryo models; mechanobiology'
+status: published

@@ -1,0 +1,25 @@
+# Source: https://sites.google.com/view/gastrulationseminars/past-talks (Season 7 > Mar 2026)
+id: season-07-2026-03-05
+season: season-07
+status: published
+date: '2026-03-05'
+time: '12:30'
+timezone: America/New_York
+durationMinutes: 60
+sessionType: two-speaker
+timeSlot: western
+speakers:
+  - person: david-morsdorf
+    role: speaker
+    talkTitle: 'Chordin-mediated BMP shuttling underlies secondary body axis patterning in the Nematostella embryo'
+    affiliationOverride: 'University of Vienna'
+  - person: lakshmi-balasubramaniam
+    role: speaker
+    talkTitle: 'Motility during embryogenesis guides extracellular matrix remodelling'
+    affiliationOverride: 'University of Cambridge'
+poster: ../../assets/posters/season-07/2026-03-05-morsdorf-balasubramaniam.jpg
+posterAlt: 'Season 7 VGZT poster for David Morsdorf and Lakshmi Balasubramaniam, 2026-03-05.'
+recordingUrl: null
+recordingLabel: null
+description: null
+featured: false

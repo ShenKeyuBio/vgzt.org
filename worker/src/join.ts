@@ -3,9 +3,9 @@ export interface JoinSubmission {
   organization: string;
   careerStage: string;
   email: string;
-  slackEmail: string;
-  joinSlack: true;
-  joinMailingList: true;
+  slackEmail: string | null;
+  joinSlack: boolean;
+  joinMailingList: boolean;
   privacyAccepted: true;
   turnstileToken: string;
 }

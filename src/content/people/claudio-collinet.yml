@@ -1,0 +1,18 @@
+id: claudio-collinet
+name: 'Claudio Collinet'
+preferredName: null
+currentAffiliation: 'Institut de Biologie du Développement de Marseille (IBDM), Aix Marseille Université & CNRS'
+title: 'CNRS Researcher'
+portrait: null
+portraitAlt: null
+website: null
+orcid: null
+bluesky: null
+linkedin: null
+bio: null
+historicalSeasons:
+  - 4
+verificationStatus: verified
+sourceUrl: 'https://pubmed.ncbi.nlm.nih.gov/38103554/'
+sourceNote: 'Recent publication affiliation supports current IBDM/CNRS identity.'
+status: published

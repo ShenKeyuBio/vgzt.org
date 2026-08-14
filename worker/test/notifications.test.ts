@@ -83,6 +83,28 @@ describe("notification formatting", () => {
     expect(slackText).not.toContain("mrkdwn");
   });
 
+  it("formats mailing-list-only requests without a Slack field or action", () => {
+    const mailingOnly: JoinSubmission = {
+      ...joinSubmission,
+      slackEmail: null,
+      joinSlack: false,
+      joinMailingList: true,
+    };
+    const email = buildJoinEmail(mailingOnly, {
+      from: "contact@vgzt.org",
+      to: "organizers@vgzt.org",
+      requestId: "join-request-124",
+      receivedAt: new Date("2026-08-14T12:00:00.000Z"),
+    });
+    const slack = buildJoinSlackPayload(mailingOnly, "join-request-124");
+    const serialized = `${email.text}\n${JSON.stringify(slack)}`;
+
+    expect(serialized).toContain("mailing list");
+    expect(serialized).not.toContain("Slack-linked email");
+    expect(serialized).not.toContain("Slack email:");
+    expect(serialized).not.toContain("Slack + mailing list");
+  });
+
   it("uses a runtime-minimal fetch with a string endpoint", async () => {
     let inputType = "";
     let requestInit: RequestInit | undefined;

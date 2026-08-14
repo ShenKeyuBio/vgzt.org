@@ -1,0 +1,25 @@
+# Source: https://sites.google.com/view/gastrulationseminars/past-talks (Season 7 > Feb 2026)
+id: season-07-2026-02-11
+season: season-07
+status: published
+date: '2026-02-11'
+time: '04:00'
+timezone: America/New_York
+durationMinutes: 60
+sessionType: two-speaker
+timeSlot: custom
+speakers:
+  - person: pragathi-masamsetti
+    role: speaker
+    talkTitle: 'Characterization of mesendoderm progenitors'
+    affiliationOverride: "Children's Medical Research Institute"
+  - person: marc-trani-bustos
+    role: speaker
+    talkTitle: 'Building the mammalian embryo body: tissue surface mechanics constrains proliferation-driven forces to guide axial elongation'
+    affiliationOverride: 'Max Planck Institute of Molecular Cell Biology and Genetics'
+poster: ../../assets/posters/season-07/2026-02-11-masamsetti-trani-bustos.jpg
+posterAlt: 'Season 7 VGZT poster for Pragathi Masamsetti and Marc Trani Bustos, 2026-02-11.'
+recordingUrl: null
+recordingLabel: null
+description: null
+featured: false

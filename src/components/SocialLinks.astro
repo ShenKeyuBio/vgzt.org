@@ -2,6 +2,7 @@
 interface SocialItem {
   label: string;
   url?: string | null;
+  external?: boolean;
 }
 
 interface Props {
@@ -16,9 +17,15 @@ const { items } = Astro.props;
     items.map((item) => (
       <li>
         {item.url ? (
-          <a href={item.url} rel="noopener noreferrer" target="_blank">
+          <a
+            href={item.url}
+            rel={item.external ? 'noopener noreferrer' : undefined}
+            target={item.external ? '_blank' : undefined}
+          >
             {item.label}
-            <span class="visually-hidden"> (opens in a new tab)</span>
+            {item.external && (
+              <span class="visually-hidden"> (opens in a new tab)</span>
+            )}
           </a>
         ) : (
           <span aria-disabled="true" title={`${item.label} link coming soon`}>

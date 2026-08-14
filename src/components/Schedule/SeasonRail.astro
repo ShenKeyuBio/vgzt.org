@@ -7,9 +7,10 @@ interface Props {
   selectedId?: string | null;
   start: string;
   end: string;
+  autoplay?: boolean;
 }
 
-const { events, selectedId = null, start, end } = Astro.props;
+const { events, selectedId = null, start, end, autoplay = false } = Astro.props;
 const months: Array<{ label: string; year: number }> = [];
 const cursor = new Date(`${start.slice(0, 7)}-01T12:00:00Z`);
 const final = new Date(`${end.slice(0, 7)}-01T12:00:00Z`);
@@ -42,6 +43,17 @@ while (cursor <= final) {
           >
             →
           </button>
+          {autoplay && (
+            <button
+              class="season-rail-shell__playback"
+              type="button"
+              data-archive-playback
+              aria-pressed="false"
+              aria-label="Pause archive autoplay"
+            >
+              Pause
+            </button>
+          )}
         </div>
       )
     }
@@ -109,6 +121,12 @@ while (cursor <= final) {
     border: 2px solid currentColor;
     background: var(--vgzt-paper);
     font-weight: 1000;
+  }
+
+  .season-rail-shell__controls .season-rail-shell__playback {
+    width: auto;
+    min-width: 4.8rem;
+    padding-inline: 0.65rem;
   }
 
   .season-rail {

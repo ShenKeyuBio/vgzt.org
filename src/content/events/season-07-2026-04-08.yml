@@ -1,0 +1,25 @@
+# Source: https://sites.google.com/view/gastrulationseminars/past-talks (Season 7 > Apr 2026)
+id: season-07-2026-04-08
+season: season-07
+status: published
+date: '2026-04-08'
+time: '04:00'
+timezone: America/New_York
+durationMinutes: 60
+sessionType: two-speaker
+timeSlot: custom
+speakers:
+  - person: leqian-yu
+    role: speaker
+    talkTitle: 'Embryo 3D reconstruction and embryo models: get a glimpse of the human gastrulation'
+    affiliationOverride: 'Institute of Zoology, Chinese Academy of Sciences'
+  - person: tatsuo-shibata
+    role: speaker
+    talkTitle: 'Migrating mesoderm cells self-organize into a dynamic meshwork structure during chick gastrulation'
+    affiliationOverride: 'RIKEN'
+poster: ../../assets/posters/season-07/2026-04-08-yu-shibata.jpg
+posterAlt: 'Season 7 VGZT poster for Leqian Yu and Tatsuo Shibata, 2026-04-08.'
+recordingUrl: null
+recordingLabel: null
+description: null
+featured: false
