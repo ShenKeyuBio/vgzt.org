@@ -3,7 +3,11 @@ import { describe, expect, it } from "vitest";
 import type { ContactSubmission } from "../src/contact";
 import { buildContactEmail, buildJoinEmail } from "../src/email";
 import type { JoinSubmission } from "../src/join";
-import { buildJoinSlackPayload, buildSlackPayload } from "../src/slack";
+import {
+  buildJoinSlackPayload,
+  buildSlackPayload,
+  sendContactSlack,
+} from "../src/slack";
 
 const submission: ContactSubmission = {
   name: "Jane <@channel>",
@@ -77,5 +81,27 @@ describe("notification formatting", () => {
     expect(slackText).toContain("Slack + mailing list");
     expect(slackText).not.toContain(joinSubmission.turnstileToken);
     expect(slackText).not.toContain("mrkdwn");
+  });
+
+  it("uses a runtime-minimal fetch with a string endpoint", async () => {
+    let inputType = "";
+    let requestInit: RequestInit | undefined;
+    const fetcher: typeof fetch = async (input, init) => {
+      inputType = typeof input;
+      requestInit = init;
+      return new Response("ok", { status: 200 });
+    };
+
+    await sendContactSlack(
+      "https://hooks.slack.com/services/test-webhook",
+      submission,
+      "request-123",
+      fetcher,
+    );
+
+    expect(inputType).toBe("string");
+    expect(requestInit?.method).toBe("POST");
+    expect(requestInit?.redirect).toBeUndefined();
+    expect(requestInit?.signal).toBeUndefined();
   });
 });

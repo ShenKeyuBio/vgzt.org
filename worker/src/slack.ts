@@ -128,26 +128,17 @@ async function sendSlackPayload(
   payload: SlackPayload,
   fetcher: typeof fetch = fetch,
 ): Promise<void> {
-  const url = validateWebhookUrl(webhookUrl);
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 3_000);
+  const endpoint = validateWebhookUrl(webhookUrl).href;
+  const response = await fetcher(endpoint, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(payload),
+  });
 
-  try {
-    const response = await fetcher(url, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(payload),
-      signal: controller.signal,
-      redirect: "error",
+  if (!response.ok) {
+    throw Object.assign(new Error("Slack webhook rejected the notification."), {
+      code: "SLACK_HTTP_ERROR",
     });
-
-    if (!response.ok) {
-      throw Object.assign(new Error("Slack webhook rejected the notification."), {
-        code: "SLACK_HTTP_ERROR",
-      });
-    }
-  } finally {
-    clearTimeout(timeoutId);
   }
 }
 
