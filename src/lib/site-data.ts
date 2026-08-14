@@ -103,7 +103,11 @@ export function getFooterSocial(settings: SocialSettings) {
         settings.newsletterUrl || (hasNewsletterEmbed ? '/subscribe/' : null),
       external: Boolean(settings.newsletterUrl),
     },
-    { label: 'Slack', url: settings.slackInviteUrl, external: true },
+    {
+      label: 'Slack',
+      url: settings.slackInviteUrl ? '/subscribe/' : null,
+      external: false,
+    },
     { label: 'LinkedIn', url: settings.linkedinUrl, external: true },
     { label: 'Bluesky', url: settings.blueskyUrl, external: true },
     { label: 'X', url: settings.xUrl, external: true },
