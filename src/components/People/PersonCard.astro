@@ -5,6 +5,7 @@ interface Props {
   preferredName?: string | null | undefined;
   title?: string | null | undefined;
   affiliation?: string | null | undefined;
+  country?: string | null | undefined;
   portrait?: string | null | undefined;
   portraitAlt?: string | null | undefined;
   website?: string | null | undefined;
@@ -17,6 +18,7 @@ const {
   preferredName = null,
   title = null,
   affiliation = null,
+  country = null,
   portrait = null,
   portraitAlt = null,
   website = null,
@@ -56,9 +58,17 @@ const initials = displayName
   <div class="person-card__content">
     <h3>{displayName}</h3>
     {title && <p class="person-card__title">{title}</p>}
-    {affiliation && <p>{affiliation}</p>}
     {
-      !title && !affiliation && (
+      affiliation && (
+        <p>
+          {affiliation}
+          {country && <span class="person-card__country"> · {country}</span>}
+        </p>
+      )
+    }
+    {!affiliation && country && <p>{country}</p>}
+    {
+      !title && !affiliation && !country && (
         <p class="person-card__pending">
           Profile details will be added after confirmation.
         </p>

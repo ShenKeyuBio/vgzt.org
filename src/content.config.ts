@@ -70,6 +70,7 @@ const people = defineCollection({
         name: z.string().trim().min(1).max(100),
         preferredName: nullableShortText(100),
         currentAffiliation: nullableShortText(200),
+        country: nullableShortText(100),
         title: nullableShortText(160),
         portrait: image()
           .refine(

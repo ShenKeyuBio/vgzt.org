@@ -7,6 +7,7 @@ interface Organizer {
   preferredName?: string | null;
   title?: string | null;
   currentAffiliation?: string | null;
+  country?: string | null;
   portrait?: string | null;
   portraitAlt?: string | null;
   website?: string | null;
@@ -48,8 +49,8 @@ const {
             id={person.id}
             name={person.name}
             preferredName={person.preferredName}
-            title={person.title}
             affiliation={person.currentAffiliation}
+            country={person.country}
             portrait={person.portrait}
             portraitAlt={person.portraitAlt}
             website={person.website}
