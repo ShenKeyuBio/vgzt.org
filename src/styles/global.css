@@ -441,17 +441,8 @@ p {
 }
 
 .hero__mark .brand-logo {
-  width: clamp(13rem, 24vw, 21rem);
+  width: clamp(15rem, 27vw, 23rem);
   height: auto;
-}
-
-.hero__mark-caption {
-  margin: 1rem 0 0;
-  font-size: 0.68rem;
-  font-weight: 950;
-  letter-spacing: 0.16em;
-  text-align: center;
-  text-transform: uppercase;
 }
 
 .section {
@@ -779,7 +770,7 @@ p {
   }
 
   .hero__mark .brand-logo {
-    width: clamp(10rem, 42vw, 14rem);
+    width: clamp(11rem, 46vw, 15rem);
   }
 
   .hero h1 {
