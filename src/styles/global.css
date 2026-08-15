@@ -441,7 +441,7 @@ p {
 }
 
 .hero__mark .brand-logo {
-  width: clamp(15rem, 27vw, 23rem);
+  width: clamp(20rem, 36vw, 29rem);
   height: auto;
 }
 
@@ -770,7 +770,7 @@ p {
   }
 
   .hero__mark .brand-logo {
-    width: clamp(11rem, 46vw, 15rem);
+    width: clamp(14rem, 61vw, 19rem);
   }
 
   .hero h1 {
