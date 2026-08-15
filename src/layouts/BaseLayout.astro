@@ -5,7 +5,11 @@ import AnnouncementBar from '../components/AnnouncementBar.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { getAbstractCallState } from '../lib/config';
-import { getAbstractCallSettings, getSiteSettings } from '../lib/site-data';
+import {
+  getAbstractCallSettings,
+  getSiteSettings,
+  getSocialSettings,
+} from '../lib/site-data';
 
 interface SocialItem {
   label: string;
@@ -43,6 +47,41 @@ const socialImage = image ? new URL(image, Astro.site).toString() : null;
 const siteSettings = getSiteSettings();
 const effectiveMasterLogo =
   masterLogo || siteSettings.masterLogo || '/brand/vgzt-logo.png';
+const socialSettings = getSocialSettings();
+const sameAs = [
+  socialSettings.linkedinUrl,
+  socialSettings.blueskyUrl,
+  socialSettings.xUrl,
+].filter((url): url is string => Boolean(url));
+const organizationId = new URL('/#organization', Astro.site).toString();
+const websiteId = new URL('/#website', Astro.site).toString();
+const organizationLogo = new URL(effectiveMasterLogo, Astro.site).toString();
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      '@id': organizationId,
+      name: siteSettings.name,
+      alternateName: siteSettings.shortName,
+      url: siteSettings.site,
+      logo: organizationLogo,
+      email: siteSettings.publicEmail,
+      sameAs,
+    },
+    {
+      '@type': 'WebSite',
+      '@id': websiteId,
+      url: siteSettings.site,
+      name: siteSettings.name,
+      alternateName: siteSettings.shortName,
+      description: siteSettings.description,
+      publisher: {
+        '@id': organizationId,
+      },
+    },
+  ],
+};
 const abstractCall = getAbstractCallSettings();
 const abstractState = getAbstractCallState(abstractCall);
 const [currentSeason, abstractSeason] = await Promise.all([
@@ -60,6 +99,11 @@ const [currentSeason, abstractSeason] = await Promise.all([
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
+    <script
+      is:inline
+      type="application/ld+json"
+      set:html={JSON.stringify(structuredData)}
+    />
     <link rel="icon" href="/brand/vgzt-logo.png" type="image/png" />
     <link rel="apple-touch-icon" href="/brand/vgzt-logo.png" />
     <meta name="theme-color" content="#0b0b0b" />

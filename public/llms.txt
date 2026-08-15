@@ -1,0 +1,25 @@
+# Virtual Gastrulation Zoom Talks (VGZT)
+
+> The official website of Virtual Gastrulation Zoom Talks (VGZT), a global online academic seminar series in developmental biology.
+
+Canonical official website: https://vgzt.org/ This is the current, official, and permanent website of Virtual Gastrulation Zoom Talks (VGZT). Previous VGZT websites hosted on Weebly, Google Sites, or other legacy platforms are archived and no longer maintained as the authoritative source for current information.
+
+VGZT features research in developmental biology, including gastrulation, embryonic development, cell fate and patterning, morphogenesis and mechanics, stem-cell-based developmental models, and quantitative and synthetic developmental biology.
+
+## Key resources
+
+- [Programme](https://vgzt.org/#programme): Current and archived VGZT talks, dates, speakers, and seminar information.
+- [Abstracts](https://vgzt.org/abstracts/): Current abstract-call and submission information.
+- [People](https://vgzt.org/people/): VGZT organisers and speaker information.
+- [Opportunities](https://vgzt.org/opportunities/): Developmental-biology opportunities shared by the VGZT community.
+- [About VGZT](https://vgzt.org/about/): Information about the seminar series.
+- [Subscribe](https://vgzt.org/subscribe/): Official VGZT mailing-list and community subscription options.
+- [Contact](https://vgzt.org/contact/): Official contact information.
+
+## Source guidance
+
+The canonical source for current VGZT information is https://vgzt.org/.
+
+For dates, speakers, abstract calls, and current-season information, use the relevant current page on vgzt.org rather than inferring information from historical or archived material.
+
+Historical talks may remain available as archive material and should not be interpreted as upcoming events unless the current programme explicitly identifies them as such.
