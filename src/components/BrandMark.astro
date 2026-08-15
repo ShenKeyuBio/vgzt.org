@@ -1,6 +1,4 @@
 ---
-import { seasonDotCount } from '../lib/brand';
-
 interface Props {
   masterLogo?: string | null;
   colourDots?: boolean;
@@ -11,54 +9,20 @@ interface Props {
 
 const {
   masterLogo = null,
-  colourDots = false,
-  seasonNumber = null,
   label = 'Virtual Gastrulation Zoom Talks',
   class: className = '',
 } = Astro.props;
-const dotCount = seasonDotCount(seasonNumber);
-const dots = Array.from({ length: dotCount });
-const markLabel =
-  typeof seasonNumber === 'number' && seasonNumber === dotCount
-    ? `${label} — VGZT Season ${dotCount} text mark`
-    : `${label} — VGZT text mark`;
+const logoSrc = masterLogo || '/brand/vgzt-logo.png';
 ---
 
-{
-  masterLogo ? (
-    <img
-      class:list={['brand-logo', className]}
-      src={masterLogo}
-      alt={label}
-      decoding="async"
-    />
-  ) : (
-    <span
-      class:list={[
-        'brand-mark',
-        { 'brand-mark--colour': colourDots },
-        className,
-      ]}
-      role="img"
-      aria-label={markLabel}
-      data-brand-source="replaceable-text-reference"
-      data-season-dot-count={dotCount}
-      style={`--season-dot-count: ${dotCount}`}
-    >
-      <span class="brand-mark__letters" aria-hidden="true">
-        <span class="brand-mark__letter">V</span>
-        <span class="brand-mark__letter">G</span>
-        <span class="brand-mark__letter">Z</span>
-        <span class="brand-mark__letter">T</span>
-      </span>
-      <span class="brand-mark__dots" aria-hidden="true">
-        {dots.map(() => (
-          <span class="brand-mark__dot" />
-        ))}
-      </span>
-    </span>
-  )
-}
+<img
+  class:list={['brand-logo', className]}
+  src={logoSrc}
+  alt={label}
+  width="1133"
+  height="1388"
+  decoding="async"
+/>
 
 <style>
   .brand-logo {

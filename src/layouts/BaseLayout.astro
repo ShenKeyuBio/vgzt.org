@@ -41,6 +41,8 @@ const fullTitle =
     : `${title} — VGZT`;
 const socialImage = image ? new URL(image, Astro.site).toString() : null;
 const siteSettings = getSiteSettings();
+const effectiveMasterLogo =
+  masterLogo || siteSettings.masterLogo || '/brand/vgzt-logo.png';
 const abstractCall = getAbstractCallSettings();
 const abstractState = getAbstractCallState(abstractCall);
 const [currentSeason, abstractSeason] = await Promise.all([
@@ -58,7 +60,8 @@ const [currentSeason, abstractSeason] = await Promise.all([
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/brand/vgzt-logo.png" type="image/png" />
+    <link rel="apple-touch-icon" href="/brand/vgzt-logo.png" />
     <meta name="theme-color" content="#0b0b0b" />
     {noindex && <meta name="robots" content="noindex, nofollow" />}
     <meta property="og:type" content={type} />
@@ -83,7 +86,7 @@ const [currentSeason, abstractSeason] = await Promise.all([
       audience={abstractCall.audience}
     />
     <Header
-      masterLogo={masterLogo}
+      masterLogo={effectiveMasterLogo}
       seasonNumber={currentSeason?.data.season ?? null}
     />
     <main id="main-content" tabindex="-1">
@@ -92,7 +95,7 @@ const [currentSeason, abstractSeason] = await Promise.all([
     <Footer
       email={email}
       social={social}
-      masterLogo={masterLogo}
+      masterLogo={effectiveMasterLogo}
       seasonNumber={currentSeason?.data.season ?? null}
     />
   </body>
