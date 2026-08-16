@@ -74,7 +74,11 @@ const people = defineCollection({
         title: nullableShortText(160),
         portrait: image()
           .refine(
-            (value) => /\.(?:png|jpe?g|webp)$/i.test(value.src),
+            (value) =>
+              typeof value === 'string'
+                ? /\.(?:png|jpe?g|webp)$/i.test(value)
+                : /\.(?:png|jpe?g|webp)$/i.test(value.src) ||
+                  ['png', 'jpg', 'jpeg', 'webp'].includes(value.format),
             'Use a PNG, JPEG, or WebP portrait.',
           )
           .nullable()
