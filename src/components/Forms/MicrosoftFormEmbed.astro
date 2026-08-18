@@ -1,0 +1,90 @@
+---
+interface Props {
+  formUrl: string;
+  title: string;
+  externalLabel?: string;
+}
+
+const {
+  formUrl,
+  title,
+  externalLabel = 'Open form in a new tab',
+} = Astro.props;
+---
+
+<div class="form-shell">
+  <div class="form-toolbar">
+    <div>
+      <p class="form-toolbar__copy">
+        Complete the Microsoft Form below to share your project with the VGZT
+        organizing team.
+      </p>
+      <p class="form-toolbar__note">
+        On a small screen, opening the form in a new tab may be easier.
+      </p>
+    </div>
+    <a
+      class="button button--ink"
+      href={formUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      {externalLabel}
+    </a>
+  </div>
+  <iframe src={formUrl} title={title} width="100%" loading="lazy"></iframe>
+</div>
+
+<style>
+  .form-shell {
+    overflow: hidden;
+    border: var(--keyline);
+    background: var(--vgzt-paper-strong);
+  }
+
+  .form-toolbar {
+    display: flex;
+    padding: 1rem 1.1rem;
+    border-bottom: var(--keyline);
+    gap: 1rem 2rem;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .form-toolbar__copy,
+  .form-toolbar__note {
+    margin: 0;
+  }
+
+  .form-toolbar__copy {
+    font-weight: 850;
+  }
+
+  .form-toolbar__note {
+    color: var(--vgzt-muted);
+    font-size: 0.9rem;
+  }
+
+  iframe {
+    display: block;
+    width: 100%;
+    height: clamp(45rem, 78vh, 60rem);
+    border: 0;
+    background: var(--vgzt-paper-strong);
+  }
+
+  @media (max-width: 42rem) {
+    .form-toolbar {
+      align-items: stretch;
+      flex-direction: column;
+    }
+
+    .form-toolbar .button {
+      width: 100%;
+    }
+
+    iframe {
+      height: 48rem;
+    }
+  }
+</style>

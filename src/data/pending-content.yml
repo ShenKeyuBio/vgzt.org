@@ -23,61 +23,61 @@ pending:
     label: Season 8 abstract submission deadline
     type: date
     intendedLocation: Abstracts page and announcement bar
-    status: pending
+    status: resolved
     requiredForLaunch: true
     replaceVia: Pages CMS > Abstract Call > Deadline
-    resolvedAt: null
-    notes: null
+    resolvedAt: 2026-08-18
+    notes: Season 8 intentionally uses a rolling call rather than a fixed submission deadline.
 
   - key: abstractCall.formUrl
     label: Season 8 abstract submission URL
     type: url
     intendedLocation: Abstracts page and announcement bar
-    status: pending
+    status: resolved
     requiredForLaunch: true
     replaceVia: Pages CMS > Abstract Call > Form URL
-    resolvedAt: null
-    notes: null
+    resolvedAt: 2026-08-18
+    notes: The canonical Season 8 Microsoft Forms HTTPS embed destination is configured.
 
   - key: abstractCall.eligibility
     label: Approved abstract eligibility copy
     type: text
     intendedLocation: Abstracts page
-    status: pending
+    status: resolved
     requiredForLaunch: true
     replaceVia: Pages CMS > Abstract Call > Eligibility
-    resolvedAt: null
-    notes: null
+    resolvedAt: 2026-08-18
+    notes: Approved Season 8 rolling-call eligibility copy is published.
 
   - key: abstractCall.submissionDetails
     label: Approved abstract submission requirements
     type: text
     intendedLocation: Abstracts page
-    status: pending
+    status: resolved
     requiredForLaunch: true
     replaceVia: Pages CMS > Abstract Call > What to submit
-    resolvedAt: null
-    notes: null
+    resolvedAt: 2026-08-18
+    notes: Approved low-friction Season 8 submission requirements are published.
 
   - key: abstractCall.reviewDescription
     label: Approved abstract review description
     type: text
     intendedLocation: Abstracts page
-    status: pending
+    status: resolved
     requiredForLaunch: true
     replaceVia: Pages CMS > Abstract Call > Review description
-    resolvedAt: null
-    notes: null
+    resolvedAt: 2026-08-18
+    notes: Approved non-competitive scope, readiness, and thematic matching policy is published.
 
   - key: abstractCall.faq
     label: Approved abstract call FAQ
     type: text
     intendedLocation: Abstracts page
-    status: pending
+    status: resolved
     requiredForLaunch: false
     replaceVia: Pages CMS > Abstract Call > FAQ
-    resolvedAt: null
-    notes: null
+    resolvedAt: 2026-08-18
+    notes: Approved Season 8 rolling-call FAQ is published.
 
   - key: social.newsletterUrl
     label: Canonical VGZT mailing-list subscription URL

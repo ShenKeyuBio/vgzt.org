@@ -1,7 +1,8 @@
 ---
 import { getEntry } from 'astro:content';
+import MicrosoftFormEmbed from '../components/Forms/MicrosoftFormEmbed.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { getAbstractCallState } from '../lib/config';
+import { getAbstractCallState, safeHttpsUrl } from '../lib/config';
 import {
   getAbstractCallSettings,
   getFooterSocial,
@@ -21,6 +22,20 @@ const seasonLabel = seasonEntry?.data.label || call.season;
 const timeSlots = sessions.timeSlots.filter((slot) =>
   call.preferredTimeSlots.includes(slot.id),
 );
+const formUrl = safeHttpsUrl(call.formUrl);
+const twoSpeaker = sessions.sessionTypes.find(({ id }) => id === 'two-speaker');
+const twoSpeakerTiming = twoSpeaker
+  ? {
+      slot:
+        twoSpeaker.presentationMinutesPerSpeaker +
+        twoSpeaker.qaMinutesPerSpeaker,
+      presentation: twoSpeaker.presentationMinutesPerSpeaker,
+      qa: twoSpeaker.qaMinutesPerSpeaker,
+    }
+  : null;
+const twoSpeakerSlotLabel = twoSpeakerTiming
+  ? `${twoSpeakerTiming.slot}-minute`
+  : null;
 const deadline = call.deadline
   ? formatEventTime(
       {
@@ -31,11 +46,25 @@ const deadline = call.deadline
       call.deadline.timezone,
     ).reference
   : null;
+const deadlineLabel = deadline
+  ? `${deadline.dateLabel}, ${deadline.timeLabel}`
+  : state.mode === 'open'
+    ? 'Rolling · until available slots are filled'
+    : 'To be confirmed';
+const supportingLine =
+  'Submit a short abstract to present alongside an invited VGZT speaker.';
+const configuredDescription =
+  call.description?.trim() ||
+  'Season 8 abstract-call details will be published here as soon as they are confirmed.';
+const descriptionBody = configuredDescription.startsWith(supportingLine)
+  ? configuredDescription.slice(supportingLine.length).trim()
+  : configuredDescription;
+const abstractWordLimit = '150–300 words';
 ---
 
 <BaseLayout
   title="Call for abstracts"
-  description="VGZT Season 8 call for abstracts for Early Career Researchers."
+  description="VGZT Season 8 rolling call for early-career researchers to present peri-gastrulation research alongside invited speakers."
   email={site.publicEmail}
   social={getFooterSocial(social)}
   masterLogo={site.masterLogo}
@@ -48,20 +77,22 @@ const deadline = call.deadline
         {call.audience}
       </p>
       <h1>Share your science with VGZT.</h1>
-      <p>
-        {
-          call.description ||
-            'Season 8 abstract-call details will be published here as soon as they are confirmed.'
-        }
+      <p class="abstract-hero__supporting">
+        {supportingLine}
       </p>
+      {
+        descriptionBody && (
+          <p class="abstract-hero__description">{descriptionBody}</p>
+        )
+      }
       <div class="button-row">
         {
           state.canSubmit && state.ctaUrl ? (
             <a
               class="button button--ink"
               href={state.ctaUrl}
-              rel="noopener noreferrer"
-              target="_blank"
+              rel={state.external ? 'noopener noreferrer' : undefined}
+              target={state.external ? '_blank' : undefined}
             >
               Submit your abstract
             </a>
@@ -97,13 +128,8 @@ const deadline = call.deadline
           <div><dt>Season</dt><dd>{seasonLabel}</dd></div>
           <div><dt>Audience</dt><dd>{call.audience}</dd></div>
           <div>
-            <dt>Deadline</dt><dd>
-              {
-                deadline
-                  ? `${deadline.dateLabel}, ${deadline.timeLabel}`
-                  : 'To be confirmed'
-              }
-            </dd>
+            <dt>Deadline</dt>
+            <dd>{deadlineLabel}</dd>
           </div>
         </dl>
       </div>
@@ -121,9 +147,22 @@ const deadline = call.deadline
         {
           call.whatToSubmit.length > 0 ? (
             <ul>
-              {call.whatToSubmit.map((item) => (
-                <li>{item}</li>
-              ))}
+              {call.whatToSubmit.map((item) => {
+                const parts = item.split(abstractWordLimit);
+                return (
+                  <li>
+                    {parts.length > 1 ? (
+                      <>
+                        {parts[0]}
+                        <strong>{abstractWordLimit}</strong>
+                        {parts.slice(1).join(abstractWordLimit)}
+                      </>
+                    ) : (
+                      item
+                    )}
+                  </li>
+                );
+              })}
             </ul>
           ) : (
             <p>
@@ -135,23 +174,42 @@ const deadline = call.deadline
 
         <h2>Seminar format</h2>
         <p>
-          Selected early-career speakers may take part in a two-speaker session.
-          A typical talk is approximately 25 minutes, followed by approximately
-          5 minutes of questions.
+          Early-career speakers will normally present in a two-speaker session
+          alongside an invited VGZT speaker working on a related or
+          complementary topic.
+        </p>
+        {
+          twoSpeakerTiming ? (
+            <p>
+              Each early-career speaker receives a {twoSpeakerSlotLabel} slot,
+              currently consisting of approximately{' '}
+              {twoSpeakerTiming.presentation} minutes for the research
+              presentation followed by {twoSpeakerTiming.qa} minutes of
+              questions.
+            </p>
+          ) : null
+        }
+        <p>
+          Pairings are made according to scientific theme, with the aim of
+          bringing related or complementary research questions into the same
+          session.
         </p>
 
-        <h2>Review and selection</h2>
+        <h2>How submissions are matched</h2>
         <p>
           {
             call.reviewDescription ||
-              'The organizer team will publish its review and selection process before submissions open.'
+              'The organizing team will publish how submissions are matched before submissions open.'
           }
         </p>
 
         <h2>Preferred session times</h2>
         <p>
           Sessions use America/New_York as the canonical timezone, with
-          daylight-saving transitions handled automatically.
+          daylight-saving transitions handled automatically. Exact scheduling
+          will be arranged after a thematic match has been identified;
+          applicants do not need to commit to a specific seminar date when
+          submitting.
         </p>
         <ul>
           {
@@ -164,30 +222,92 @@ const deadline = call.deadline
         </ul>
 
         <h2>FAQ</h2>
-        {
-          call.faq.length > 0 ? (
-            <div class="faq-list">
-              {call.faq.map((item) => (
-                <details>
-                  <summary>{item.question}</summary>
-                  <p>{item.answer}</p>
-                </details>
-              ))}
-            </div>
-          ) : (
-            <p>
-              FAQ entries will be added as the call is finalized. For an urgent
-              question, email{' '}
-              <a href={`mailto:${site.publicEmail}`}>{site.publicEmail}</a>.
-            </p>
-          )
-        }
+        <div class="faq-list">
+          {
+            call.faq.map((item) => (
+              <details>
+                <summary>{item.question}</summary>
+                <p>{item.answer}</p>
+              </details>
+            ))
+          }
+        </div>
       </div>
+    </div>
+  </section>
+
+  {
+    state.canSubmit && formUrl ? (
+      <section
+        id="submit"
+        class="section section--pink abstracts-submit"
+        aria-labelledby="submit-title"
+      >
+        <div class="container">
+          <div class="section-heading">
+            <h2 id="submit-title">Submit your abstract</h2>
+            <p>
+              The Microsoft Form is embedded below so you can stay in the VGZT
+              page context while submitting.
+            </p>
+          </div>
+          <MicrosoftFormEmbed
+            formUrl={formUrl}
+            title="VGZT Season 8 abstract submission form"
+          />
+        </div>
+      </section>
+    ) : null
+  }
+
+  <section class="section section--orange section--compact abstracts-followup">
+    <div class="container abstracts-followup__inner">
+      <div>
+        <p class="eyebrow">Stay updated</p>
+        <h2>Stay updated.</h2>
+        <p>
+          Subscribe to the official VGZT seminar mailing list, join the VGZT
+          Slack community, or both, for programme and Abstract Call updates.
+        </p>
+      </div>
+      <a class="button button--ink" href="/subscribe/">Stay updated</a>
+    </div>
+  </section>
+
+  <section class="section section--ink abstracts-contact">
+    <div class="container">
+      <h2>Questions?</h2>
+      <p>
+        If you are unsure whether your project fits the VGZT scope or have a
+        question about the call, contact the Season 8 organizing team at
+        <a href={`mailto:${site.publicEmail}`}>{site.publicEmail}</a>.
+      </p>
+      <p><a href="/people/">Meet the Season 8 organizing team →</a></p>
     </div>
   </section>
 </BaseLayout>
 
 <style>
+  .abstract-hero__supporting {
+    max-width: 42rem;
+    margin-bottom: 0.9rem;
+    font-size: clamp(1.4rem, 3vw, 2rem) !important;
+    font-weight: 900 !important;
+    line-height: 1.12;
+  }
+
+  .abstract-hero__description {
+    max-width: 50rem;
+    margin-bottom: 0;
+    font-size: clamp(1.05rem, 1.8vw, 1.25rem) !important;
+    font-weight: 700 !important;
+    line-height: 1.45;
+  }
+
+  .page-hero .button-row {
+    margin-top: 1.7rem;
+  }
+
   .abstracts-grid {
     display: grid;
     grid-template-columns: minmax(16rem, 0.55fr) minmax(25rem, 1.45fr);
@@ -221,6 +341,14 @@ const deadline = call.deadline
     margin-top: 0;
   }
 
+  .abstracts-copy li + li {
+    margin-top: 0.6rem;
+  }
+
+  .abstracts-copy strong {
+    font-weight: 950;
+  }
+
   .faq-list {
     border-top: var(--keyline);
   }
@@ -235,9 +363,53 @@ const deadline = call.deadline
     font-weight: 900;
   }
 
+  .faq-list details p {
+    margin: 0 0 1.25rem;
+  }
+
+  .abstracts-submit {
+    scroll-margin-top: 6rem;
+  }
+
+  .abstracts-submit .section-heading {
+    align-items: start;
+  }
+
+  .abstracts-submit .section-heading p {
+    max-width: 26rem;
+  }
+
+  .abstracts-followup__inner {
+    display: flex;
+    gap: 2rem;
+    align-items: end;
+    justify-content: space-between;
+  }
+
+  .abstracts-followup h2 {
+    margin-bottom: 1rem;
+  }
+
+  .abstracts-followup p:last-child {
+    margin-bottom: 0;
+  }
+
+  .abstracts-contact p {
+    max-width: 52rem;
+  }
+
+  .abstracts-contact a {
+    font-weight: 850;
+  }
+
   @media (max-width: 50rem) {
     .abstracts-grid {
       grid-template-columns: 1fr;
+    }
+
+    .abstracts-followup__inner {
+      align-items: start;
+      flex-direction: column;
     }
   }
 </style>

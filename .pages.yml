@@ -237,7 +237,7 @@ content:
             label: Submission deadline
             type: object
             default: null
-            description: 'Optional. Enter the deadline in its canonical timezone; leave the entire object empty until confirmed.'
+            description: 'Optional. Leave empty for a rolling call with no fixed deadline. When the call is open and no deadline is set, the public page displays that submissions remain open until available slots are filled.'
             fields:
               - name: date
                 label: Deadline date
@@ -257,7 +257,7 @@ content:
           - name: formUrl
             label: Submission form URL
             component: nullable_https_url
-            description: 'Canonical HTTPS form destination. Leave empty rather than using # or a guessed URL.'
+            description: 'Canonical HTTPS submission/form embed destination. Use the complete HTTPS URL; leave empty rather than using # or a guessed URL.'
           - name: description
             label: Call description
             type: text
@@ -271,7 +271,7 @@ content:
             type: string
             list: true
           - name: reviewDescription
-            label: Review / selection description
+            label: How submissions are matched
             type: text
             default: null
           - name: preferredTimeSlots

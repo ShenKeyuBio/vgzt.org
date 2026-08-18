@@ -203,14 +203,16 @@ Fields include:
 - season reference;
 - audience;
 - optional deadline object with date, time, and IANA timezone;
-- canonical external form URL;
+- canonical external form URL, which may be embedded as a Microsoft Form when supported;
 - description and eligibility;
 - list of required submission materials;
 - review description;
 - preferred time-slot IDs;
 - FAQ question/answer pairs.
 
-Before setting the call open, confirm eligibility, deadline, form destination, review copy, and submission requirements. If the form URL is missing, leave it null. The site can show the open state without pretending a disabled CTA is a live link.
+Before setting the call open, confirm eligibility, form destination, review copy, and submission requirements. The call supports both a fixed deadline and a rolling mode: use a complete deadline object for a fixed closing time, or keep `deadline: null` when submissions remain open until available presentation slots are filled. An open rolling call displays that capacity-based message rather than `To be confirmed`; do not fabricate a date.
+
+When supported, `formUrl` is rendered as an embedded Microsoft Form on the Abstracts page. The public page should always provide an external fallback link to the same HTTPS destination. Routine abstract-call text remains editable through the Abstract Call settings in Pages CMS. Never commit private applicant data, responses, or other personal submission information to Git.
 
 Use the deadline timezone actually announced for the call. Do not silently treat an end-of-day deadline as the organizer's or visitor's local time.
 

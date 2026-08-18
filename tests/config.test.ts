@@ -36,7 +36,7 @@ describe('abstract-call display state', () => {
     });
   });
 
-  it('enables the CTA only for an open call with a valid HTTPS URL', () => {
+  it('routes a valid open call to the embedded submission section', () => {
     expect(
       getAbstractCallState({
         state: 'open',
@@ -46,14 +46,25 @@ describe('abstract-call display state', () => {
       mode: 'open',
       showBanner: true,
       canSubmit: true,
-      ctaUrl: 'https://example.org/form',
+      ctaUrl: '/abstracts/#submit',
       ctaLabel: 'Submit an abstract',
-      external: true,
+      external: false,
     });
   });
 
-  it.each([null, '#', 'javascript:void(0)', 'http://example.org/form'])(
-    'keeps an open call visible without exposing an invalid submission URL %s',
+  it('keeps an open call visible without a submission URL', () => {
+    expect(getAbstractCallState({ state: 'open', formUrl: null })).toEqual({
+      mode: 'open',
+      showBanner: true,
+      canSubmit: false,
+      ctaUrl: '/abstracts/',
+      ctaLabel: 'View abstract call',
+      external: false,
+    });
+  });
+
+  it.each(['#', 'javascript:void(0)'])(
+    'rejects a malformed submission URL %s',
     (formUrl) => {
       expect(getAbstractCallState({ state: 'open', formUrl })).toEqual({
         mode: 'open',
@@ -65,6 +76,22 @@ describe('abstract-call display state', () => {
       });
     },
   );
+
+  it('rejects an HTTP submission URL', () => {
+    expect(
+      getAbstractCallState({
+        state: 'open',
+        formUrl: 'http://example.org/form',
+      }),
+    ).toEqual({
+      mode: 'open',
+      showBanner: true,
+      canSubmit: false,
+      ctaUrl: '/abstracts/',
+      ctaLabel: 'View abstract call',
+      external: false,
+    });
+  });
 });
 
 describe('missing poster handling', () => {

@@ -60,8 +60,7 @@ export function getAbstractCallState(
     };
   }
 
-  const ctaUrl = safeHttpsUrl(config.formUrl);
-  if (ctaUrl === null) {
+  if (safeHttpsUrl(config.formUrl) === null) {
     return {
       mode: 'open',
       showBanner: true,
@@ -76,9 +75,9 @@ export function getAbstractCallState(
     mode: 'open',
     showBanner: true,
     canSubmit: true,
-    ctaUrl,
+    ctaUrl: '/abstracts/#submit',
     ctaLabel: 'Submit an abstract',
-    external: true,
+    external: false,
   };
 }
 
