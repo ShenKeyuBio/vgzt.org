@@ -1,0 +1,136 @@
+---
+interface AttendanceSlot {
+  id: string;
+  label: string;
+  description: string;
+  conditional: boolean;
+}
+
+interface AttendanceAward {
+  enabled: boolean;
+  eyebrow: string;
+  title: string;
+  intro: string;
+  slots: AttendanceSlot[];
+  sponsorNote: string | null;
+}
+
+interface Props {
+  award: AttendanceAward;
+}
+
+const { award } = Astro.props;
+---
+
+{
+  award.enabled && (
+    <section
+      class="section section--pink enthusiast-award"
+      aria-labelledby="enthusiast-award-title"
+    >
+      <div class="container">
+        <div class="section-heading enthusiast-award__heading">
+          <div>
+            <p class="eyebrow">{award.eyebrow}</p>
+            <h2 id="enthusiast-award-title">{award.title}</h2>
+          </div>
+          <p>{award.intro}</p>
+        </div>
+
+        <div class="enthusiast-award__slots">
+          {award.slots.map((slot) => (
+            <article class="enthusiast-award__slot">
+              <div class="enthusiast-award__slot-heading">
+                <h3>{slot.label}</h3>
+                {slot.conditional && (
+                  <span class="status-badge">Conditional</span>
+                )}
+              </div>
+              <p>{slot.description}</p>
+            </article>
+          ))}
+        </div>
+
+        {award.sponsorNote && (
+          <p class="enthusiast-award__sponsor">{award.sponsorNote}</p>
+        )}
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .enthusiast-award__heading {
+    align-items: start;
+  }
+
+  .enthusiast-award__heading h2 {
+    max-width: 12ch;
+  }
+
+  .enthusiast-award__heading > p {
+    max-width: 38rem;
+    font-size: clamp(1.1rem, 2vw, 1.4rem);
+    font-weight: 750;
+  }
+
+  .enthusiast-award__slots {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .enthusiast-award__slot {
+    min-width: 0;
+    min-height: 13rem;
+    padding: clamp(1rem, 2.5vw, 1.75rem);
+    border: var(--keyline);
+    border-right: 0;
+    background: var(--vgzt-paper-strong);
+  }
+
+  .enthusiast-award__slot:last-child {
+    border-right: var(--keyline);
+  }
+
+  .enthusiast-award__slot-heading {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+    align-items: start;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+  }
+
+  .enthusiast-award__slot h3 {
+    margin: 0;
+    font-size: clamp(1.7rem, 3vw, 2.7rem);
+  }
+
+  .enthusiast-award__slot p {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+  }
+
+  .enthusiast-award__sponsor {
+    margin: 1.25rem 0 0;
+    font-size: 0.9rem;
+    font-weight: 800;
+  }
+
+  @media (max-width: 48rem) {
+    .enthusiast-award__slots {
+      grid-template-columns: 1fr;
+    }
+
+    .enthusiast-award__slot {
+      min-height: 0;
+      border-right: var(--keyline);
+      border-bottom: 0;
+    }
+
+    .enthusiast-award__slot:last-child {
+      border-bottom: var(--keyline);
+    }
+  }
+</style>

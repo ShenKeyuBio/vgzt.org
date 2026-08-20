@@ -1,9 +1,11 @@
 ---
 import { getCollection } from 'astro:content';
+import EnthusiastAward from '../components/Awards/EnthusiastAward.astro';
 import ContactForm from '../components/Forms/ContactForm.astro';
 import Hero from '../components/Hero.astro';
 import OrganizerGrid from '../components/People/OrganizerGrid.astro';
 import ProgrammeSchedule from '../components/Schedule/ProgrammeSchedule.astro';
+import SpeakerPreview from '../components/SpeakerPreview.astro';
 import SeasonFormat from '../components/SeasonFormat.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getAbstractCallState, resolvePoster } from '../lib/config';
@@ -140,6 +142,8 @@ const western = timeSlotsById.get('western');
 const alternative = timeSlotsById.get('alternative');
 const twoSpeaker = sessionTypesById.get('two-speaker');
 const keynote = sessionTypesById.get('keynote');
+const speakerPreview = currentSeason.data.speakerPreview;
+const enthusiastAward = currentSeason.data.awards?.attendance;
 ---
 
 <BaseLayout
@@ -165,6 +169,14 @@ const keynote = sessionTypesById.get('keynote');
     defaultSeasonId={defaultProgrammeSeason}
     currentSeasonId={site.currentSeason}
   />
+  {
+    speakerPreview?.enabled && speakerPreview.speakers.length > 0 ? (
+      <SpeakerPreview
+        disclaimer={speakerPreview.disclaimer}
+        speakers={speakerPreview.speakers}
+      />
+    ) : null
+  }
   <SeasonFormat
     easternTime={eastern?.time}
     westernTime={western?.time}
@@ -174,6 +186,11 @@ const keynote = sessionTypesById.get('keynote');
     keynotePresentation={keynote?.presentationMinutesPerSpeaker}
     keynoteQa={keynote?.qaMinutesPerSpeaker}
   />
+  {
+    enthusiastAward?.enabled ? (
+      <EnthusiastAward award={enthusiastAward} />
+    ) : null
+  }
   <OrganizerGrid organizers={organizers} />
   <ContactForm
     endpoint={site.contactEndpoint}

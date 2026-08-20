@@ -61,6 +61,65 @@ const nullableHttpsUrl = z
 const nullableShortText = (maximum: number) =>
   z.string().trim().min(1).max(maximum).nullable().default(null);
 
+const speakerPreview = z
+  .object({
+    enabled: z.boolean().default(true),
+    disclaimer: z.string().trim().min(1).max(1_200),
+    speakers: z
+      .array(
+        z.object({
+          name: z.string().trim().min(1).max(160),
+          affiliation: z.string().trim().min(1).max(240),
+        }),
+      )
+      .max(100)
+      .default([]),
+  })
+  .nullable()
+  .default(null);
+
+const earlyCareerTalkAward = z
+  .object({
+    enabled: z.boolean().default(true),
+    eyebrow: z.string().trim().min(1).max(100),
+    title: z.string().trim().min(1).max(180),
+    intro: z.string().trim().min(1).max(600),
+    categories: z
+      .array(
+        z.object({
+          id: z.enum(['student-pre-doctoral', 'research-staff']),
+          label: z.string().trim().min(1).max(120),
+          description: z.string().trim().min(1).max(500),
+        }),
+      )
+      .length(2),
+    sponsorNote: nullableShortText(300),
+  })
+  .nullable()
+  .default(null);
+
+const attendanceAward = z
+  .object({
+    enabled: z.boolean().default(true),
+    eyebrow: z.string().trim().min(1).max(100),
+    title: z.string().trim().min(1).max(180),
+    intro: z.string().trim().min(1).max(600),
+    slots: z
+      .array(
+        z.object({
+          id: z.enum(['eastern', 'western', 'alternative']),
+          label: z.string().trim().min(1).max(80),
+          description: z.string().trim().min(1).max(500),
+          conditional: z.boolean().default(false),
+        }),
+      )
+      .min(2)
+      .max(3),
+    sponsorNote: nullableShortText(300),
+  })
+  .nullable()
+  .default(null);
+
 const people = defineCollection({
   loader: glob({ base: './src/content/people', pattern: '**/*.{yml,yaml}' }),
   schema: ({ image }) =>
@@ -140,6 +199,14 @@ const seasons = defineCollection({
       status: z.enum(['draft', 'published', 'archived']).default('draft'),
       description: nullableShortText(2_000),
       organizers: z.array(id).max(30).default([]),
+      speakerPreview,
+      awards: z
+        .object({
+          earlyCareerTalk: earlyCareerTalkAward,
+          attendance: attendanceAward,
+        })
+        .nullable()
+        .default(null),
     })
     .superRefine((season, context) => {
       if (season.start > season.end) {
@@ -164,6 +231,61 @@ const seasons = defineCollection({
           path: ['organizers'],
           message: 'A published season must have at least one organizer.',
         });
+      }
+
+      if (season.speakerPreview !== null) {
+        const names = season.speakerPreview.speakers.map(({ name }) =>
+          name.toLocaleLowerCase('en'),
+        );
+        if (new Set(names).size !== names.length) {
+          context.addIssue({
+            code: 'custom',
+            path: ['speakerPreview', 'speakers'],
+            message: 'Speaker preview names must be unique.',
+          });
+        }
+      }
+
+      const earlyCareerTalk = season.awards?.earlyCareerTalk;
+      if (earlyCareerTalk !== null && earlyCareerTalk !== undefined) {
+        const categoryIds = earlyCareerTalk.categories.map(({ id }) => id);
+        if (new Set(categoryIds).size !== categoryIds.length) {
+          context.addIssue({
+            code: 'custom',
+            path: ['awards', 'earlyCareerTalk', 'categories'],
+            message: 'Early Career Talk award categories must be unique.',
+          });
+        }
+      }
+
+      const attendance = season.awards?.attendance;
+      if (attendance !== null && attendance !== undefined) {
+        const slotIds = attendance.slots.map(({ id }) => id);
+        if (new Set(slotIds).size !== slotIds.length) {
+          context.addIssue({
+            code: 'custom',
+            path: ['awards', 'attendance', 'slots'],
+            message: 'Attendance award slots must be unique.',
+          });
+        }
+        if (!slotIds.includes('eastern') || !slotIds.includes('western')) {
+          context.addIssue({
+            code: 'custom',
+            path: ['awards', 'attendance', 'slots'],
+            message:
+              'Attendance awards must include both eastern and western slots.',
+          });
+        }
+        const alternative = attendance.slots.find(
+          ({ id }) => id === 'alternative',
+        );
+        if (alternative && !alternative.conditional) {
+          context.addIssue({
+            code: 'custom',
+            path: ['awards', 'attendance', 'slots'],
+            message: 'The alternative attendance award must be conditional.',
+          });
+        }
       }
     }),
 });

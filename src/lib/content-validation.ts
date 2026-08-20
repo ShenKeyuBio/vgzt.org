@@ -28,6 +28,55 @@ export interface SeasonRecord extends SourcedRecord {
   timezone: string;
   status: 'draft' | 'published' | 'archived';
   organizers: string[];
+  speakerPreview: SpeakerPreviewRecord | null;
+  awards: SeasonAwardsRecord | null;
+}
+
+export interface SpeakerPreviewPersonRecord {
+  name: string;
+  affiliation: string;
+}
+
+export interface SpeakerPreviewRecord {
+  enabled: boolean;
+  disclaimer: string;
+  speakers: SpeakerPreviewPersonRecord[];
+}
+
+export interface EarlyCareerAwardCategoryRecord {
+  id: 'student-pre-doctoral' | 'research-staff';
+  label: string;
+  description: string;
+}
+
+export interface EarlyCareerTalkAwardRecord {
+  enabled: boolean;
+  eyebrow: string;
+  title: string;
+  intro: string;
+  categories: EarlyCareerAwardCategoryRecord[];
+  sponsorNote: string | null;
+}
+
+export interface AttendanceAwardSlotRecord {
+  id: 'eastern' | 'western' | 'alternative';
+  label: string;
+  description: string;
+  conditional: boolean;
+}
+
+export interface AttendanceAwardRecord {
+  enabled: boolean;
+  eyebrow: string;
+  title: string;
+  intro: string;
+  slots: AttendanceAwardSlotRecord[];
+  sponsorNote: string | null;
+}
+
+export interface SeasonAwardsRecord {
+  earlyCareerTalk: EarlyCareerTalkAwardRecord | null;
+  attendance: AttendanceAwardRecord | null;
 }
 
 export interface SpeakerRecord {
@@ -293,6 +342,308 @@ function checkRequiredText(
   }
 }
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function checkOptionalText(
+  issues: ValidationIssue[],
+  path: string,
+  value: unknown,
+  maximum: number,
+): void {
+  if (value !== null && value !== undefined) {
+    checkRequiredText(issues, path, value, maximum);
+  }
+}
+
+function validateSpeakerPreview(
+  value: unknown,
+  source: string,
+  issues: ValidationIssue[],
+): void {
+  if (value === null || value === undefined) return;
+  if (!isRecord(value)) {
+    add(
+      issues,
+      'invalid_shape',
+      `${source}:speakerPreview`,
+      'Speaker preview must be an object or null.',
+    );
+    return;
+  }
+
+  if (typeof value.enabled !== 'boolean') {
+    add(
+      issues,
+      'invalid_configuration',
+      `${source}:speakerPreview.enabled`,
+      'Speaker preview enabled must be true or false.',
+    );
+  }
+  checkRequiredText(
+    issues,
+    `${source}:speakerPreview.disclaimer`,
+    value.disclaimer,
+    1_200,
+  );
+  if (!Array.isArray(value.speakers)) {
+    add(
+      issues,
+      'invalid_shape',
+      `${source}:speakerPreview.speakers`,
+      'Speaker preview speakers must be a list.',
+    );
+    return;
+  }
+
+  const names = new Set<string>();
+  value.speakers.forEach((speaker, index) => {
+    const path = `${source}:speakerPreview.speakers[${index}]`;
+    if (!isRecord(speaker)) {
+      add(
+        issues,
+        'invalid_shape',
+        path,
+        'Each preview speaker must be an object.',
+      );
+      return;
+    }
+    checkRequiredText(issues, `${path}.name`, speaker.name, 160);
+    checkRequiredText(issues, `${path}.affiliation`, speaker.affiliation, 240);
+    if (typeof speaker.name === 'string') {
+      const normalized = speaker.name.trim().toLocaleLowerCase('en');
+      if (names.has(normalized)) {
+        add(
+          issues,
+          'duplicate_speaker_preview',
+          `${path}.name`,
+          `Speaker preview name "${speaker.name}" is duplicated case-insensitively.`,
+        );
+      }
+      names.add(normalized);
+    }
+  });
+}
+
+function validateEarlyCareerTalkAward(
+  value: unknown,
+  source: string,
+  issues: ValidationIssue[],
+): void {
+  const path = `${source}:awards.earlyCareerTalk`;
+  if (!isRecord(value)) {
+    add(
+      issues,
+      'invalid_award',
+      path,
+      'Early Career Talk award must be an object or null.',
+    );
+    return;
+  }
+  if (typeof value.enabled !== 'boolean') {
+    add(
+      issues,
+      'invalid_award',
+      `${path}.enabled`,
+      'Award enabled must be true or false.',
+    );
+  }
+  checkRequiredText(issues, `${path}.eyebrow`, value.eyebrow, 100);
+  checkRequiredText(issues, `${path}.title`, value.title, 180);
+  checkRequiredText(issues, `${path}.intro`, value.intro, 600);
+  checkOptionalText(issues, `${path}.sponsorNote`, value.sponsorNote, 300);
+  if (!Array.isArray(value.categories) || value.categories.length !== 2) {
+    add(
+      issues,
+      'invalid_award',
+      `${path}.categories`,
+      'Early Career Talk awards must define exactly two categories.',
+    );
+    return;
+  }
+
+  const categoryIds = new Set<string>();
+  const allowedIds = new Set(['student-pre-doctoral', 'research-staff']);
+  value.categories.forEach((category, index) => {
+    const categoryPath = `${path}.categories[${index}]`;
+    if (!isRecord(category)) {
+      add(
+        issues,
+        'invalid_award',
+        categoryPath,
+        'Award category must be an object.',
+      );
+      return;
+    }
+    if (typeof category.id !== 'string' || !allowedIds.has(category.id)) {
+      add(
+        issues,
+        'invalid_award',
+        `${categoryPath}.id`,
+        'Award category ID must be student-pre-doctoral or research-staff.',
+      );
+    }
+    if (typeof category.id === 'string') {
+      if (categoryIds.has(category.id)) {
+        add(
+          issues,
+          'duplicate_award_category',
+          `${categoryPath}.id`,
+          `Award category "${category.id}" is duplicated.`,
+        );
+      }
+      categoryIds.add(category.id);
+    }
+    checkRequiredText(issues, `${categoryPath}.label`, category.label, 120);
+    checkRequiredText(
+      issues,
+      `${categoryPath}.description`,
+      category.description,
+      500,
+    );
+  });
+}
+
+function validateAttendanceAward(
+  value: unknown,
+  source: string,
+  issues: ValidationIssue[],
+): void {
+  const path = `${source}:awards.attendance`;
+  if (!isRecord(value)) {
+    add(
+      issues,
+      'invalid_award',
+      path,
+      'Attendance award must be an object or null.',
+    );
+    return;
+  }
+  if (typeof value.enabled !== 'boolean') {
+    add(
+      issues,
+      'invalid_award',
+      `${path}.enabled`,
+      'Award enabled must be true or false.',
+    );
+  }
+  checkRequiredText(issues, `${path}.eyebrow`, value.eyebrow, 100);
+  checkRequiredText(issues, `${path}.title`, value.title, 180);
+  checkRequiredText(issues, `${path}.intro`, value.intro, 600);
+  checkOptionalText(issues, `${path}.sponsorNote`, value.sponsorNote, 300);
+  if (
+    !Array.isArray(value.slots) ||
+    value.slots.length < 2 ||
+    value.slots.length > 3
+  ) {
+    add(
+      issues,
+      'invalid_award',
+      `${path}.slots`,
+      'Attendance awards must define two or three slots.',
+    );
+    return;
+  }
+
+  const slotIds = new Set<string>();
+  const allowedIds = new Set(['eastern', 'western', 'alternative']);
+  value.slots.forEach((slot, index) => {
+    const slotPath = `${path}.slots[${index}]`;
+    if (!isRecord(slot)) {
+      add(
+        issues,
+        'invalid_award',
+        slotPath,
+        'Attendance slot must be an object.',
+      );
+      return;
+    }
+    if (typeof slot.id !== 'string' || !allowedIds.has(slot.id)) {
+      add(
+        issues,
+        'invalid_award',
+        `${slotPath}.id`,
+        'Attendance slot ID must be eastern, western, or alternative.',
+      );
+    }
+    if (typeof slot.id === 'string') {
+      if (slotIds.has(slot.id)) {
+        add(
+          issues,
+          'duplicate_attendance_slot',
+          `${slotPath}.id`,
+          `Attendance slot "${slot.id}" is duplicated.`,
+        );
+      }
+      slotIds.add(slot.id);
+    }
+    checkRequiredText(issues, `${slotPath}.label`, slot.label, 80);
+    checkRequiredText(issues, `${slotPath}.description`, slot.description, 500);
+    if (typeof slot.conditional !== 'boolean') {
+      add(
+        issues,
+        'invalid_award',
+        `${slotPath}.conditional`,
+        'Attendance slot conditional must be true or false.',
+      );
+    }
+    if (slot.id === 'alternative' && slot.conditional !== true) {
+      add(
+        issues,
+        'invalid_award',
+        `${slotPath}.conditional`,
+        'The alternative attendance award must be conditional.',
+      );
+    }
+  });
+  if (!slotIds.has('eastern') || !slotIds.has('western')) {
+    add(
+      issues,
+      'invalid_award',
+      `${path}.slots`,
+      'Attendance awards must include both eastern and western slots.',
+    );
+  }
+}
+
+function validateSeasonAwards(
+  value: unknown,
+  source: string,
+  issues: ValidationIssue[],
+): void {
+  if (value === null || value === undefined) return;
+  if (!isRecord(value)) {
+    add(
+      issues,
+      'invalid_shape',
+      `${source}:awards`,
+      'Season awards must be an object or null.',
+    );
+    return;
+  }
+  if (!Object.prototype.hasOwnProperty.call(value, 'earlyCareerTalk')) {
+    add(
+      issues,
+      'invalid_award',
+      `${source}:awards.earlyCareerTalk`,
+      'Set earlyCareerTalk to an award object or null.',
+    );
+  } else if (value.earlyCareerTalk !== null) {
+    validateEarlyCareerTalkAward(value.earlyCareerTalk, source, issues);
+  }
+  if (!Object.prototype.hasOwnProperty.call(value, 'attendance')) {
+    add(
+      issues,
+      'invalid_award',
+      `${source}:awards.attendance`,
+      'Set attendance to an award object or null.',
+    );
+  } else if (value.attendance !== null) {
+    validateAttendanceAward(value.attendance, source, issues);
+  }
+}
+
 function validateSessionDefinitions(
   graph: ContentGraph,
   issues: ValidationIssue[],
@@ -443,6 +794,8 @@ export function validateContentGraph(
 
   for (const [index, season] of graph.seasons.entries()) {
     const source = sourceOf(season, `seasons[${index}]`);
+    validateSpeakerPreview(season.speakerPreview, source, issues);
+    validateSeasonAwards(season.awards, source, issues);
     if (!isDateOnly(season.start)) {
       add(
         issues,

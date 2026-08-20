@@ -1,0 +1,109 @@
+---
+interface AwardCategory {
+  id: string;
+  label: string;
+  description: string;
+}
+
+interface EarlyCareerTalkAward {
+  enabled: boolean;
+  eyebrow: string;
+  title: string;
+  intro: string;
+  categories: AwardCategory[];
+  sponsorNote: string | null;
+}
+
+interface Props {
+  award: EarlyCareerTalkAward;
+}
+
+const { award } = Astro.props;
+---
+
+{
+  award.enabled && (
+    <section
+      id="early-career-awards"
+      class="section section--blue early-career-awards"
+      aria-labelledby="early-career-awards-title"
+    >
+      <div class="container">
+        <div class="section-heading early-career-awards__heading">
+          <div>
+            <p class="eyebrow">{award.eyebrow}</p>
+            <h2 id="early-career-awards-title">{award.title}</h2>
+          </div>
+          <p>{award.intro}</p>
+        </div>
+
+        <div class="early-career-awards__grid">
+          {award.categories.map((category) => (
+            <article class="early-career-awards__category">
+              <h3>{category.label}</h3>
+              <p>{category.description}</p>
+            </article>
+          ))}
+        </div>
+
+        {award.sponsorNote && (
+          <p class="early-career-awards__sponsor">{award.sponsorNote}</p>
+        )}
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .early-career-awards__heading {
+    align-items: start;
+  }
+
+  .early-career-awards__heading h2 {
+    max-width: 12ch;
+  }
+
+  .early-career-awards__heading > p {
+    max-width: 35rem;
+    font-size: clamp(1.1rem, 2vw, 1.4rem);
+    font-weight: 750;
+  }
+
+  .early-career-awards__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+
+  .early-career-awards__category {
+    min-width: 0;
+    padding: clamp(1.25rem, 3vw, 2.25rem);
+    border: var(--keyline);
+    background: var(--vgzt-paper-strong);
+    color: var(--vgzt-ink);
+  }
+
+  .early-career-awards__category h3 {
+    margin-bottom: 1rem;
+    font-size: clamp(1.7rem, 3vw, 2.8rem);
+  }
+
+  .early-career-awards__category p {
+    max-width: 32rem;
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+  }
+
+  .early-career-awards__sponsor {
+    margin: 1.25rem 0 0;
+    font-size: 0.9rem;
+    font-weight: 800;
+  }
+
+  @media (max-width: 42rem) {
+    .early-career-awards__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

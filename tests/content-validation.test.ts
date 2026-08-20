@@ -75,6 +75,8 @@ function validGraph(): ContentGraph {
         timezone: 'America/New_York',
         status: 'published',
         organizers: ['person-pi'],
+        speakerPreview: null,
+        awards: null,
         __source: 'src/content/seasons/season-08.yml',
       },
     ],
@@ -224,6 +226,112 @@ describe('content graph validation', () => {
     expect(issues).toEqual(
       expect.arrayContaining([
         expect.objectContaining({ code: 'draft_reference' }),
+      ]),
+    );
+  });
+
+  it('accepts a structured speaker preview and award configuration', () => {
+    const graph = validGraph();
+    graph.seasons[0]!.speakerPreview = {
+      enabled: true,
+      disclaimer: 'This is a preliminary invitation list.',
+      speakers: [
+        { name: 'Invited Researcher', affiliation: 'Example University' },
+      ],
+    };
+    graph.seasons[0]!.awards = {
+      earlyCareerTalk: {
+        enabled: true,
+        eyebrow: 'Season 8 recognition',
+        title: 'Two Early Career Talk Awards.*',
+        intro: 'VGZT will recognise two awardees.',
+        categories: [
+          {
+            id: 'student-pre-doctoral',
+            label: 'Student / pre-doctoral',
+            description: 'Students and early research assistants.',
+          },
+          {
+            id: 'research-staff',
+            label: 'Research staff',
+            description: 'Postdoctoral and comparable research staff.',
+          },
+        ],
+        sponsorNote: '*Subject to sponsorship.',
+      },
+      attendance: {
+        enabled: true,
+        eyebrow: 'Season 8 community award',
+        title: 'VGZT Enthusiast Award.*',
+        intro: 'Recognising attendance across the regular slots.',
+        slots: [
+          {
+            id: 'eastern',
+            label: 'Eastern',
+            description: 'The highest Eastern attendance.',
+            conditional: false,
+          },
+          {
+            id: 'western',
+            label: 'Western',
+            description: 'The highest Western attendance.',
+            conditional: false,
+          },
+          {
+            id: 'alternative',
+            label: 'Alternative',
+            description: 'Conditional alternative attendance comparison.',
+            conditional: true,
+          },
+        ],
+        sponsorNote: '*Subject to sponsorship.',
+      },
+    };
+
+    expect(validateContentGraph(graph)).toEqual([]);
+  });
+
+  it('rejects duplicate preview names and invalid attendance slots', () => {
+    const graph = validGraph();
+    graph.seasons[0]!.speakerPreview = {
+      enabled: true,
+      disclaimer: 'This is a preliminary invitation list.',
+      speakers: [
+        { name: 'Invited Researcher', affiliation: 'Example University' },
+        { name: 'invited researcher', affiliation: 'Another University' },
+      ],
+    };
+    graph.seasons[0]!.awards = {
+      earlyCareerTalk: null,
+      attendance: {
+        enabled: true,
+        eyebrow: 'Season 8 community award',
+        title: 'VGZT Enthusiast Award.*',
+        intro: 'Recognising attendance across the regular slots.',
+        slots: [
+          {
+            id: 'eastern',
+            label: 'Eastern',
+            description: 'The highest Eastern attendance.',
+            conditional: false,
+          },
+          {
+            id: 'eastern',
+            label: 'Duplicate Eastern',
+            description: 'This slot is duplicated.',
+            conditional: false,
+          },
+        ],
+        sponsorNote: null,
+      },
+    };
+
+    const issues = validateContentGraph(graph);
+    expect(issues).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ code: 'duplicate_speaker_preview' }),
+        expect.objectContaining({ code: 'duplicate_attendance_slot' }),
+        expect.objectContaining({ code: 'invalid_award' }),
       ]),
     );
   });

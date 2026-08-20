@@ -1,5 +1,6 @@
 ---
 import { getEntry } from 'astro:content';
+import EarlyCareerTalkAwards from '../components/Awards/EarlyCareerTalkAwards.astro';
 import MicrosoftFormEmbed from '../components/Forms/MicrosoftFormEmbed.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getAbstractCallState, safeHttpsUrl } from '../lib/config';
@@ -19,6 +20,8 @@ const state = getAbstractCallState(call);
 const sessions = getSessionSettings();
 const seasonEntry = await getEntry('seasons', call.season);
 const seasonLabel = seasonEntry?.data.label || call.season;
+const earlyCareerTalkAward = seasonEntry?.data.awards?.earlyCareerTalk;
+const speakerPreview = seasonEntry?.data.speakerPreview;
 const timeSlots = sessions.timeSlots.filter((slot) =>
   call.preferredTimeSlots.includes(slot.id),
 );
@@ -105,6 +108,14 @@ const abstractWordLimit = '150–300 words';
           )
         }
       </div>
+      {
+        earlyCareerTalkAward?.enabled ? (
+          <a class="abstract-hero__award-link" href="#early-career-awards">
+            Season 8 includes two Early Career Talk Awards
+            <span aria-hidden="true">→</span>
+          </a>
+        ) : null
+      }
     </div>
   </header>
 
@@ -202,6 +213,16 @@ const abstractWordLimit = '150–300 words';
               'The organizing team will publish how submissions are matched before submissions open.'
           }
         </p>
+        {
+          speakerPreview?.enabled && speakerPreview.speakers.length > 0 ? (
+            <p class="abstracts-copy__preview-link">
+              You can also browse the current{' '}
+              <a href="/#speaker-preview">Season 8 Speaker Preview</a>. The list
+              is preliminary and will continue to change as invitations and
+              scheduling are confirmed.
+            </p>
+          ) : null
+        }
 
         <h2>Preferred session times</h2>
         <p>
@@ -235,6 +256,12 @@ const abstractWordLimit = '150–300 words';
       </div>
     </div>
   </section>
+
+  {
+    earlyCareerTalkAward ? (
+      <EarlyCareerTalkAwards award={earlyCareerTalkAward} />
+    ) : null
+  }
 
   {
     state.canSubmit && formUrl ? (
@@ -308,6 +335,15 @@ const abstractWordLimit = '150–300 words';
     margin-top: 1.7rem;
   }
 
+  .abstract-hero__award-link {
+    display: inline-flex;
+    gap: 0.45rem;
+    align-items: center;
+    margin-top: 1rem;
+    font-size: 0.95rem;
+    font-weight: 900;
+  }
+
   .abstracts-grid {
     display: grid;
     grid-template-columns: minmax(16rem, 0.55fr) minmax(25rem, 1.45fr);
@@ -347,6 +383,14 @@ const abstractWordLimit = '150–300 words';
 
   .abstracts-copy strong {
     font-weight: 950;
+  }
+
+  .abstracts-copy__preview-link {
+    margin-top: 1.25rem;
+    padding: 1rem;
+    border: var(--keyline);
+    background: var(--vgzt-paper-strong);
+    font-weight: 750;
   }
 
   .faq-list {
