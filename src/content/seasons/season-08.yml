@@ -15,12 +15,11 @@ organizers:
 speakerPreview:
   enabled: true
   disclaimer: >-
-    The researchers below are among those invited for VGZT Season 8. This is a
-    preliminary invitation and scheduling list, not a confirmed programme.
-    Participation and dates are not yet fully confirmed, individual invitees
-    may ultimately be unavailable, and additional speakers will be added as
-    Season 8 develops. Confirmed speakers and dates will appear in the
-    programme as scheduling is finalized.
+    The researchers below are expected to take part in VGZT Season 8. Their
+    participation is not yet a fully confirmed programme commitment: dates and
+    times are still being arranged, individual availability may change, and
+    additional speakers will be added as Season 8 develops. Confirmed speakers
+    and dates will appear in the programme as scheduling is finalized.
   speakers:
     - name: Peng Du
       affiliation: Peking University
