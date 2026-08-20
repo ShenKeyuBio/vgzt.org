@@ -2,7 +2,7 @@ id: nadia-ayad
 name: 'Nadia Ayad'
 preferredName: null
 currentAffiliation: 'Graduate Program in Bioengineering, University of California San Francisco & University of California Berkeley; Center for Bioengineering and Tissue Regeneration, UCSF'
-title: 'Graduate Researcher / PhD candidate (exact program status not independently confirmed)'
+title: Graduate Researcher / PhD candidate
 portrait: null
 portraitAlt: null
 website: null
@@ -14,5 +14,5 @@ historicalSeasons:
   - 4
 verificationStatus: verified
 sourceUrl: 'https://pubmed.ncbi.nlm.nih.gov/42442364/'
-sourceNote: 'Identity and 2026 affiliation are supported by a recent Developmental Cell paper; exact student title is stated conservatively.'
+sourceNote: Identity and 2026 affiliation are supported by a recent Developmental Cell paper.
 status: published

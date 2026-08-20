@@ -4,40 +4,25 @@ audience: Early Career Researchers
 deadline: null
 formUrl: 'https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=B3jtTq3rWkGnqZFwlH9OrscM_7z6UFVOiVCj04ix33hURVdFWDhBUUJPNzY3MUxWRVRBUzRHTU9QVi4u&embed=true'
 description: >-
-  Submit a short abstract to present alongside an invited VGZT speaker. VGZT
-  Season 8 is opening a rolling call for early-career researchers working on
-  questions related to peri-gastrulation development.
-eligibility: >-
-  We particularly welcome submissions from undergraduate and Master’s students,
-  PhD students, research assistants, postdoctoral researchers, and other
-  early-career researchers. We also strongly encourage submissions from
-  researchers based in Asia and other regions that have historically been less
-  represented in the VGZT seminar series. Projects should broadly address
-  questions related to peri-gastrulation development, including but not limited
-  to cell fate specification, patterning, morphogenesis, signalling, embryo
-  models, self-organisation, and related developmental processes. Ongoing and
-  unpublished work is very welcome. Projects do not need to represent a fully
-  completed or published story, but should be sufficiently developed to support
-  a coherent research presentation.
+  Submit a short abstract to present alongside a VGZT speaker. Season 8 welcomes
+  early-career research on peri-gastrulation development.
+eligibility: |-
+  We welcome undergraduate and Master’s students, PhD students, research assistants, postdoctoral researchers, and other early-career researchers.
+
+  Projects should address peri-gastrulation development—such as cell fate, patterning, morphogenesis, signalling, embryo models, or self-organisation. Ongoing and unpublished work is welcome when it is ready for a coherent presentation.
+
+  We especially encourage submissions from researchers based in Asia and other regions historically underrepresented in the VGZT series.
 whatToSubmit:
   - A provisional talk title. This can be updated later.
   - A short abstract of 150–300 words describing the research question, approach, main findings or current direction, and significance of the project.
   - Basic information about you, your institution, and your career stage.
   - Research themes or keywords, plus any relevant scheduling information.
-reviewDescription: >-
-  This is not a competitive abstract selection process. Submissions are not
-  scored or ranked against one another. The organizing team will only conduct a
-  light check that the proposed work falls broadly within the scientific scope
-  of VGZT, represents a sufficiently developed research project to support a
-  coherent presentation, and can be appropriately matched with the topic of one
-  of our invited speakers. Eligible submissions will be paired with an invited
-  speaker working on a related or complementary topic. Because matching depends
-  on the Season 8 programme, some submissions may be contacted sooner than
-  others. Submissions are considered on a rolling basis until the available
-  Season 8 presentation slots are filled. We hope to accommodate as many
-  eligible projects as possible; however, if submissions substantially exceed
-  the number of available sessions, we may not be able to accommodate every
-  eligible project.
+reviewDescription: |-
+  This is not a competitive selection: abstracts are not scored or ranked. The organizing team checks only that the work fits VGZT’s scope, is ready for a coherent presentation, and can be paired with a related Season 8 speaker.
+
+  Eligible abstracts are considered as suitable sessions are arranged. Replies may arrive at different times; the call remains open until presentation slots are filled.
+
+  If submissions exceed available sessions, some eligible projects may not be accommodated.
 preferredTimeSlots:
   - eastern
   - western
@@ -49,14 +34,13 @@ faq:
       sufficiently developed to support a coherent research presentation.
   - question: Is this a competitive abstract selection?
     answer: >-
-      No. Abstracts are not scored or ranked against one another. We conduct
-      only a light scope and project-readiness check before matching eligible
-      projects with relevant invited speakers.
+      No. We make a light scope and readiness check before matching eligible
+      projects with a relevant Season 8 speaker.
   - question: When will I hear back?
     answer: >-
-      Timing depends on when a suitable invited speaker and session can be
-      identified. Applicants who submit around the same time may therefore hear
-      from us at different times.
+      Timing depends on when a suitable speaker and session can be identified.
+      Applicants who submit around the same time may therefore hear from us at
+      different times.
   - question: Can I submit if my work is not strictly about gastrulation?
     answer: >-
       Yes. VGZT interprets the scope broadly around peri-gastrulation

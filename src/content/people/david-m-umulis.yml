@@ -2,7 +2,7 @@ id: david-m-umulis
 name: 'David M. Umulis'
 preferredName: null
 currentAffiliation: 'Purdue University'
-title: 'Professor (exact current administrative title not confirmed)'
+title: Professor
 portrait: null
 portraitAlt: null
 website: null
@@ -14,5 +14,5 @@ historicalSeasons:
   - 4
 verificationStatus: verified
 sourceUrl: 'https://www.sciencedirect.com/author/8345158900/david-m-umulis'
-sourceNote: 'Current Purdue affiliation is clear; exact administrative title may have changed.'
+sourceNote: Current Purdue affiliation verified.
 status: published

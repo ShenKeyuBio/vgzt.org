@@ -21,76 +21,76 @@ speakerPreview:
     additional speakers will be added as Season 8 develops. Confirmed speakers
     and dates will appear in the programme as scheduling is finalized.
   speakers:
-    - name: Peng Du
-      affiliation: Peking University
-    - name: Swathi Arur
-      affiliation: The University of Texas MD Anderson Cancer Center
-    - name: Maneesha S. Inamdar
-      affiliation: Institute for Stem Cell Science and Regenerative Medicine (inStem), Bengaluru
-    - name: Anupama Hemalatha
-      affiliation: Friedrich Miescher Institute for Biomedical Research (FMI)
-    - name: Sreelaja Nair
-      affiliation: Indian Institute of Technology Bombay (IIT Bombay)
-    - name: Mark Sharpley
-      affiliation: Cedars-Sinai
-    - name: Allon Klein
-      affiliation: Harvard University
-    - name: Fengzhu Xiong
-      affiliation: University of Cambridge
-    - name: Chun So
-      affiliation: National Institute of Biological Sciences, Beijing (NIBS)
-    - name: Guoye Guan
-      affiliation: Harvard Medical School & Dana-Farber Cancer Institute
-    - name: Zheng Guo
-      affiliation: Huazhong University of Science and Technology
-    - name: M. Lisa Manning
-      affiliation: Syracuse University
-    - name: Hans Clevers
-      affiliation: Utrecht University / Hubrecht Institute
-    - name: Suraj Shankar
-      affiliation: University of Michigan
-    - name: Alejandro Torres-Sánchez
-      affiliation: European Molecular Biology Laboratory (EMBL)
-    - name: Mattia Serra
-      affiliation: University of California San Diego
-    - name: Scott Holley
-      affiliation: Yale University
-    - name: Idse Heemskerk
-      affiliation: University of Michigan
-    - name: Shilei Xue
-      affiliation: Westlake University
-    - name: Peng Xia
-      affiliation: Zhejiang University
-    - name: Carl-Philipp Heisenberg
-      affiliation: Institute of Science and Technology Austria (ISTA)
-    - name: Saunak Sahu
-      affiliation: New York University (NYU)
-    - name: Ashley Solmonson
-      affiliation: UT Southwestern Medical Center
-    - name: Mahendra Sonawane
-      affiliation: Tata Institute of Fundamental Research (TIFR), India
-    - name: Sandeep Gupta
-      affiliation: University of Alberta
-    - name: Edgar Pera
-      affiliation: Karolinska Institutet
     - name: Alejandro Aguilera-Castrejon
       affiliation: HHMI Janelia Research Campus
-    - name: Catherine Triandafillou
-      affiliation: University of Pennsylvania
+    - name: Alejandro Torres-Sánchez
+      affiliation: European Molecular Biology Laboratory (EMBL)
+    - name: Allon Klein
+      affiliation: Harvard University
     - name: Amanda Collier
       affiliation: University of California, Los Angeles (UCLA)
-    - name: Denis Duboule
-      affiliation: Collège de France; University of Geneva & EPFL (emeritus)
-    - name: Kim Dale
-      affiliation: University of Dundee
-    - name: Qi Gu
-      affiliation: Institute of Zoology, Chinese Academy of Sciences (CAS)
-    - name: Hui Chen
-      affiliation: University of South Carolina
+    - name: Anupama Hemalatha
+      affiliation: Friedrich Miescher Institute for Biomedical Research (FMI)
+    - name: Ashley Solmonson
+      affiliation: UT Southwestern Medical Center
+    - name: Carl-Philipp Heisenberg
+      affiliation: Institute of Science and Technology Austria (ISTA)
     - name: Carolina Guibentif
       affiliation: University of Gothenburg / Sahlgrenska Center for Cancer Research
+    - name: Catherine Triandafillou
+      affiliation: University of Pennsylvania
+    - name: Chun So
+      affiliation: National Institute of Biological Sciences, Beijing (NIBS)
+    - name: Denis Duboule
+      affiliation: Collège de France; University of Geneva & EPFL (emeritus)
+    - name: Edgar Pera
+      affiliation: Karolinska Institutet
+    - name: Fengzhu Xiong
+      affiliation: University of Cambridge
+    - name: Guoye Guan
+      affiliation: Harvard Medical School & Dana-Farber Cancer Institute
+    - name: Hans Clevers
+      affiliation: Utrecht University / Hubrecht Institute
+    - name: Hui Chen
+      affiliation: University of South Carolina
+    - name: Idse Heemskerk
+      affiliation: University of Michigan
+    - name: Kim Dale
+      affiliation: University of Dundee
+    - name: M. Lisa Manning
+      affiliation: Syracuse University
+    - name: Mahendra Sonawane
+      affiliation: Tata Institute of Fundamental Research (TIFR), India
+    - name: Maneesha S. Inamdar
+      affiliation: Institute for Stem Cell Science and Regenerative Medicine (inStem), Bengaluru
+    - name: Mark Sharpley
+      affiliation: Cedars-Sinai
+    - name: Mattia Serra
+      affiliation: University of California San Diego
+    - name: Peng Du
+      affiliation: Peking University
+    - name: Peng Xia
+      affiliation: Zhejiang University
+    - name: Qi Gu
+      affiliation: Institute of Zoology, Chinese Academy of Sciences (CAS)
     - name: Rowan Karvas
       affiliation: University of Colorado Boulder
+    - name: Sandeep Gupta
+      affiliation: University of Alberta
+    - name: Saunak Sahu
+      affiliation: New York University (NYU)
+    - name: Scott Holley
+      affiliation: Yale University
+    - name: Shilei Xue
+      affiliation: Westlake University
+    - name: Sreelaja Nair
+      affiliation: Indian Institute of Technology Bombay (IIT Bombay)
+    - name: Suraj Shankar
+      affiliation: University of Michigan
+    - name: Swathi Arur
+      affiliation: The University of Texas MD Anderson Cancer Center
+    - name: Zheng Guo
+      affiliation: Huazhong University of Science and Technology
 awards:
   earlyCareerTalk:
     enabled: true

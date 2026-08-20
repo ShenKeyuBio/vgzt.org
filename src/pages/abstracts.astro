@@ -55,7 +55,7 @@ const deadlineLabel = deadline
     ? 'Rolling · until available slots are filled'
     : 'To be confirmed';
 const supportingLine =
-  'Submit a short abstract to present alongside an invited VGZT speaker.';
+  'Submit a short abstract to present alongside a VGZT speaker.';
 const configuredDescription =
   call.description?.trim() ||
   'Season 8 abstract-call details will be published here as soon as they are confirmed.';
@@ -63,11 +63,24 @@ const descriptionBody = configuredDescription.startsWith(supportingLine)
   ? configuredDescription.slice(supportingLine.length).trim()
   : configuredDescription;
 const abstractWordLimit = '150–300 words';
+const toParagraphs = (copy: string | null | undefined, fallback: string) =>
+  (copy?.trim() || fallback)
+    .split(/\n\s*\n/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean);
+const eligibilityParagraphs = toParagraphs(
+  call.eligibility,
+  'Confirmed eligibility guidance will be added before submissions open.',
+);
+const reviewParagraphs = toParagraphs(
+  call.reviewDescription,
+  'The organizing team will publish how submissions are matched before submissions open.',
+);
 ---
 
 <BaseLayout
   title="Call for abstracts"
-  description="VGZT Season 8 rolling call for early-career researchers to present peri-gastrulation research alongside invited speakers."
+  description="VGZT Season 8 rolling call for early-career researchers to present peri-gastrulation research alongside Season 8 speakers."
   email={site.publicEmail}
   social={getFooterSocial(social)}
   masterLogo={site.masterLogo}
@@ -147,12 +160,9 @@ const abstractWordLimit = '150–300 words';
 
       <div class="prose abstracts-copy">
         <h2>Who can apply</h2>
-        <p>
-          {
-            call.eligibility ||
-              'Confirmed eligibility guidance will be added before submissions open.'
-          }
-        </p>
+        <div class="abstracts-copy__stack">
+          {eligibilityParagraphs.map((paragraph) => <p>{paragraph}</p>)}
+        </div>
 
         <h2>What to submit</h2>
         {
@@ -185,52 +195,46 @@ const abstractWordLimit = '150–300 words';
 
         <h2>Seminar format</h2>
         <p>
-          Early-career speakers will normally present in a two-speaker session
-          alongside an invited VGZT speaker working on a related or
-          complementary topic.
+          Early-career speakers normally share a two-speaker session with a
+          related VGZT speaker. Pairings are based on scientific theme.
         </p>
         {
           twoSpeakerTiming ? (
-            <p>
-              Each early-career speaker receives a {twoSpeakerSlotLabel} slot,
-              currently consisting of approximately{' '}
-              {twoSpeakerTiming.presentation} minutes for the research
-              presentation followed by {twoSpeakerTiming.qa} minutes of
-              questions.
-            </p>
+            <dl class="seminar-format">
+              <div>
+                <dt>Slot</dt>
+                <dd>{twoSpeakerSlotLabel}</dd>
+              </div>
+              <div>
+                <dt>Presentation</dt>
+                <dd>{twoSpeakerTiming.presentation} minutes</dd>
+              </div>
+              <div>
+                <dt>Questions</dt>
+                <dd>{twoSpeakerTiming.qa} minutes</dd>
+              </div>
+            </dl>
           ) : null
         }
-        <p>
-          Pairings are made according to scientific theme, with the aim of
-          bringing related or complementary research questions into the same
-          session.
-        </p>
 
         <h2>How submissions are matched</h2>
-        <p>
-          {
-            call.reviewDescription ||
-              'The organizing team will publish how submissions are matched before submissions open.'
-          }
-        </p>
+        <div class="abstracts-copy__stack">
+          {reviewParagraphs.map((paragraph) => <p>{paragraph}</p>)}
+        </div>
         {
           speakerPreview?.enabled && speakerPreview.speakers.length > 0 ? (
             <p class="abstracts-copy__preview-link">
               You can also browse the current{' '}
-              <a href="/#speaker-preview">Season 8 Speaker Preview</a>. The list
-              is preliminary and will continue to change as invitations and
-              scheduling are confirmed.
+              <a href="/#speaker-preview">Season 8 Speaker Preview</a>. Dates
+              are still being arranged and availability may change.
             </p>
           ) : null
         }
 
         <h2>Preferred session times</h2>
         <p>
-          Sessions use America/New_York as the canonical timezone, with
-          daylight-saving transitions handled automatically. Exact scheduling
-          will be arranged after a thematic match has been identified;
-          applicants do not need to commit to a specific seminar date when
-          submitting.
+          Sessions use America/New_York. Exact dates are arranged after a
+          thematic match, so no date commitment is needed when applying.
         </p>
         <ul>
           {
@@ -377,12 +381,35 @@ const abstractWordLimit = '150–300 words';
     margin-top: 0;
   }
 
+  .abstracts-copy__stack p + p {
+    margin-top: 1rem;
+  }
+
   .abstracts-copy li + li {
     margin-top: 0.6rem;
   }
 
   .abstracts-copy strong {
     font-weight: 950;
+  }
+
+  .seminar-format {
+    display: grid;
+    margin: 1.25rem 0 1.8rem;
+    border: var(--keyline);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .seminar-format div {
+    padding: 0.8rem;
+  }
+
+  .seminar-format div + div {
+    border-left: var(--keyline);
+  }
+
+  .seminar-format dd {
+    font-size: 1rem;
   }
 
   .abstracts-copy__preview-link {
@@ -454,6 +481,15 @@ const abstractWordLimit = '150–300 words';
     .abstracts-followup__inner {
       align-items: start;
       flex-direction: column;
+    }
+
+    .seminar-format {
+      grid-template-columns: 1fr;
+    }
+
+    .seminar-format div + div {
+      border-top: var(--keyline);
+      border-left: 0;
     }
   }
 </style>

@@ -2,7 +2,7 @@ id: guillermo-serrano-najera
 name: 'Guillermo Serrano Nájera'
 preferredName: null
 currentAffiliation: 'University of Cambridge — Department of Genetics'
-title: 'Researcher / Fellow (exact current title not explicitly listed on current Cambridge directory)'
+title: Researcher / Fellow
 portrait: null
 portraitAlt: null
 website: null
@@ -14,5 +14,5 @@ historicalSeasons:
   - 5
 verificationStatus: verified
 sourceUrl: 'https://www.physbiol.cam.ac.uk/directory/s'
-sourceNote: 'Current Cambridge directory and 2025 gastrulation paper support identity and affiliation; exact job title is not shown on the directory.'
+sourceNote: Current Cambridge directory and a 2025 gastrulation paper support identity and affiliation.
 status: published

@@ -14,5 +14,5 @@ historicalSeasons:
   - 5
 verificationStatus: verified
 sourceUrl: 'https://www.kaszalab.com/people'
-sourceNote: 'Official Kasza Lab profile supports current doctoral/research-fellow status; secondary placeholder Nature URL should be replaced if exact paper URL is needed.'
+sourceNote: Official Kasza Lab profile supports current doctoral/research-fellow status.
 status: published

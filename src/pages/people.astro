@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import PersonCard from '../components/People/PersonCard.astro';
+import SpeakerArchiveCard from '../components/People/SpeakerArchiveCard.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import {
   getFooterSocial,
@@ -145,15 +146,11 @@ const seasonOptions = [...seasonOptionsById.values()].sort(
                     .join(' ')}
                   data-person-search={`${person.name} ${person.preferredName || ''} ${person.currentAffiliation || ''}`.toLowerCase()}
                 >
-                  <PersonCard
+                  <SpeakerArchiveCard
                     id={person.id}
                     name={person.name}
                     preferredName={person.preferredName}
-                    title={person.title}
                     affiliation={person.currentAffiliation}
-                    portrait={person.portrait}
-                    portraitAlt={person.portraitAlt}
-                    website={person.website}
                   />
                 </div>
               ))}
