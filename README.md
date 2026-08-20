@@ -33,6 +33,8 @@ pnpm test
 pnpm run build
 ```
 
+The shared editing and conflict-avoidance workflow is documented in [docs/GIT-WORKFLOW.md](docs/GIT-WORKFLOW.md). Start technical work from a feature branch; use Pages CMS for routine editorial content.
+
 Run the stricter pre-launch gate separately:
 
 ```sh

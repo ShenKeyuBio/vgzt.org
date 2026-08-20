@@ -32,11 +32,16 @@ The root pnpm workspace deliberately excludes `worker/`. The Cloudflare Worker i
 
 ## Branches and pull requests
 
-1. Branch from the current default branch.
+Use [docs/GIT-WORKFLOW.md](docs/GIT-WORKFLOW.md) for the full clone, sync, rebase, and conflict-recovery procedure.
+
+1. Fetch `origin` and branch from the current `main`; do not develop directly on `main`.
 2. Keep the change focused; do not reformat unrelated historical content.
-3. Add or update tests for behavior changes.
-4. Run the checks below.
-5. Open a pull request that explains the visitor/organizer impact, data migrations, screenshots for visual changes, and any unresolved content.
+3. Before committing and pushing, rebase onto `origin/main` and inspect the staged paths.
+4. Add or update tests for behavior changes.
+5. Run the checks below.
+6. Open a pull request that explains the visitor/organizer impact, data migrations, screenshots for visual changes, and any unresolved content.
+
+If Pages CMS has committed while your branch was in progress, fetch and rebase before touching the affected files. Do not resolve a YAML conflict by blindly taking one side.
 
 Required site checks:
 
