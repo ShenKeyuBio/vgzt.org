@@ -182,6 +182,7 @@ const categories = [
 
   .contact-section__intro {
     position: sticky;
+    min-width: 0;
     top: 2rem;
   }
 
@@ -200,20 +201,24 @@ const categories = [
 
   .contact-form {
     display: grid;
+    min-width: 0;
     padding: clamp(1.25rem, 3vw, 2.5rem);
     border: var(--keyline);
     background: var(--vgzt-paper-strong);
+    grid-template-columns: minmax(0, 1fr);
     gap: 1.1rem;
   }
 
   .contact-form__row {
     display: grid;
+    min-width: 0;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 1rem;
   }
 
   .field {
     display: grid;
+    min-width: 0;
     gap: 0.35rem;
   }
 
@@ -317,7 +322,7 @@ const categories = [
 
   @media (max-width: 36rem) {
     .contact-form__row {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
     }
 
     .contact-form__submit-row {

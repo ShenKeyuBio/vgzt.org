@@ -1,0 +1,163 @@
+---
+import type { AbstractCallState } from '../lib/config';
+
+interface Props {
+  abstractState: AbstractCallState;
+  isAbstractsPage?: boolean;
+}
+
+const { abstractState, isAbstractsPage = false } = Astro.props;
+const showSubmit = abstractState.canSubmit && Boolean(abstractState.ctaUrl);
+---
+
+<nav class="persistent-actions" aria-label="Quick actions">
+  {
+    showSubmit && !isAbstractsPage ? (
+      <a
+        class="button button--pink persistent-actions__desktop"
+        href={abstractState.ctaUrl ?? '/abstracts/'}
+        data-persistent-desktop-submit
+      >
+        Submit an abstract
+      </a>
+    ) : null
+  }
+
+  <div
+    class:list={[
+      'persistent-actions__mobile',
+      { 'persistent-actions__mobile--single': !showSubmit },
+    ]}
+    data-persistent-mobile-actions
+    data-abstracts-page={isAbstractsPage ? 'true' : 'false'}
+  >
+    {
+      showSubmit ? (
+        <a
+          class="button button--pink"
+          href={abstractState.ctaUrl ?? '/abstracts/'}
+          data-persistent-submit
+        >
+          Submit abstract
+        </a>
+      ) : null
+    }
+    <a class="button" href="/subscribe/">Subscribe</a>
+  </div>
+</nav>
+
+<style>
+  .persistent-actions__desktop {
+    position: fixed;
+    z-index: 25;
+    right: 0;
+    bottom: 1.25rem;
+    min-height: 2.85rem;
+    padding: 0.68rem 0.9rem;
+    border-right: 0;
+    border-radius: var(--radius-small) 0 0 var(--radius-small);
+    font-size: 0.84rem;
+  }
+
+  .persistent-actions__mobile {
+    display: none;
+  }
+
+  .persistent-actions [hidden] {
+    display: none;
+  }
+
+  @media (max-width: 56rem) {
+    :global(body) {
+      padding-bottom: calc(5rem + env(safe-area-inset-bottom));
+    }
+
+    .persistent-actions__desktop {
+      display: none;
+    }
+
+    .persistent-actions__mobile {
+      position: fixed;
+      z-index: 25;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      display: grid;
+      padding: 0.55rem max(0.625rem, env(safe-area-inset-right))
+        calc(0.55rem + env(safe-area-inset-bottom))
+        max(0.625rem, env(safe-area-inset-left));
+      border-top: 2px solid var(--vgzt-paper-strong);
+      background: var(--vgzt-ink);
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.55rem;
+    }
+
+    .persistent-actions__mobile--single {
+      grid-template-columns: 1fr;
+    }
+
+    .persistent-actions__mobile .button {
+      min-height: 3.25rem;
+      padding-inline: 0.75rem;
+    }
+  }
+
+  @media print {
+    .persistent-actions {
+      display: none;
+    }
+
+    :global(body) {
+      padding-bottom: 0;
+    }
+  }
+</style>
+
+<script>
+  const desktopSubmit = document.querySelector<HTMLElement>(
+    '[data-persistent-desktop-submit]',
+  );
+  const submitSources = [
+    ...document.querySelectorAll<HTMLElement>(
+      '[data-submit-source], [data-persistent-action-obstacle]',
+    ),
+  ];
+
+  if (desktopSubmit && submitSources.length > 0) {
+    const visibleSources = new Set<Element>();
+    const sourceObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) visibleSources.add(entry.target);
+          else visibleSources.delete(entry.target);
+        });
+        desktopSubmit.hidden = visibleSources.size > 0;
+      },
+      { threshold: 0.15 },
+    );
+    submitSources.forEach((source) => sourceObserver.observe(source));
+  }
+
+  const mobileActions = document.querySelector<HTMLElement>(
+    '[data-persistent-mobile-actions][data-abstracts-page="true"]',
+  );
+  const submitAction = mobileActions?.querySelector<HTMLElement>(
+    '[data-persistent-submit]',
+  );
+  const submitSection = document.getElementById('submit');
+
+  if (mobileActions && submitAction && submitSection) {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        const submitIsVisible = Boolean(entry?.isIntersecting);
+        submitAction.hidden = submitIsVisible;
+        mobileActions.classList.toggle(
+          'persistent-actions__mobile--single',
+          submitIsVisible,
+        );
+      },
+      { threshold: 0.15 },
+    );
+    observer.observe(submitSection);
+  }
+</script>

@@ -11,12 +11,12 @@ const seasons = [
 ];
 
 describe('homepage programme season selection', () => {
-  it('falls back to Season 7 when Season 8 has no published events', () => {
+  it('defaults to the current season even when it has no published events', () => {
     expect(
       defaultProgrammeSeasonId('season-08', seasons, [
         { season: 'season-07', status: 'published' },
       ]),
-    ).toBe('season-07');
+    ).toBe('season-08');
   });
 
   it('automatically defaults to Season 8 once it has an event', () => {

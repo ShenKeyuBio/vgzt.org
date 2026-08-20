@@ -13,7 +13,11 @@ interface Props {
   selectedId?: string | null | undefined;
   archive?: boolean;
   active?: boolean;
-  fallbackMessage?: string | null;
+  hasSpeakerPreview?: boolean;
+  abstractCtaUrl?: string | null;
+  abstractCtaLabel?: string | null;
+  archiveUrl?: string | null;
+  archiveLabel?: string | null;
 }
 
 const {
@@ -25,7 +29,11 @@ const {
   selectedId = null,
   archive = false,
   active = true,
-  fallbackMessage = null,
+  hasSpeakerPreview = false,
+  abstractCtaUrl = null,
+  abstractCtaLabel = null,
+  archiveUrl = null,
+  archiveLabel = null,
 } = Astro.props;
 ---
 
@@ -34,6 +42,7 @@ const {
   id={sectionId}
   aria-labelledby={`${sectionId}-title`}
   data-schedule
+  data-persistent-action-obstacle
   data-archive-autoplay={archive && events.length > 1 ? 'true' : 'false'}
   hidden={!active}
 >
@@ -41,20 +50,24 @@ const {
     <div class="section-heading">
       <div>
         <p class="eyebrow">{seasonLabel} {archive ? 'archive' : 'programme'}</p>
-        <h2 id={`${sectionId}-title`}>The poster stage.</h2>
+        <h2 id={`${sectionId}-title`}>
+          {
+            events.length > 0
+              ? 'The poster stage.'
+              : `${seasonLabel} programme.`
+          }
+        </h2>
       </div>
       <p>
-        Select a seminar to see its poster, speakers, and the correct date and
-        time wherever you are. {
-          archive
-            ? 'Archive highlights advance slowly until you interact.'
-            : 'Published sessions appear as organizers confirm them.'
+        {
+          events.length > 0
+            ? `Select a seminar to see its poster, speakers, and the correct date and time wherever you are. ${archive ? 'The full archive advances slowly until you interact.' : 'Published sessions appear as organizers confirm them.'}`
+            : 'The season rail remains visible while organizers arrange the first published sessions.'
         }
       </p>
     </div>
 
-    {fallbackMessage && <p class="schedule-notice">{fallbackMessage}</p>}
-    <TimezoneSelector />
+    {events.length > 0 && <TimezoneSelector />}
     <SeasonRail
       events={events}
       selectedId={selectedId}
@@ -69,17 +82,31 @@ const {
         <div class="schedule-empty">
           <div class="schedule-empty__copy">
             <p class="eyebrow">Programme status</p>
-            <h3>{seasonLabel} programme coming soon.</h3>
+            <h3>{seasonLabel} programme scheduling is in progress.</h3>
             <p>
-              Published seminar dates and posters will appear here as organizers
-              confirm them. No provisional sessions are shown as real events.
+              Published seminar dates and posters will appear here as sessions
+              are confirmed.
             </p>
-            <a class="button button--ink" href="/subscribe/">
-              Get programme updates
-            </a>
           </div>
-          <div class="schedule-empty__poster" aria-hidden="true">
-            <img src="/assets/poster-placeholder.svg" alt="" />
+          <div class="schedule-empty__actions" aria-label="Programme actions">
+            <div class="button-row">
+              {hasSpeakerPreview && (
+                <a class="button button--ink" href="#speaker-preview">
+                  View expected speakers
+                </a>
+              )}
+              {abstractCtaUrl && abstractCtaLabel && (
+                <a class="button" href={abstractCtaUrl} data-submit-source>
+                  {abstractCtaLabel}
+                </a>
+              )}
+            </div>
+            <nav aria-label="More programme options">
+              {archiveUrl && archiveLabel && (
+                <a href={archiveUrl}>Explore full {archiveLabel} archive →</a>
+              )}
+              <a href="/subscribe/">Get programme updates →</a>
+            </nav>
           </div>
         </div>
       )
@@ -96,54 +123,59 @@ const {
     margin-bottom: 1rem;
   }
 
-  .schedule-notice {
-    margin: 0 0 1rem;
-    padding: 0.9rem 1rem;
-    border: var(--keyline);
-    background: var(--vgzt-yellow);
-    font-weight: 850;
-  }
-
   .schedule-empty {
     display: grid;
-    min-height: 32rem;
     border: var(--keyline);
     border-top: 0;
     background: var(--vgzt-paper-strong);
-    grid-template-columns: minmax(18rem, 0.75fr) minmax(20rem, 1.25fr);
+    grid-template-columns: minmax(0, 1.35fr) minmax(18rem, 0.65fr);
   }
 
   .schedule-empty__copy {
     display: grid;
-    padding: clamp(2rem, 5vw, 4.5rem);
+    padding: clamp(1.5rem, 4vw, 3rem);
     border-right: var(--keyline);
     align-content: center;
     justify-items: start;
   }
 
   .schedule-empty__copy h3 {
-    max-width: 11ch;
-    margin-bottom: 1.2rem;
-    font-size: clamp(2.4rem, 5vw, 4.8rem);
+    max-width: 18ch;
+    margin-bottom: 1rem;
+    font-size: clamp(2rem, 4vw, 3.6rem);
   }
 
   .schedule-empty__copy p:not(.eyebrow) {
-    margin-bottom: 1.5rem;
+    margin-bottom: 0;
     font-weight: 650;
   }
 
-  .schedule-empty__poster {
+  .schedule-empty__actions {
     display: grid;
-    min-height: 32rem;
-    padding: clamp(1rem, 4vw, 3rem);
-    background: var(--vgzt-ink);
-    place-items: center;
+    padding: clamp(1.5rem, 3vw, 2.25rem);
+    background: var(--vgzt-pink);
+    gap: 1.25rem;
+    align-content: center;
   }
 
-  .schedule-empty__poster img {
-    width: auto;
-    max-height: 38rem;
-    object-fit: contain;
+  .schedule-empty__actions .button-row {
+    align-items: stretch;
+  }
+
+  .schedule-empty__actions .button {
+    flex: 1 1 12rem;
+  }
+
+  .schedule-empty__actions nav {
+    display: grid;
+    border-top: var(--keyline);
+  }
+
+  .schedule-empty__actions nav a {
+    min-height: 2.9rem;
+    padding-block: 0.75rem;
+    border-bottom: var(--keyline);
+    font-weight: 900;
   }
 
   @media (max-width: 52rem) {

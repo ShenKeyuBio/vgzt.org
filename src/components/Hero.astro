@@ -12,6 +12,8 @@ interface Props {
   abstractLabel?: string | null;
   abstractExternal?: boolean;
   masterLogo?: string | null;
+  expectedSpeakerCount?: number;
+  expectedSpeakerUrl?: string;
 }
 
 const {
@@ -23,6 +25,8 @@ const {
   abstractLabel = null,
   abstractExternal = false,
   masterLogo = null,
+  expectedSpeakerCount = 0,
+  expectedSpeakerUrl = '#speaker-preview',
 } = Astro.props;
 ---
 
@@ -56,6 +60,7 @@ const {
               href={abstractUrl}
               rel={abstractExternal ? 'noopener noreferrer' : undefined}
               target={abstractExternal ? '_blank' : undefined}
+              data-submit-source
             >
               {abstractLabel}
             </a>
@@ -63,6 +68,15 @@ const {
         }
         <a class="button" href="/subscribe/">Subscribe VGZT Talks</a>
       </div>
+      {
+        expectedSpeakerCount > 0 ? (
+          <a class="hero__speaker-signal" href={expectedSpeakerUrl}>
+            {expectedSpeakerCount} researchers currently expected for{' '}
+            {seasonLabel}
+            <span aria-hidden="true"> · View expected speakers →</span>
+          </a>
+        ) : null
+      }
     </div>
 
     <div class="hero__mark" aria-hidden={masterLogo ? undefined : 'true'}>
@@ -70,3 +84,13 @@ const {
     </div>
   </div>
 </section>
+
+<style>
+  .hero__speaker-signal {
+    display: inline-block;
+    max-width: 34rem;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    font-weight: 850;
+  }
+</style>

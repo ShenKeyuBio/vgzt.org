@@ -163,11 +163,10 @@ const enthusiastAward = currentSeason.data.awards?.attendance;
     abstractLabel={abstractState.ctaLabel}
     abstractExternal={abstractState.external}
     masterLogo={site.masterLogo}
-  />
-  <ProgrammeSchedule
-    seasons={programmeSeasons}
-    defaultSeasonId={defaultProgrammeSeason}
-    currentSeasonId={site.currentSeason}
+    expectedSpeakerCount={speakerPreview?.enabled
+      ? speakerPreview.speakers.length
+      : 0}
+    expectedSpeakerUrl="#speaker-preview"
   />
   {
     speakerPreview?.enabled && speakerPreview.speakers.length > 0 ? (
@@ -177,6 +176,15 @@ const enthusiastAward = currentSeason.data.awards?.attendance;
       />
     ) : null
   }
+  <ProgrammeSchedule
+    seasons={programmeSeasons}
+    defaultSeasonId={defaultProgrammeSeason}
+    currentSeasonId={site.currentSeason}
+    hasSpeakerPreview={Boolean(speakerPreview?.enabled) &&
+      (speakerPreview?.speakers.length ?? 0) > 0}
+    abstractCtaUrl={abstractState.ctaUrl}
+    abstractCtaLabel={abstractState.ctaLabel}
+  />
   <SeasonFormat
     easternTime={eastern?.time}
     westernTime={western?.time}

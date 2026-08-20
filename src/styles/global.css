@@ -39,7 +39,7 @@
 html {
   color-scheme: light;
   scroll-behavior: smooth;
-  scroll-padding-top: 6rem;
+  scroll-padding-top: 6.5rem;
 }
 
 body {
@@ -223,8 +223,9 @@ p {
 }
 
 .site-header {
-  position: relative;
-  z-index: 30;
+  position: sticky;
+  z-index: 40;
+  top: 0;
   border-bottom: 2px solid var(--vgzt-paper-strong);
   background: var(--vgzt-ink);
   color: var(--vgzt-paper-strong);
@@ -697,6 +698,10 @@ p {
 
   .mobile-nav {
     display: block;
+  }
+
+  .mobile-nav:not([open]) > div {
+    display: none;
   }
 
   .mobile-nav summary {

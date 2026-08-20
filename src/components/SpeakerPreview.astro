@@ -60,15 +60,15 @@ const orderedSpeakers = [...speakers].sort((a, b) =>
 
   .speaker-preview__grid {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 0.75rem;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 0.65rem;
   }
 
   .speaker-preview__card {
     display: grid;
     min-width: 0;
-    min-height: 9rem;
-    padding: 1rem;
+    min-height: 6.5rem;
+    padding: 0.9rem;
     border: var(--keyline);
     background: var(--vgzt-paper-strong);
     align-content: start;
@@ -87,32 +87,38 @@ const orderedSpeakers = [...speakers].sort((a, b) =>
   }
 
   .speaker-preview__card h3 {
-    margin-bottom: 0.55rem;
-    font-size: clamp(1.25rem, 2vw, 1.7rem);
-    line-height: 1.02;
+    margin-bottom: 0.45rem;
+    font-size: clamp(1.08rem, 1.5vw, 1.4rem);
+    line-height: 1.08;
   }
 
   .speaker-preview__card p {
     margin: 0;
     overflow-wrap: anywhere;
-    font-size: 0.92rem;
+    font-size: 0.84rem;
     font-weight: 700;
     line-height: 1.35;
   }
 
-  @media (max-width: 64rem) {
+  @media (max-width: 70rem) {
     .speaker-preview__grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(3, minmax(0, 1fr));
     }
   }
 
   @media (max-width: 42rem) {
     .speaker-preview__grid {
-      grid-template-columns: 1fr;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .speaker-preview__card {
       min-height: 0;
+    }
+  }
+
+  @media (max-width: 24rem) {
+    .speaker-preview__grid {
+      grid-template-columns: 1fr;
     }
   }
 </style>

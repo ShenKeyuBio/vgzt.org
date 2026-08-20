@@ -4,6 +4,7 @@ import '../styles/global.css';
 import AnnouncementBar from '../components/AnnouncementBar.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import PersistentActions from '../components/PersistentActions.astro';
 import { getAbstractCallState } from '../lib/config';
 import {
   getAbstractCallSettings,
@@ -84,6 +85,7 @@ const structuredData = {
 };
 const abstractCall = getAbstractCallSettings();
 const abstractState = getAbstractCallState(abstractCall);
+const isAbstractsPage = /^\/abstracts\/?$/.test(Astro.url.pathname);
 const [currentSeason, abstractSeason] = await Promise.all([
   getEntry('seasons', siteSettings.currentSeason),
   getEntry('seasons', abstractCall.season),
@@ -136,11 +138,44 @@ const [currentSeason, abstractSeason] = await Promise.all([
     <main id="main-content" tabindex="-1">
       <slot />
     </main>
+    <PersistentActions
+      abstractState={abstractState}
+      isAbstractsPage={isAbstractsPage}
+    />
     <Footer
       email={email}
       social={social}
       masterLogo={effectiveMasterLogo}
       seasonNumber={currentSeason?.data.season ?? null}
     />
+    <script>
+      const alignHashTarget = () => {
+        if (!location.hash) return;
+        let targetId = location.hash.slice(1);
+        try {
+          targetId = decodeURIComponent(targetId);
+        } catch {
+          return;
+        }
+        const target = document.getElementById(targetId);
+        if (!target) return;
+        const root = document.documentElement;
+        const previousScrollBehavior = root.style.scrollBehavior;
+        root.style.scrollBehavior = 'auto';
+        target.scrollIntoView({ block: 'start', behavior: 'auto' });
+        requestAnimationFrame(() => {
+          root.style.scrollBehavior = previousScrollBehavior;
+        });
+      };
+
+      const alignHashAfterLayout = async () => {
+        await document.fonts?.ready;
+        requestAnimationFrame(() => requestAnimationFrame(alignHashTarget));
+      };
+
+      if (document.readyState === 'complete') alignHashAfterLayout();
+      else
+        window.addEventListener('load', alignHashAfterLayout, { once: true });
+    </script>
   </body>
 </html>

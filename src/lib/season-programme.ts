@@ -33,17 +33,10 @@ export function programmeSeasonIds(
 
 export function defaultProgrammeSeasonId(
   currentSeasonId: string,
-  seasons: readonly ProgrammeSeasonLike[],
-  events: readonly ProgrammeEventLike[],
+  _seasons: readonly ProgrammeSeasonLike[],
+  _events: readonly ProgrammeEventLike[],
 ): string {
-  const currentHasEvents = events.some(
-    ({ season, status }) =>
-      season === currentSeasonId && status === 'published',
-  );
-  if (currentHasEvents) return currentSeasonId;
-  return (
-    programmeSeasonIds(currentSeasonId, seasons, events)[1] ?? currentSeasonId
-  );
+  return currentSeasonId;
 }
 
 export function archiveAutoplayEnabled(

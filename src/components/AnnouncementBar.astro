@@ -28,6 +28,7 @@ const label =
             href={state.ctaUrl}
             rel={state.external ? 'noopener noreferrer' : undefined}
             target={state.external ? '_blank' : undefined}
+            data-submit-source={state.canSubmit ? '' : undefined}
           >
             {state.ctaLabel} <span aria-hidden="true">→</span>
           </a>

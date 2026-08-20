@@ -22,6 +22,7 @@ const sessions = getSessionSettings();
 const seasonEntry = await getEntry('seasons', call.season);
 const seasonLabel = seasonEntry?.data.label || call.season;
 const earlyCareerTalkAward = seasonEntry?.data.awards?.earlyCareerTalk;
+const awardSummaryLabel = earlyCareerTalkAward?.title.replace(/\.\*$/, '*');
 const speakerPreview = seasonEntry?.data.speakerPreview;
 const timeSlots = sessions.timeSlots.filter((slot) =>
   call.preferredTimeSlots.includes(slot.id),
@@ -133,134 +134,225 @@ const reviewParagraphs = toParagraphs(
     </div>
   </header>
 
+  <section
+    class="section section--compact abstract-glance"
+    aria-labelledby="abstract-glance-title"
+  >
+    <div class="container">
+      <div class="abstract-glance__heading">
+        <div>
+          <p class="eyebrow">Abstract call</p>
+          <h2 id="abstract-glance-title">At a glance.</h2>
+        </div>
+        {
+          state.canSubmit && formUrl ? (
+            <a class="button button--ink" href="#submit">
+              Submit your abstract →
+            </a>
+          ) : null
+        }
+      </div>
+      <dl class="abstract-glance__grid">
+        <div><dt>Audience</dt><dd>{call.audience}</dd></div>
+        <div><dt>Abstract</dt><dd>{abstractWordLimit}</dd></div>
+        <div><dt>Selection</dt><dd>Not competitively ranked</dd></div>
+        <div><dt>Deadline</dt><dd>{deadlineLabel}</dd></div>
+        {
+          earlyCareerTalkAward?.enabled ? (
+            <div>
+              <dt>Recognition</dt>
+              <dd>{awardSummaryLabel}</dd>
+            </div>
+          ) : null
+        }
+      </dl>
+    </div>
+  </section>
+
   <section class="section">
     <div class="container abstracts-grid">
-      <div>
-        <p class="eyebrow">Call status</p>
-        <dl class="call-status">
-          <div>
-            <dt>Status</dt>
-            <dd>
-              {
-                state.mode === 'opening-soon'
-                  ? 'Opening soon'
-                  : state.mode === 'open'
-                    ? 'Open'
-                    : 'Closed'
-              }
-            </dd>
-          </div>
-          <div><dt>Season</dt><dd>{seasonLabel}</dd></div>
-          <div><dt>Audience</dt><dd>{call.audience}</dd></div>
-          <div>
-            <dt>Deadline</dt>
-            <dd>{deadlineLabel}</dd>
-          </div>
-        </dl>
-      </div>
+      <aside class="abstracts-rail" aria-label="Abstract call navigation">
+        <div>
+          <h2 class="abstracts-rail__heading">Call status</h2>
+          <dl class="call-status">
+            <div>
+              <dt>Status</dt>
+              <dd>
+                {
+                  state.mode === 'opening-soon'
+                    ? 'Opening soon'
+                    : state.mode === 'open'
+                      ? 'Open'
+                      : 'Closed'
+                }
+              </dd>
+            </div>
+            <div><dt>Season</dt><dd>{seasonLabel}</dd></div>
+            <div><dt>Audience</dt><dd>{call.audience}</dd></div>
+            <div>
+              <dt>Deadline</dt>
+              <dd>{deadlineLabel}</dd>
+            </div>
+          </dl>
+        </div>
+
+        <nav
+          class="abstracts-toc"
+          aria-labelledby="abstracts-toc-title"
+          data-section-nav
+        >
+          <h2 id="abstracts-toc-title" class="abstracts-rail__heading">
+            On this page
+          </h2>
+          <ol>
+            <li>
+              <a href="#eligibility" aria-current="location">Who can apply</a>
+            </li>
+            <li><a href="#submission-requirements">What to submit</a></li>
+            <li><a href="#seminar-format">Seminar format</a></li>
+            {
+              earlyCareerTalkAward?.enabled ? (
+                <li>
+                  <a href="#early-career-awards">Early Career Talk Awards</a>
+                </li>
+              ) : null
+            }
+            <li><a href="#matching">How submissions are matched</a></li>
+            <li><a href="#session-times">Preferred session times</a></li>
+            <li><a href="#faq">FAQ</a></li>
+            {
+              state.canSubmit && formUrl ? (
+                <li>
+                  <a href="#submit">Submit abstract</a>
+                </li>
+              ) : null
+            }
+          </ol>
+        </nav>
+
+        {
+          state.canSubmit && formUrl ? (
+            <a class="button button--ink abstracts-rail__submit" href="#submit">
+              Submit abstract
+            </a>
+          ) : null
+        }
+      </aside>
 
       <div class="prose abstracts-copy">
-        <h2>Who can apply</h2>
-        <div class="abstracts-copy__stack">
-          {eligibilityParagraphs.map((paragraph) => <p>{paragraph}</p>)}
-        </div>
+        <section id="eligibility" class="abstracts-copy__section">
+          <h2>Who can apply</h2>
+          <div class="abstracts-copy__stack">
+            {eligibilityParagraphs.map((paragraph) => <p>{paragraph}</p>)}
+          </div>
+        </section>
 
-        <h2>What to submit</h2>
-        {
-          call.whatToSubmit.length > 0 ? (
-            <ul>
-              {call.whatToSubmit.map((item) => {
-                const parts = item.split(abstractWordLimit);
-                return (
-                  <li>
-                    {parts.length > 1 ? (
-                      <>
-                        {parts[0]}
-                        <strong>{abstractWordLimit}</strong>
-                        {parts.slice(1).join(abstractWordLimit)}
-                      </>
-                    ) : (
-                      item
-                    )}
-                  </li>
-                );
-              })}
-            </ul>
-          ) : (
-            <p>
-              Submission requirements are being finalized and will appear here
-              before the form opens.
-            </p>
-          )
-        }
-
-        <h2>Seminar format</h2>
-        <p>
-          Early-career speakers normally share a two-speaker session with a
-          related VGZT speaker. Pairings are based on scientific theme.
-        </p>
-        {
-          twoSpeakerTiming ? (
-            <dl class="seminar-format">
-              <div>
-                <dt>Slot</dt>
-                <dd>{twoSpeakerSlotLabel}</dd>
-              </div>
-              <div>
-                <dt>Presentation</dt>
-                <dd>{twoSpeakerTiming.presentation} minutes</dd>
-              </div>
-              <div>
-                <dt>Questions</dt>
-                <dd>{twoSpeakerTiming.qa} minutes</dd>
-              </div>
-            </dl>
-          ) : null
-        }
-
-        <h2>How submissions are matched</h2>
-        <div class="abstracts-copy__stack">
-          {reviewParagraphs.map((paragraph) => <p>{paragraph}</p>)}
-        </div>
-        {
-          speakerPreview?.enabled && speakerPreview.speakers.length > 0 ? (
-            <p class="abstracts-copy__preview-link">
-              You can also browse the current{' '}
-              <a href="/#speaker-preview">Season 8 Speaker Preview</a>. Dates
-              are still being arranged and availability may change.
-            </p>
-          ) : null
-        }
-
-        <h2 id="preferred-session-times">Preferred session times</h2>
-        <p>
-          Sessions use America/New_York. The world times below are calculated
-          for the next Friday session and update automatically for seasonal
-          clock changes. Exact dates are arranged after a thematic match, so no
-          date commitment is needed when applying.
-        </p>
-        <ul class="preferred-session-times">
+        <section id="submission-requirements" class="abstracts-copy__section">
+          <h2>What to submit</h2>
           {
-            timeSlots.map((slot) => (
-              <li>
-                <span>{slot.label}</span>
-                <GlobalSessionTimes time={slot.time} />
-              </li>
-            ))
+            call.whatToSubmit.length > 0 ? (
+              <ul>
+                {call.whatToSubmit.map((item) => {
+                  const parts = item.split(abstractWordLimit);
+                  return (
+                    <li>
+                      {parts.length > 1 ? (
+                        <>
+                          {parts[0]}
+                          <strong>{abstractWordLimit}</strong>
+                          {parts.slice(1).join(abstractWordLimit)}
+                        </>
+                      ) : (
+                        item
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+            ) : (
+              <p>
+                Submission requirements are being finalized and will appear here
+                before the form opens.
+              </p>
+            )
           }
-        </ul>
+        </section>
 
-        <h2>FAQ</h2>
-        <div class="faq-list">
+        <section id="seminar-format" class="abstracts-copy__section">
+          <h2>Seminar format</h2>
+          <p>
+            Early-career speakers normally share a two-speaker session with a
+            related VGZT speaker. Pairings are based on scientific theme.
+          </p>
           {
-            call.faq.map((item) => (
-              <details>
-                <summary>{item.question}</summary>
-                <p>{item.answer}</p>
-              </details>
-            ))
+            twoSpeakerTiming ? (
+              <dl class="seminar-format">
+                <div>
+                  <dt>Slot</dt>
+                  <dd>{twoSpeakerSlotLabel}</dd>
+                </div>
+                <div>
+                  <dt>Presentation</dt>
+                  <dd>{twoSpeakerTiming.presentation} minutes</dd>
+                </div>
+                <div>
+                  <dt>Questions</dt>
+                  <dd>{twoSpeakerTiming.qa} minutes</dd>
+                </div>
+              </dl>
+            ) : null
           }
-        </div>
+        </section>
+
+        <section id="matching" class="abstracts-copy__section">
+          <h2>How submissions are matched</h2>
+          <div class="abstracts-copy__stack">
+            {reviewParagraphs.map((paragraph) => <p>{paragraph}</p>)}
+          </div>
+          {
+            speakerPreview?.enabled && speakerPreview.speakers.length > 0 ? (
+              <p class="abstracts-copy__preview-link">
+                You can also browse the current{' '}
+                <a href="/#speaker-preview">Season 8 Speaker Preview</a>. Dates
+                are still being arranged and availability may change.
+              </p>
+            ) : null
+          }
+        </section>
+
+        <section id="session-times" class="abstracts-copy__section">
+          <h2 id="preferred-session-times">Preferred session times</h2>
+          <p>
+            Sessions use America/New_York. The world times below are calculated
+            for the next Friday session and update automatically for seasonal
+            clock changes. Exact dates are arranged after a thematic match, so
+            no date commitment is needed when applying.
+          </p>
+          <ul class="preferred-session-times">
+            {
+              timeSlots.map((slot) => (
+                <li>
+                  <span>{slot.label}</span>
+                  <GlobalSessionTimes time={slot.time} />
+                </li>
+              ))
+            }
+          </ul>
+        </section>
+
+        <section id="faq" class="abstracts-copy__section">
+          <h2>FAQ</h2>
+          <div class="faq-list">
+            {
+              call.faq.map((item) => (
+                <details>
+                  <summary>{item.question}</summary>
+                  <p>{item.answer}</p>
+                </details>
+              ))
+            }
+          </div>
+        </section>
       </div>
     </div>
   </section>
@@ -323,6 +415,41 @@ const reviewParagraphs = toParagraphs(
 </BaseLayout>
 
 <style>
+  .abstract-glance {
+    background: var(--vgzt-paper);
+  }
+
+  .abstract-glance__heading {
+    display: flex;
+    margin-bottom: 1.5rem;
+    gap: 1.5rem;
+    align-items: end;
+    justify-content: space-between;
+  }
+
+  .abstract-glance__heading h2 {
+    margin-bottom: 0;
+    font-size: clamp(2.2rem, 4vw, 4rem);
+  }
+
+  .abstract-glance__grid {
+    display: grid;
+    margin: 0;
+    grid-template-columns: repeat(auto-fit, minmax(10.5rem, 1fr));
+    gap: 0.65rem;
+  }
+
+  .abstract-glance__grid div {
+    min-width: 0;
+    padding: 0.9rem;
+    border: var(--keyline);
+    background: var(--vgzt-paper-strong);
+  }
+
+  .abstract-glance__grid dd {
+    overflow-wrap: anywhere;
+  }
+
   .abstract-hero__supporting {
     max-width: 42rem;
     margin-bottom: 0.9rem;
@@ -359,6 +486,27 @@ const reviewParagraphs = toParagraphs(
     align-items: start;
   }
 
+  .abstracts-rail {
+    position: sticky;
+    top: 6.35rem;
+    display: grid;
+    max-height: calc(100vh - 7.35rem);
+    padding: 0.4rem;
+    overflow-y: auto;
+    gap: 1.5rem;
+    align-self: start;
+    scrollbar-color: var(--vgzt-ink) var(--vgzt-paper);
+  }
+
+  .abstracts-rail__heading {
+    margin: 0 0 0.7rem;
+    font-size: 0.75rem;
+    font-weight: 950;
+    letter-spacing: 0.14em;
+    line-height: 1.25;
+    text-transform: uppercase;
+  }
+
   .call-status {
     margin: 0;
     border-top: var(--keyline);
@@ -367,6 +515,47 @@ const reviewParagraphs = toParagraphs(
   .call-status div {
     padding-block: 0.8rem;
     border-bottom: var(--keyline);
+  }
+
+  .abstracts-toc {
+    min-width: 0;
+  }
+
+  .abstracts-toc ol {
+    margin: 0;
+    padding: 0;
+    border-top: var(--keyline);
+    list-style: none;
+  }
+
+  .abstracts-toc li {
+    border-bottom: var(--keyline);
+  }
+
+  .abstracts-toc a {
+    display: flex;
+    min-height: 2.75rem;
+    padding: 0.55rem 0.6rem;
+    border-left: 0.4rem solid transparent;
+    align-items: center;
+    font-size: 0.86rem;
+    font-weight: 800;
+    line-height: 1.2;
+    text-decoration: none;
+  }
+
+  .abstracts-toc a:hover {
+    text-decoration: underline;
+  }
+
+  .abstracts-toc a[aria-current='location'] {
+    border-left-color: var(--vgzt-ink);
+    background: var(--vgzt-orange);
+    font-weight: 950;
+  }
+
+  .abstracts-rail__submit {
+    width: 100%;
   }
 
   dt {
@@ -381,7 +570,7 @@ const reviewParagraphs = toParagraphs(
     font-weight: 800;
   }
 
-  .abstracts-copy h2:first-child {
+  .abstracts-copy__section:first-child h2 {
     margin-top: 0;
   }
 
@@ -466,10 +655,6 @@ const reviewParagraphs = toParagraphs(
     margin: 0 0 1.25rem;
   }
 
-  .abstracts-submit {
-    scroll-margin-top: 6rem;
-  }
-
   .abstracts-submit .section-heading {
     align-items: start;
   }
@@ -502,8 +687,20 @@ const reviewParagraphs = toParagraphs(
   }
 
   @media (max-width: 50rem) {
+    .abstract-glance__heading {
+      align-items: start;
+      flex-direction: column;
+    }
+
     .abstracts-grid {
       grid-template-columns: 1fr;
+    }
+
+    .abstracts-rail {
+      position: static;
+      max-height: none;
+      padding: 0;
+      overflow: visible;
     }
 
     .abstracts-followup__inner {
@@ -526,3 +723,66 @@ const reviewParagraphs = toParagraphs(
     }
   }
 </style>
+
+<script>
+  document
+    .querySelectorAll<HTMLElement>('[data-section-nav]')
+    .forEach((navigation) => {
+      const links = [
+        ...navigation.querySelectorAll<HTMLAnchorElement>('a[href^="#"]'),
+      ];
+      const targets = links
+        .map((link) => document.getElementById(link.hash.slice(1)))
+        .filter((target): target is HTMLElement => target !== null);
+      const visibleTargets = new Set<HTMLElement>();
+
+      const activate = (target: HTMLElement) => {
+        links.forEach((link) => {
+          if (link.hash === `#${target.id}`)
+            link.setAttribute('aria-current', 'location');
+          else link.removeAttribute('aria-current');
+        });
+      };
+
+      const targetForHash = () => {
+        if (location.hash === '#preferred-session-times')
+          return document.getElementById('session-times');
+        return targets.find((target) => `#${target.id}` === location.hash);
+      };
+
+      activate(targetForHash() ?? targets[0] ?? document.body);
+
+      links.forEach((link) => {
+        link.addEventListener('click', () => {
+          const target = document.getElementById(link.hash.slice(1));
+          if (target) activate(target);
+        });
+      });
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            const target = entry.target as HTMLElement;
+            if (entry.isIntersecting) visibleTargets.add(target);
+            else visibleTargets.delete(target);
+          });
+          const active = [...visibleTargets].sort(
+            (a, b) =>
+              Math.abs(a.getBoundingClientRect().top - 104) -
+              Math.abs(b.getBoundingClientRect().top - 104),
+          )[0];
+          if (active) activate(active);
+        },
+        {
+          rootMargin: '-104px 0px -60% 0px',
+          threshold: [0, 0.01],
+        },
+      );
+
+      targets.forEach((target) => observer.observe(target));
+      window.addEventListener('hashchange', () => {
+        const target = targetForHash();
+        if (target) activate(target);
+      });
+    });
+</script>

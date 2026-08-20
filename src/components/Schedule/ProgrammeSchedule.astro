@@ -16,19 +16,22 @@ interface Props {
   seasons: ProgrammeSeasonViewModel[];
   defaultSeasonId: string;
   currentSeasonId: string;
+  hasSpeakerPreview?: boolean;
+  abstractCtaUrl?: string | null;
+  abstractCtaLabel?: string | null;
 }
 
-const { seasons, defaultSeasonId, currentSeasonId } = Astro.props;
-const current = seasons.find(({ id }) => id === currentSeasonId);
-const currentHasEvents = (current?.events.length ?? 0) > 0;
-const currentStart = current
-  ? new Intl.DateTimeFormat('en-GB', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-      timeZone: 'UTC',
-    }).format(new Date(`${current.start}T12:00:00Z`))
-  : null;
+const {
+  seasons,
+  defaultSeasonId,
+  currentSeasonId,
+  hasSpeakerPreview = false,
+  abstractCtaUrl = null,
+  abstractCtaLabel = null,
+} = Astro.props;
+const archiveSeason = seasons.find(
+  ({ status, events }) => status === 'archived' && events.length > 0,
+);
 ---
 
 <div class="programme-switcher" id="programme" data-programme-switcher>
@@ -43,9 +46,9 @@ const currentStart = current
           const selected = season.id === defaultSeasonId;
           const state =
             season.id === currentSeasonId && season.events.length === 0
-              ? 'Coming soon'
+              ? 'Scheduling'
               : season.status === 'archived'
-                ? 'Archive'
+                ? 'Full archive'
                 : 'Programme';
           return (
             <button
@@ -76,13 +79,13 @@ const currentStart = current
       end={season.end}
       archive={season.status === 'archived'}
       active={season.id === defaultSeasonId}
-      fallbackMessage={
-        !currentHasEvents &&
-        season.status === 'archived' &&
-        currentStart !== null
-          ? `${current?.label ?? 'The next season'} begins ${currentStart} — showing highlights from ${season.label} while the new programme is being prepared.`
-          : null
+      hasSpeakerPreview={hasSpeakerPreview}
+      abstractCtaUrl={abstractCtaUrl}
+      abstractCtaLabel={abstractCtaLabel}
+      archiveUrl={
+        archiveSeason ? `/?season=${archiveSeason.id}#programme` : null
       }
+      archiveLabel={archiveSeason?.label ?? null}
     />
   ))
 }
