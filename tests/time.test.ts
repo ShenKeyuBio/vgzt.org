@@ -4,6 +4,8 @@ import {
   chooseTimeZone,
   eventPartsInZone,
   formatEventTime,
+  formatGlobalSessionTimes,
+  nextWeekdayDateInZone,
   type ScheduledEventTime,
 } from '../src/lib/time';
 
@@ -86,6 +88,39 @@ describe('VGZT canonical scheduling', () => {
       time: '12:30',
       timeZone: 'America/New_York',
     });
+  });
+
+  it('lists globally useful session times with seasonal abbreviations', () => {
+    const summer = formatGlobalSessionTimes(daylightEvent);
+    const winter = formatGlobalSessionTimes(standardEvent);
+
+    expect(summer).toMatchObject([
+      { label: 'ET', time: '12:30', abbreviation: 'ET', dayOffset: 0 },
+      { label: 'Europe', time: '18:30', abbreviation: 'CEST', dayOffset: 0 },
+      { label: 'UK', time: '17:30', abbreviation: 'BST', dayOffset: 0 },
+      { label: 'China', time: '00:30', abbreviation: 'CST', dayOffset: 1 },
+      { label: 'India', time: '22:00', abbreviation: 'IST', dayOffset: 0 },
+      { label: 'Japan', time: '01:30', abbreviation: 'JST', dayOffset: 1 },
+      { label: 'Sydney', time: '02:30', abbreviation: 'AEST', dayOffset: 1 },
+    ]);
+    expect(winter).toMatchObject([
+      { label: 'ET', time: '12:30', abbreviation: 'ET', dayOffset: 0 },
+      { label: 'Europe', time: '18:30', abbreviation: 'CET', dayOffset: 0 },
+      { label: 'UK', time: '17:30', abbreviation: 'GMT', dayOffset: 0 },
+      { label: 'China', time: '01:30', abbreviation: 'CST', dayOffset: 1 },
+      { label: 'India', time: '23:00', abbreviation: 'IST', dayOffset: 0 },
+      { label: 'Japan', time: '02:30', abbreviation: 'JST', dayOffset: 1 },
+      { label: 'Sydney', time: '04:30', abbreviation: 'AEDT', dayOffset: 1 },
+    ]);
+  });
+
+  it('uses the upcoming Friday as the rolling session-time reference', () => {
+    expect(
+      nextWeekdayDateInZone('America/New_York', 5, '2026-09-16T12:00:00Z'),
+    ).toBe('2026-09-18');
+    expect(
+      nextWeekdayDateInZone('America/New_York', 5, '2026-09-18T12:00:00Z'),
+    ).toBe('2026-09-18');
   });
 
   it('prefers a valid manual timezone and safely falls back', () => {

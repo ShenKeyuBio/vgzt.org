@@ -2,6 +2,7 @@
 import { getEntry } from 'astro:content';
 import EarlyCareerTalkAwards from '../components/Awards/EarlyCareerTalkAwards.astro';
 import MicrosoftFormEmbed from '../components/Forms/MicrosoftFormEmbed.astro';
+import GlobalSessionTimes from '../components/Schedule/GlobalSessionTimes.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getAbstractCallState, safeHttpsUrl } from '../lib/config';
 import {
@@ -231,16 +232,19 @@ const reviewParagraphs = toParagraphs(
           ) : null
         }
 
-        <h2>Preferred session times</h2>
+        <h2 id="preferred-session-times">Preferred session times</h2>
         <p>
-          Sessions use America/New_York. Exact dates are arranged after a
-          thematic match, so no date commitment is needed when applying.
+          Sessions use America/New_York. The world times below are calculated
+          for the next Friday session and update automatically for seasonal
+          clock changes. Exact dates are arranged after a thematic match, so no
+          date commitment is needed when applying.
         </p>
-        <ul>
+        <ul class="preferred-session-times">
           {
             timeSlots.map((slot) => (
               <li>
-                {slot.label}: {slot.time} ET
+                <span>{slot.label}</span>
+                <GlobalSessionTimes time={slot.time} />
               </li>
             ))
           }
@@ -420,6 +424,30 @@ const reviewParagraphs = toParagraphs(
     font-weight: 750;
   }
 
+  .preferred-session-times {
+    display: grid;
+    margin: 1.2rem 0 2rem;
+    padding: 0;
+    border-top: var(--keyline);
+    list-style: none;
+  }
+
+  .preferred-session-times li {
+    display: grid;
+    padding: 0.8rem 0;
+    border-bottom: var(--keyline);
+    grid-template-columns: minmax(8rem, 0.35fr) minmax(0, 1fr);
+    gap: 0.8rem;
+    align-items: start;
+  }
+
+  .preferred-session-times > li > span {
+    font-size: 0.78rem;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
   .faq-list {
     border-top: var(--keyline);
   }
@@ -490,6 +518,11 @@ const reviewParagraphs = toParagraphs(
     .seminar-format div + div {
       border-top: var(--keyline);
       border-left: 0;
+    }
+
+    .preferred-session-times li {
+      grid-template-columns: 1fr;
+      gap: 0.25rem;
     }
   }
 </style>

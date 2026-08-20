@@ -1,0 +1,240 @@
+---
+import {
+  formatGlobalSessionTimes,
+  upcomingSessionTime,
+  VGZT_TIME_ZONE,
+} from '../../lib/time';
+
+interface Props {
+  time: string;
+  date?: string | null;
+  timezone?: string;
+}
+
+const { time, date = null, timezone = VGZT_TIME_ZONE } = Astro.props;
+const scheduled = date
+  ? { date, time, timezone }
+  : upcomingSessionTime(time, timezone);
+const globalTimes = formatGlobalSessionTimes(scheduled);
+---
+
+<span
+  class="global-session-times"
+  data-global-session-times
+  data-session-time={time}
+  data-session-timezone={timezone}
+  data-session-date={date || undefined}
+>
+  {
+    globalTimes.map((entry, index) => (
+      <>
+        {index > 0 && <span class="global-session-times__separator">/</span>}
+        <span
+          class="global-session-times__entry"
+          data-global-session-zone={entry.timeZone}
+        >
+          <span data-global-session-value>
+            {entry.time} {entry.abbreviation}
+          </span>
+          <small data-global-session-day hidden={entry.dayOffset === 0}>
+            {entry.dayOffset > 0 ? `+${entry.dayOffset}` : entry.dayOffset}
+          </small>
+        </span>
+      </>
+    ))
+  }
+</span>
+
+<script>
+  const GLOBAL_SESSION_TIME_ZONES = [
+    'America/New_York',
+    'Europe/Paris',
+    'Europe/London',
+    'Asia/Shanghai',
+    'Asia/Kolkata',
+    'Asia/Tokyo',
+    'Australia/Sydney',
+  ] as const;
+
+  type CalendarParts = {
+    year: number;
+    month: number;
+    day: number;
+    hour: number;
+    minute: number;
+    second: number;
+  };
+
+  function partsInZone(date: Date, timeZone: string): CalendarParts {
+    const values = new Intl.DateTimeFormat('en-CA', {
+      timeZone,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hourCycle: 'h23',
+    }).formatToParts(date);
+    const value = (type: Intl.DateTimeFormatPartTypes) =>
+      Number(values.find((part) => part.type === type)?.value);
+
+    return {
+      year: value('year'),
+      month: value('month'),
+      day: value('day'),
+      hour: value('hour'),
+      minute: value('minute'),
+      second: value('second'),
+    };
+  }
+
+  function offsetMinutes(date: Date, timeZone: string): number {
+    const parts = partsInZone(date, timeZone);
+    return (
+      (Date.UTC(
+        parts.year,
+        parts.month - 1,
+        parts.day,
+        parts.hour,
+        parts.minute,
+        parts.second,
+      ) -
+        date.getTime()) /
+      60_000
+    );
+  }
+
+  function dateToKey(
+    parts: Pick<CalendarParts, 'year' | 'month' | 'day'>,
+  ): string {
+    return `${parts.year}-${String(parts.month).padStart(2, '0')}-${String(parts.day).padStart(2, '0')}`;
+  }
+
+  function nextFridayInZone(timeZone: string): string {
+    const today = partsInZone(new Date(), timeZone);
+    const current = new Date(Date.UTC(today.year, today.month - 1, today.day));
+    const daysUntilFriday = (5 - current.getUTCDay() + 7) % 7;
+    current.setUTCDate(current.getUTCDate() + daysUntilFriday);
+    return `${current.getUTCFullYear()}-${String(current.getUTCMonth() + 1).padStart(2, '0')}-${String(current.getUTCDate()).padStart(2, '0')}`;
+  }
+
+  function zonedTimeToInstant(
+    date: string,
+    time: string,
+    timeZone: string,
+  ): Date | null {
+    const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(date);
+    const clock = /^(\d{2}):(\d{2})$/.exec(time);
+    if (!match || !clock) return null;
+
+    const asUtc = Date.UTC(
+      Number(match[1]),
+      Number(match[2]) - 1,
+      Number(match[3]),
+      Number(clock[1]),
+      Number(clock[2]),
+    );
+    let instant = new Date(asUtc);
+    instant = new Date(asUtc - offsetMinutes(instant, timeZone) * 60_000);
+    return new Date(asUtc - offsetMinutes(instant, timeZone) * 60_000);
+  }
+
+  function abbreviation(instant: Date, timeZone: string): string {
+    const offset = offsetMinutes(instant, timeZone);
+    switch (timeZone) {
+      case 'America/New_York':
+        return 'ET';
+      case 'Europe/Paris':
+        return offset === 120 ? 'CEST' : 'CET';
+      case 'Europe/London':
+        return offset === 60 ? 'BST' : 'GMT';
+      case 'Asia/Shanghai':
+        return 'CST';
+      case 'Asia/Kolkata':
+        return 'IST';
+      case 'Asia/Tokyo':
+        return 'JST';
+      case 'Australia/Sydney':
+        return offset === 660 ? 'AEDT' : 'AEST';
+      default:
+        return timeZone;
+    }
+  }
+
+  function updateWorldTimes(root: HTMLElement): void {
+    const time = root.dataset.sessionTime;
+    const timeZone = root.dataset.sessionTimezone || 'America/New_York';
+    const date = root.dataset.sessionDate || nextFridayInZone(timeZone);
+    if (!time) return;
+
+    const instant = zonedTimeToInstant(date, time, timeZone);
+    if (!instant) return;
+
+    const referenceDate = dateToKey(partsInZone(instant, timeZone));
+    root
+      .querySelectorAll<HTMLElement>('[data-global-session-zone]')
+      .forEach((node) => {
+        const zone = node.dataset.globalSessionZone;
+        if (
+          !zone ||
+          !GLOBAL_SESSION_TIME_ZONES.includes(
+            zone as (typeof GLOBAL_SESSION_TIME_ZONES)[number],
+          )
+        )
+          return;
+        const local = partsInZone(instant, zone);
+        const value = node.querySelector<HTMLElement>(
+          '[data-global-session-value]',
+        );
+        const day = node.querySelector<HTMLElement>(
+          '[data-global-session-day]',
+        );
+        if (value) {
+          value.textContent = `${String(local.hour).padStart(2, '0')}:${String(local.minute).padStart(2, '0')} ${abbreviation(instant, zone)}`;
+        }
+        if (day) {
+          const localDate = dateToKey(local);
+          const dayOffset = Math.round(
+            (Date.parse(`${localDate}T00:00:00Z`) -
+              Date.parse(`${referenceDate}T00:00:00Z`)) /
+              86_400_000,
+          );
+          day.hidden = dayOffset === 0;
+          day.textContent = dayOffset > 0 ? `+${dayOffset}` : String(dayOffset);
+        }
+      });
+  }
+
+  document
+    .querySelectorAll<HTMLElement>('[data-global-session-times]')
+    .forEach(updateWorldTimes);
+</script>
+
+<style>
+  .global-session-times {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.45rem;
+    align-items: baseline;
+    font-size: 0.9rem;
+    font-weight: 800;
+    line-height: 1.45;
+  }
+
+  .global-session-times__entry {
+    white-space: nowrap;
+  }
+
+  .global-session-times__separator {
+    color: var(--vgzt-muted);
+    font-weight: 600;
+  }
+
+  small {
+    margin-left: 0.1rem;
+    color: var(--vgzt-muted);
+    font-size: 0.7em;
+    font-weight: 900;
+  }
+</style>

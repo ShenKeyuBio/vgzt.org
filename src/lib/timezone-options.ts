@@ -21,6 +21,7 @@ export const CURATED_TIME_ZONE_OPTIONS: readonly TimeZoneOption[] = [
     label: 'Berlin — Central Europe (CET/CEST)',
   },
   { value: 'Asia/Shanghai', label: 'Shanghai — China Standard Time' },
+  { value: 'Asia/Kolkata', label: 'India — India Standard Time' },
   { value: 'Asia/Tokyo', label: 'Tokyo — Japan Standard Time' },
   {
     value: 'Australia/Sydney',

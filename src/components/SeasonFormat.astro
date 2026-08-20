@@ -1,4 +1,6 @@
 ---
+import GlobalSessionTimes from './Schedule/GlobalSessionTimes.astro';
+
 interface Props {
   easternTime?: string | undefined;
   westernTime?: string | undefined;
@@ -66,20 +68,28 @@ const {
       </div>
     </article>
 
-    <div class="format__timing">
+    <div class="format__timing" id="global-session-times">
       <div class="container format__timing-inner">
         <p class="eyebrow">
-          Usual Friday starts <span aria-hidden="true">·</span> America/New_York
+          Usual Friday starts <span aria-hidden="true">·</span> global time
         </p>
         <ul>
-          <li><span>Eastern</span><strong>{easternTime} ET</strong></li>
-          <li><span>Western</span><strong>{westernTime} ET</strong></li>
-          <li><span>Alternative</span><strong>{alternativeTime} ET</strong></li>
+          <li>
+            <span>Eastern</span><GlobalSessionTimes time={easternTime} />
+          </li>
+          <li>
+            <span>Western</span><GlobalSessionTimes time={westernTime} />
+          </li>
+          <li>
+            <span>Alternative</span><GlobalSessionTimes
+              time={alternativeTime}
+            />
+          </li>
         </ul>
         <p>
-          Every published event is converted from this IANA timezone to the
-          viewer’s chosen timezone, including daylight-saving changes and
-          next-day rollover.
+          Europe, UK, China, India, Japan, and Sydney are shown for the next
+          Friday session. Seasonal clock changes and next-day rollovers update
+          automatically.
         </p>
       </div>
     </div>
@@ -186,14 +196,17 @@ const {
     display: grid;
     margin: 0;
     padding: 0;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    border-top: 1px solid rgb(255 255 255 / 45%);
     list-style: none;
   }
 
   .format__timing li {
     display: grid;
-    padding: 0.5rem 1rem;
-    border-left: 1px solid rgb(255 255 255 / 45%);
+    padding: 0.7rem 0;
+    border-bottom: 1px solid rgb(255 255 255 / 45%);
+    grid-template-columns: minmax(6.5rem, 0.35fr) minmax(0, 1fr);
+    gap: 0.8rem;
+    align-items: start;
   }
 
   .format__timing li span {
@@ -202,8 +215,8 @@ const {
     text-transform: uppercase;
   }
 
-  .format__timing li strong {
-    font-size: 1.2rem;
+  .format__timing li :global(.global-session-times) {
+    min-width: 0;
   }
 
   @media (max-width: 58rem) {
@@ -227,8 +240,9 @@ const {
       border-top: 0;
     }
 
-    .format__timing ul {
+    .format__timing li {
       grid-template-columns: 1fr;
+      gap: 0.25rem;
     }
   }
 </style>

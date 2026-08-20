@@ -147,6 +147,99 @@ export interface FormattedEventTime {
   reference: ZonedEventParts & { dateLabel: string; timeLabel: string };
 }
 
+export const GLOBAL_SESSION_TIME_ZONES = [
+  { timeZone: 'America/New_York', label: 'ET' },
+  { timeZone: 'Europe/Paris', label: 'Europe' },
+  { timeZone: 'Europe/London', label: 'UK' },
+  { timeZone: 'Asia/Shanghai', label: 'China' },
+  { timeZone: 'Asia/Kolkata', label: 'India' },
+  { timeZone: 'Asia/Tokyo', label: 'Japan' },
+  { timeZone: 'Australia/Sydney', label: 'Sydney' },
+] as const;
+
+export interface GlobalSessionTime {
+  timeZone: (typeof GLOBAL_SESSION_TIME_ZONES)[number]['timeZone'];
+  label: (typeof GLOBAL_SESSION_TIME_ZONES)[number]['label'];
+  time: string;
+  abbreviation: string;
+  dayOffset: number;
+}
+
+function globalSessionAbbreviation(
+  instant: Temporal.Instant,
+  timeZone: string,
+): string {
+  const offset = instant.toZonedDateTimeISO(timeZone).offset;
+
+  switch (timeZone) {
+    case 'America/New_York':
+      return 'ET';
+    case 'Europe/Paris':
+      return offset === '+02:00' ? 'CEST' : 'CET';
+    case 'Europe/London':
+      return offset === '+01:00' ? 'BST' : 'GMT';
+    case 'Asia/Shanghai':
+      return 'CST';
+    case 'Asia/Kolkata':
+      return 'IST';
+    case 'Asia/Tokyo':
+      return 'JST';
+    case 'Australia/Sydney':
+      return offset === '+11:00' ? 'AEDT' : 'AEST';
+    default:
+      return timeZoneAbbreviation(instant, timeZone, 'en-GB');
+  }
+}
+
+export function formatGlobalSessionTimes(
+  event: ScheduledEventTime,
+): GlobalSessionTime[] {
+  const instant = canonicalEventInstant(event);
+  const referenceDate = instant
+    .toZonedDateTimeISO(event.timezone)
+    .toPlainDate();
+
+  return GLOBAL_SESSION_TIME_ZONES.map(({ timeZone, label }) => {
+    const local = instant.toZonedDateTimeISO(timeZone);
+    const localDate = local.toPlainDate();
+    return {
+      timeZone,
+      label,
+      time: `${pad(local.hour)}:${pad(local.minute)}`,
+      abbreviation: globalSessionAbbreviation(instant, timeZone),
+      dayOffset: referenceDate.until(localDate, { largestUnit: 'day' }).days,
+    };
+  });
+}
+
+export function nextWeekdayDateInZone(
+  timeZone: string,
+  weekday = 5,
+  now: InstantInput = Temporal.Now.instant(),
+): string {
+  if (!Number.isInteger(weekday) || weekday < 1 || weekday > 7) {
+    throw new RangeError('Weekday must be an ISO weekday between 1 and 7.');
+  }
+  if (!isValidTimeZone(timeZone)) {
+    throw new RangeError(`Invalid IANA timezone "${timeZone}".`);
+  }
+
+  const today = coerceInstant(now).toZonedDateTimeISO(timeZone);
+  const daysUntilWeekday = (weekday - today.dayOfWeek + 7) % 7;
+  return today.toPlainDate().add({ days: daysUntilWeekday }).toString();
+}
+
+export function upcomingSessionTime(
+  time: string,
+  timezone = VGZT_TIME_ZONE,
+): ScheduledEventTime {
+  return {
+    date: nextWeekdayDateInZone(timezone),
+    time,
+    timezone,
+  };
+}
+
 function labels(
   instant: Temporal.Instant,
   parts: ZonedEventParts,

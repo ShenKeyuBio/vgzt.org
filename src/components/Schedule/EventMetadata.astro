@@ -1,5 +1,6 @@
 ---
 import type { EventViewModel } from '../../lib/view-models';
+import GlobalSessionTimes from './GlobalSessionTimes.astro';
 
 interface Props {
   event: EventViewModel;
@@ -40,9 +41,15 @@ const easternTimeLabel = new Intl.DateTimeFormat('en-GB', {
         <small data-local-zone>Your timezone</small>
       </dd>
     </div>
-    <div>
-      <dt>Reference</dt>
-      <dd>{easternTimeLabel}<br /><small>{event.timezone}</small></dd>
+    <div class="event-metadata__world-times">
+      <dt>World times</dt>
+      <dd>
+        <GlobalSessionTimes
+          date={event.canonicalDate}
+          time={event.canonicalTime}
+          timezone={event.timezone}
+        />
+      </dd>
     </div>
     <div>
       <dt>Format</dt>
@@ -137,6 +144,19 @@ const easternTimeLabel = new Intl.DateTimeFormat('en-GB', {
     font-weight: 700;
   }
 
+  dl .event-metadata__world-times {
+    display: grid;
+    padding-inline: 0;
+    border-right: 0;
+    grid-column: 1 / -1;
+    grid-template-columns: minmax(6.5rem, 0.25fr) minmax(0, 1fr);
+    gap: 0.8rem;
+  }
+
+  .event-metadata__world-times dd {
+    min-width: 0;
+  }
+
   .event-metadata__speakers {
     display: grid;
     gap: 1rem;
@@ -174,5 +194,12 @@ const easternTimeLabel = new Intl.DateTimeFormat('en-GB', {
 
   .event-metadata__access a {
     font-weight: 900;
+  }
+
+  @media (max-width: 32rem) {
+    dl .event-metadata__world-times {
+      grid-template-columns: 1fr;
+      gap: 0.25rem;
+    }
   }
 </style>
