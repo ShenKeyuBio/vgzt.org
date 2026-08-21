@@ -7,6 +7,23 @@ async function openStable(page: Page, route: string) {
   await page.addStyleTag({
     content: '* { content-visibility: visible !important; }',
   });
+  await page.evaluate(async () => {
+    const images = [...document.images];
+    images.forEach((image) => {
+      image.loading = 'eager';
+    });
+    await Promise.all(
+      images.map(async (image) => {
+        if (!image.complete) {
+          await new Promise<void>((resolve) => {
+            image.addEventListener('load', () => resolve(), { once: true });
+            image.addEventListener('error', () => resolve(), { once: true });
+          });
+        }
+        await image.decode().catch(() => undefined);
+      }),
+    );
+  });
   await waitForStableLayout(page);
 }
 
