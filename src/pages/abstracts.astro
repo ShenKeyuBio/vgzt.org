@@ -196,39 +196,41 @@ const reviewParagraphs = toParagraphs(
           </dl>
         </div>
 
-        <nav
-          class="abstracts-toc"
-          aria-labelledby="abstracts-toc-title"
-          data-section-nav
-        >
-          <h2 id="abstracts-toc-title" class="abstracts-rail__heading">
+        <details class="abstracts-toc-disclosure" data-abstracts-toc open>
+          <summary id="abstracts-toc-title" class="abstracts-rail__heading">
             On this page
-          </h2>
-          <ol>
-            <li>
-              <a href="#eligibility" aria-current="location">Who can apply</a>
-            </li>
-            <li><a href="#submission-requirements">What to submit</a></li>
-            <li><a href="#seminar-format">Seminar format</a></li>
-            {
-              earlyCareerTalkAward?.enabled ? (
-                <li>
-                  <a href="#early-career-awards">Early Career Talk Awards</a>
-                </li>
-              ) : null
-            }
-            <li><a href="#matching">How submissions are matched</a></li>
-            <li><a href="#session-times">Preferred session times</a></li>
-            <li><a href="#faq">FAQ</a></li>
-            {
-              state.canSubmit && formUrl ? (
-                <li>
-                  <a href="#submit">Submit abstract</a>
-                </li>
-              ) : null
-            }
-          </ol>
-        </nav>
+          </summary>
+          <nav
+            class="abstracts-toc"
+            aria-labelledby="abstracts-toc-title"
+            data-section-nav
+          >
+            <ol>
+              <li>
+                <a href="#eligibility" aria-current="location">Who can apply</a>
+              </li>
+              <li><a href="#submission-requirements">What to submit</a></li>
+              <li><a href="#seminar-format">Seminar format</a></li>
+              {
+                earlyCareerTalkAward?.enabled ? (
+                  <li>
+                    <a href="#early-career-awards">Early Career Talk Awards</a>
+                  </li>
+                ) : null
+              }
+              <li><a href="#matching">How submissions are matched</a></li>
+              <li><a href="#session-times">Preferred session times</a></li>
+              <li><a href="#faq">FAQ</a></li>
+              {
+                state.canSubmit && formUrl ? (
+                  <li>
+                    <a href="#submit">Submit abstract</a>
+                  </li>
+                ) : null
+              }
+            </ol>
+          </nav>
+        </details>
 
         {
           state.canSubmit && formUrl ? (
@@ -304,6 +306,15 @@ const reviewParagraphs = toParagraphs(
           }
         </section>
 
+        {
+          earlyCareerTalkAward ? (
+            <EarlyCareerTalkAwards
+              award={earlyCareerTalkAward}
+              variant="inline"
+            />
+          ) : null
+        }
+
         <section id="matching" class="abstracts-copy__section">
           <h2>How submissions are matched</h2>
           <div class="abstracts-copy__stack">
@@ -356,12 +367,6 @@ const reviewParagraphs = toParagraphs(
       </div>
     </div>
   </section>
-
-  {
-    earlyCareerTalkAward ? (
-      <EarlyCareerTalkAwards award={earlyCareerTalkAward} />
-    ) : null
-  }
 
   {
     state.canSubmit && formUrl ? (
@@ -488,19 +493,16 @@ const reviewParagraphs = toParagraphs(
 
   .abstracts-rail {
     position: sticky;
-    top: 6.35rem;
+    top: var(--sticky-chrome-offset);
     display: grid;
-    max-height: calc(100vh - 7.35rem);
-    padding: 0.4rem;
-    overflow-y: auto;
-    gap: 1.5rem;
+    padding: 0;
+    gap: 1.1rem;
     align-self: start;
-    scrollbar-color: var(--vgzt-ink) var(--vgzt-paper);
   }
 
   .abstracts-rail__heading {
     margin: 0 0 0.7rem;
-    font-size: 0.75rem;
+    font-size: var(--font-ui-small);
     font-weight: 950;
     letter-spacing: 0.14em;
     line-height: 1.25;
@@ -519,6 +521,15 @@ const reviewParagraphs = toParagraphs(
 
   .abstracts-toc {
     min-width: 0;
+  }
+
+  .abstracts-toc-disclosure summary {
+    cursor: pointer;
+    list-style-position: inside;
+  }
+
+  .abstracts-toc-disclosure[open] summary {
+    margin-bottom: 0.7rem;
   }
 
   .abstracts-toc ol {
@@ -559,7 +570,7 @@ const reviewParagraphs = toParagraphs(
   }
 
   dt {
-    font-size: 0.68rem;
+    font-size: var(--font-ui-small);
     font-weight: 950;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -572,6 +583,14 @@ const reviewParagraphs = toParagraphs(
 
   .abstracts-copy__section:first-child h2 {
     margin-top: 0;
+  }
+
+  .abstracts-copy__section {
+    scroll-margin-block-start: var(--sticky-chrome-offset);
+  }
+
+  .abstracts-copy__section h2 {
+    font-size: clamp(2rem, 4vw, 3.25rem);
   }
 
   .abstracts-copy__stack p + p {
@@ -631,7 +650,7 @@ const reviewParagraphs = toParagraphs(
   }
 
   .preferred-session-times > li > span {
-    font-size: 0.78rem;
+    font-size: var(--font-ui-small);
     font-weight: 900;
     letter-spacing: 0.04em;
     text-transform: uppercase;
@@ -703,6 +722,22 @@ const reviewParagraphs = toParagraphs(
       overflow: visible;
     }
 
+    .abstracts-toc-disclosure summary {
+      min-height: var(--tap-target);
+      padding: 0.75rem;
+      border: var(--keyline);
+      background: var(--vgzt-paper-strong);
+    }
+
+    .abstracts-toc-disclosure[open] summary {
+      margin-bottom: 0;
+      border-bottom: 0;
+    }
+
+    .abstracts-toc-disclosure[open] .abstracts-toc {
+      border-inline: var(--keyline);
+    }
+
     .abstracts-followup__inner {
       align-items: start;
       flex-direction: column;
@@ -725,6 +760,34 @@ const reviewParagraphs = toParagraphs(
 </style>
 
 <script>
+  document
+    .querySelectorAll<HTMLDetailsElement>('[data-abstracts-toc]')
+    .forEach((disclosure) => {
+      const mobile = window.matchMedia('(max-width: 50rem)');
+      const applyMode = (initial = false) => {
+        if (mobile.matches) {
+          if (initial) disclosure.open = false;
+        } else {
+          disclosure.open = true;
+        }
+      };
+      disclosure.addEventListener('click', (event) => {
+        if (
+          !mobile.matches &&
+          event.target === disclosure.querySelector('summary')
+        ) {
+          event.preventDefault();
+        }
+      });
+      disclosure.addEventListener('keydown', (event) => {
+        if (!mobile.matches && (event.key === 'Enter' || event.key === ' ')) {
+          event.preventDefault();
+        }
+      });
+      mobile.addEventListener('change', () => applyMode());
+      applyMode(true);
+    });
+
   document
     .querySelectorAll<HTMLElement>('[data-section-nav]')
     .forEach((navigation) => {

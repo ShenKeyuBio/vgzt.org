@@ -125,6 +125,13 @@ const seasonOptions = [...seasonOptionsById.values()].sort(
           </select>
         </label>
       </div>
+      <p
+        class="people-browser__result"
+        role="status"
+        aria-live="polite"
+        data-people-result
+      >
+      </p>
 
       <h2 id="people-title" class="visually-hidden">VGZT people archive</h2>
       <section
@@ -144,7 +151,7 @@ const seasonOptions = [...seasonOptionsById.values()].sort(
                       (season) => `season-${String(season).padStart(2, '0')}`,
                     )
                     .join(' ')}
-                  data-person-search={`${person.name} ${person.preferredName || ''} ${person.currentAffiliation || ''}`.toLowerCase()}
+                  data-person-search={`${person.name} ${person.preferredName || ''} ${person.currentAffiliation || ''}`}
                 >
                   <SpeakerArchiveCard
                     id={person.id}
@@ -197,7 +204,8 @@ const seasonOptions = [...seasonOptionsById.values()].sort(
                       (person) =>
                         person && (
                           <div
-                            data-person-search={`${person.name} ${person.preferredName || ''} ${person.currentAffiliation || ''}`.toLowerCase()}
+                            data-organizer-card
+                            data-person-search={`${person.name} ${person.preferredName || ''} ${person.currentAffiliation || ''}`}
                           >
                             <PersonCard
                               id={person.id}
@@ -225,6 +233,13 @@ const seasonOptions = [...seasonOptionsById.values()].sort(
           <p>No organizer records are available.</p>
         )
       }
+      <div
+        class="people-browser__no-match empty-state"
+        data-people-no-match
+        hidden
+      >
+        <h3>No matching people.</h3>
+      </div>
     </div>
   </section>
 </BaseLayout>
@@ -271,7 +286,7 @@ const seasonOptions = [...seasonOptionsById.values()].sort(
   .people-browser__controls label {
     display: grid;
     gap: 0.3rem;
-    font-size: 0.72rem;
+    font-size: var(--font-ui-small);
     font-weight: 950;
   }
 
@@ -285,6 +300,23 @@ const seasonOptions = [...seasonOptionsById.values()].sort(
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 0.75rem;
+  }
+
+  .people-grid > :global(div) {
+    content-visibility: auto;
+    contain-intrinsic-block-size: 22rem;
+  }
+
+  .people-browser__result {
+    min-height: 1.4rem;
+    margin: -1rem 0 1.5rem;
+    font-size: var(--font-ui-small);
+    font-weight: 850;
+  }
+
+  .people-browser__no-match {
+    min-height: 0;
+    margin-top: 1.5rem;
   }
 
   .season-group + .season-group {
@@ -309,13 +341,9 @@ const seasonOptions = [...seasonOptionsById.values()].sort(
     .people-browser__controls {
       grid-template-columns: 1fr;
     }
-
-    .people-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
   }
 
-  @media (max-width: 30rem) {
+  @media (max-width: 42rem) {
     .people-grid {
       grid-template-columns: 1fr;
     }
@@ -338,34 +366,95 @@ const seasonOptions = [...seasonOptionsById.values()].sort(
       const season = browser.querySelector<HTMLSelectElement>(
         '[data-season-filter]',
       );
+      const speakerCards = [
+        ...browser.querySelectorAll<HTMLElement>('[data-speaker-card]'),
+      ];
+      const organizerCards = [
+        ...browser.querySelectorAll<HTMLElement>('[data-organizer-card]'),
+      ];
+      const organizerGroups = [
+        ...browser.querySelectorAll<HTMLElement>('[data-season-group]'),
+      ];
+      const result = browser.querySelector<HTMLElement>('[data-people-result]');
+      const noMatch = browser.querySelector<HTMLElement>(
+        '[data-people-no-match]',
+      );
 
-      const applyFilters = () => {
-        const term = (search?.value || '').trim().toLowerCase();
-        browser
-          .querySelectorAll<HTMLElement>('[data-person-search]')
-          .forEach((card) => {
-            const searchMismatch =
-              term.length > 0 && !card.dataset.personSearch?.includes(term);
-            const seasonMismatch = Boolean(
-              card.hasAttribute('data-speaker-card') &&
-              season &&
-              season.value !== 'all' &&
-              !card.dataset.personSeasons?.split(' ').includes(season.value),
-            );
-            card.hidden = searchMismatch || seasonMismatch;
-          });
-        browser
-          .querySelectorAll<HTMLElement>('[data-season-group]')
-          .forEach((group) => {
-            group.hidden = Boolean(
-              season &&
-              season.value !== 'all' &&
-              group.dataset.seasonGroup !== season.value,
-            );
-          });
+      const normalizeSearch = (value: string) =>
+        value
+          .normalize('NFD')
+          .replace(/\p{Diacritic}/gu, '')
+          .toLowerCase()
+          .trim();
+
+      const activeView = () =>
+        tabs.find((tab) => tab.getAttribute('aria-selected') === 'true')
+          ?.dataset.peopleTab || 'speakers';
+
+      const updateUrl = () => {
+        const url = new URL(location.href);
+        const view = activeView();
+        const seasonValue = season?.value || 'all';
+        const query = search?.value.trim() || '';
+        if (view === 'speakers') url.searchParams.delete('view');
+        else url.searchParams.set('view', view);
+        if (seasonValue === 'all') url.searchParams.delete('season');
+        else url.searchParams.set('season', seasonValue);
+        if (query) url.searchParams.set('q', query);
+        else url.searchParams.delete('q');
+        history.replaceState(null, '', url);
       };
 
-      const selectTab = (button: HTMLButtonElement) => {
+      const applyFilters = (writeUrl = true) => {
+        const term = normalizeSearch(search?.value || '');
+        const selectedSeason = season?.value || 'all';
+        const view = activeView();
+
+        speakerCards.forEach((card) => {
+          const searchMismatch =
+            term.length > 0 &&
+            !normalizeSearch(card.dataset.personSearch || '').includes(term);
+          const seasonMismatch =
+            selectedSeason !== 'all' &&
+            !card.dataset.personSeasons?.split(' ').includes(selectedSeason);
+          card.hidden = searchMismatch || seasonMismatch;
+        });
+
+        organizerCards.forEach((card) => {
+          const searchMismatch =
+            term.length > 0 &&
+            !normalizeSearch(card.dataset.personSearch || '').includes(term);
+          const group = card.closest<HTMLElement>('[data-season-group]');
+          const seasonMismatch =
+            selectedSeason !== 'all' &&
+            group?.dataset.seasonGroup !== selectedSeason;
+          card.hidden = searchMismatch || seasonMismatch;
+        });
+
+        organizerGroups.forEach((group) => {
+          const seasonMismatch =
+            selectedSeason !== 'all' &&
+            group.dataset.seasonGroup !== selectedSeason;
+          const hasVisibleCard = [
+            ...group.querySelectorAll('[data-organizer-card]'),
+          ].some((card) => !(card as HTMLElement).hidden);
+          group.hidden = seasonMismatch || !hasVisibleCard;
+        });
+
+        const activeCards = view === 'speakers' ? speakerCards : organizerCards;
+        const visible = activeCards.filter((card) => !card.hidden).length;
+        if (result) {
+          result.textContent = `${visible} ${view === 'speakers' ? 'speakers' : 'organizers'} shown`;
+        }
+        if (noMatch) noMatch.hidden = visible !== 0;
+        if (writeUrl) updateUrl();
+      };
+
+      const selectTab = (
+        button: HTMLButtonElement,
+        focus = false,
+        writeUrl = true,
+      ) => {
         const view = button.dataset.peopleTab;
         tabs.forEach((tab) => {
           const selected = tab === button;
@@ -375,25 +464,52 @@ const seasonOptions = [...seasonOptionsById.values()].sort(
         panels.forEach(
           (panel) => (panel.hidden = panel.dataset.peoplePanel !== view),
         );
-        if (season) season.disabled = view === 'speakers';
-        applyFilters();
+        if (focus) button.focus();
+        applyFilters(writeUrl);
       };
 
       tabs.forEach((tab, index) => {
         tab.addEventListener('click', () => selectTab(tab));
         tab.addEventListener('keydown', (event) => {
-          if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+          let target: number | null = null;
+          if (event.key === 'ArrowRight') target = (index + 1) % tabs.length;
+          if (event.key === 'ArrowLeft')
+            target = (index - 1 + tabs.length) % tabs.length;
+          if (event.key === 'Home') target = 0;
+          if (event.key === 'End') target = tabs.length - 1;
+          if (target === null) return;
           event.preventDefault();
-          const direction = event.key === 'ArrowRight' ? 1 : -1;
-          const next = tabs[(index + direction + tabs.length) % tabs.length];
-          if (next) {
-            selectTab(next);
-            next.focus();
-          }
+          const next = tabs[target];
+          if (next) selectTab(next, true);
         });
       });
-      if (season) season.disabled = true;
-      search?.addEventListener('input', applyFilters);
-      season?.addEventListener('change', applyFilters);
+
+      let inputFrame: number | undefined;
+      search?.addEventListener('input', () => {
+        if (inputFrame !== undefined) cancelAnimationFrame(inputFrame);
+        inputFrame = requestAnimationFrame(() => applyFilters());
+      });
+      season?.addEventListener('change', () => applyFilters());
+
+      const restoreFromUrl = () => {
+        const params = new URLSearchParams(location.search);
+        const view = params.get('view');
+        const requestedTab = tabs.find((tab) => tab.dataset.peopleTab === view);
+        const requestedSeason = params.get('season');
+        if (
+          season &&
+          requestedSeason &&
+          [...season.options].some((option) => option.value === requestedSeason)
+        ) {
+          season.value = requestedSeason;
+        } else if (season) {
+          season.value = 'all';
+        }
+        if (search) search.value = params.get('q') || '';
+        selectTab(requestedTab || tabs[0]!, false, false);
+      };
+
+      window.addEventListener('popstate', restoreFromUrl);
+      restoreFromUrl();
     });
 </script>

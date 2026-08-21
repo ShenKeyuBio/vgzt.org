@@ -38,11 +38,22 @@ const active = getActiveOpportunities(
     </div>
   </header>
 
-  <section class="section" aria-labelledby="active-opportunities">
+  <section
+    class:list={[
+      'section opportunities-listing',
+      { 'opportunities-listing--empty': active.length === 0 },
+    ]}
+    aria-labelledby="active-opportunities"
+  >
     <div class="container">
       <div class="section-heading">
         <div>
-          <p class="eyebrow" data-opportunity-count>
+          <p
+            class="eyebrow"
+            data-opportunity-count
+            role="status"
+            aria-live="polite"
+          >
             {active.length} active {
               active.length === 1 ? 'listing' : 'listings'
             }
@@ -63,6 +74,13 @@ const active = getActiveOpportunities(
               {active.map((item) => (
                 <OpportunityCard {...item} />
               ))}
+            </div>
+            <div
+              class="empty-state opportunities-no-match"
+              data-opportunity-no-match
+              hidden
+            >
+              <h3>No matching opportunities.</h3>
             </div>
           </>
         ) : (
@@ -91,6 +109,15 @@ const active = getActiveOpportunities(
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 1rem;
+  }
+
+  .opportunities-no-match,
+  .opportunities-listing .empty-state {
+    min-height: 0;
+  }
+
+  .opportunities-listing--empty {
+    padding-block: clamp(3rem, 6vw, 4.5rem);
   }
 
   @media (max-width: 45rem) {

@@ -5,9 +5,14 @@ import MobileNav from './MobileNav.astro';
 interface Props {
   masterLogo?: string | null;
   seasonNumber?: number | null;
+  currentPath?: string;
 }
 
-const { masterLogo = null, seasonNumber = null } = Astro.props;
+const {
+  masterLogo = null,
+  seasonNumber = null,
+  currentPath = '/',
+} = Astro.props;
 const navigation = [
   { label: 'Schedule', href: '/#programme' },
   { label: 'Abstracts', href: '/abstracts/' },
@@ -16,6 +21,12 @@ const navigation = [
   { label: 'About', href: '/about/' },
   { label: 'Contact', href: '/contact/' },
 ];
+const isCurrent = (href: string) => {
+  const path = href.split('#')[0] || '/';
+  return path === '/'
+    ? currentPath === '/' || currentPath.startsWith('/events/')
+    : currentPath === path;
+};
 ---
 
 <header class="site-header">
@@ -33,16 +44,25 @@ const navigation = [
         {
           navigation.map((item) => (
             <li>
-              <a href={item.href}>{item.label}</a>
+              <a
+                href={item.href}
+                aria-current={isCurrent(item.href) ? 'page' : undefined}
+              >
+                {item.label}
+              </a>
             </li>
           ))
         }
       </ul>
     </nav>
 
-    <a class="button site-header__join" href="/subscribe/">
+    <a
+      class="button site-header__join"
+      href="/subscribe/"
+      aria-current={currentPath === '/subscribe/' ? 'page' : undefined}
+    >
       Subscribe VGZT Talks
     </a>
-    <MobileNav items={navigation} />
+    <MobileNav items={navigation} currentPath={currentPath} />
   </div>
 </header>

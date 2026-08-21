@@ -31,8 +31,10 @@ const weekday = new Intl.DateTimeFormat('en-GB', { weekday: 'short' }).format(
   data-event-id={event.id}
   data-instant={event.instant}
   data-end-instant={event.endInstant}
+  data-event-names={event.speakers.map((speaker) => speaker.name).join(' & ')}
+  aria-label={`${month} ${day}, ${weekday}, ${event.canonicalTime} — ${event.speakers.map((speaker) => speaker.name).join(' & ')}`}
 >
-  <span class="event-date-button__month">{month}</span>
+  <span class="event-date-button__month" data-local-month>{month}</span>
   <span class="event-date-button__day" data-local-day>{day}</span>
   <span class="event-date-button__weekday" data-local-weekday>{weekday}</span>
   <span class="event-date-button__time" data-local-time
@@ -62,7 +64,7 @@ const weekday = new Intl.DateTimeFormat('en-GB', { weekday: 'short' }).format(
   .event-date-button__month,
   .event-date-button__weekday,
   .event-date-button__time {
-    font-size: 0.69rem;
+    font-size: var(--font-ui-small);
     font-weight: 900;
     letter-spacing: 0.05em;
     text-transform: uppercase;

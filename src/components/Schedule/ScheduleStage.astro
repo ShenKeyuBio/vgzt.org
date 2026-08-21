@@ -6,6 +6,7 @@ import TimezoneSelector from './TimezoneSelector.astro';
 
 interface Props {
   sectionId: string;
+  tabId: string;
   seasonLabel: string;
   events: EventViewModel[];
   start: string;
@@ -22,6 +23,7 @@ interface Props {
 
 const {
   sectionId,
+  tabId,
   seasonLabel,
   events,
   start,
@@ -40,7 +42,8 @@ const {
 <section
   class="section schedule-section"
   id={sectionId}
-  aria-labelledby={`${sectionId}-title`}
+  role="tabpanel"
+  aria-labelledby={tabId}
   data-schedule
   data-persistent-action-obstacle
   data-archive-autoplay={archive && events.length > 1 ? 'true' : 'false'}
@@ -67,7 +70,11 @@ const {
       </p>
     </div>
 
-    {events.length > 0 && <TimezoneSelector />}
+    {
+      events.length > 0 && (
+        <TimezoneSelector controlId={`${sectionId}-timezone`} />
+      )
+    }
     <SeasonRail
       events={events}
       selectedId={selectedId}
@@ -189,278 +196,3 @@ const {
     }
   }
 </style>
-
-<script>
-  const storageKey = 'vgzt:timezone';
-
-  function supportedZone(zone: string): boolean {
-    try {
-      new Intl.DateTimeFormat('en', { timeZone: zone }).format();
-      return true;
-    } catch {
-      return false;
-    }
-  }
-
-  function detectedZone(): string {
-    const zone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    return zone && supportedZone(zone) ? zone : 'UTC';
-  }
-
-  function selectedZone(select: HTMLSelectElement): string {
-    const stored = localStorage.getItem(storageKey);
-    if (stored && stored !== 'auto' && supportedZone(stored)) return stored;
-    return select.value !== 'auto' && supportedZone(select.value)
-      ? select.value
-      : detectedZone();
-  }
-
-  function updateTimes(root: HTMLElement, zone: string): void {
-    const dateFormatter = new Intl.DateTimeFormat('en-GB', {
-      timeZone: zone,
-      weekday: 'long',
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-    });
-    const dayFormatter = new Intl.DateTimeFormat('en-GB', {
-      timeZone: zone,
-      day: '2-digit',
-    });
-    const weekdayFormatter = new Intl.DateTimeFormat('en-GB', {
-      timeZone: zone,
-      weekday: 'short',
-    });
-    const timeFormatter = new Intl.DateTimeFormat('en-GB', {
-      timeZone: zone,
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false,
-      timeZoneName: 'short',
-    });
-
-    root.querySelectorAll<HTMLElement>('[data-local-date]').forEach((node) => {
-      const instant = node.dataset.localDate;
-      if (instant) node.textContent = dateFormatter.format(new Date(instant));
-    });
-    root.querySelectorAll<HTMLElement>('[data-local-time]').forEach((node) => {
-      const instant =
-        node.dataset.localTime ||
-        node.closest<HTMLElement>('[data-instant]')?.dataset.instant;
-      if (instant) node.textContent = timeFormatter.format(new Date(instant));
-    });
-    root.querySelectorAll<HTMLElement>('[data-local-day]').forEach((node) => {
-      const instant =
-        node.closest<HTMLElement>('[data-instant]')?.dataset.instant;
-      if (instant) node.textContent = dayFormatter.format(new Date(instant));
-    });
-    root
-      .querySelectorAll<HTMLElement>('[data-local-weekday]')
-      .forEach((node) => {
-        const instant =
-          node.closest<HTMLElement>('[data-instant]')?.dataset.instant;
-        if (instant)
-          node.textContent = weekdayFormatter.format(new Date(instant));
-      });
-    root.querySelectorAll<HTMLElement>('[data-local-zone]').forEach((node) => {
-      node.textContent = zone.replaceAll('_', ' ');
-    });
-  }
-
-  document
-    .querySelectorAll<HTMLElement>('[data-schedule]')
-    .forEach((schedule) => {
-      const select = schedule.querySelector<HTMLSelectElement>(
-        '[data-timezone-select]',
-      );
-      const reset = schedule.querySelector<HTMLButtonElement>(
-        '[data-timezone-reset]',
-      );
-      const status = schedule.querySelector<HTMLElement>(
-        '[data-timezone-status]',
-      );
-      if (!select || !reset || !status) return;
-
-      const stored = localStorage.getItem(storageKey);
-      if (stored && stored !== 'auto' && supportedZone(stored)) {
-        if ([...select.options].some((option) => option.value === stored))
-          select.value = stored;
-        reset.hidden = false;
-      }
-
-      const applyZone = () => {
-        const zone = selectedZone(select);
-        updateTimes(schedule, zone);
-        status.textContent = `Times shown for ${zone.replaceAll('_', ' ')}.`;
-      };
-      applyZone();
-
-      select.addEventListener('change', () => {
-        if (select.value === 'auto') {
-          localStorage.removeItem(storageKey);
-          reset.hidden = true;
-        } else {
-          localStorage.setItem(storageKey, select.value);
-          reset.hidden = false;
-        }
-        applyZone();
-      });
-
-      reset.addEventListener('click', () => {
-        localStorage.removeItem(storageKey);
-        select.value = 'auto';
-        reset.hidden = true;
-        applyZone();
-      });
-
-      const tabs = [
-        ...schedule.querySelectorAll<HTMLButtonElement>('[data-event-tab]'),
-      ];
-      const panels = [
-        ...schedule.querySelectorAll<HTMLElement>('[data-event-panel]'),
-      ];
-      if (tabs.length === 0) return;
-
-      const reducedMotion = window.matchMedia(
-        '(prefers-reduced-motion: reduce)',
-      );
-      const selectTab = (
-        tab: HTMLButtonElement,
-        focus = false,
-        updateUrl = true,
-      ) => {
-        const id = tab.dataset.eventId;
-        tabs.forEach((item) => {
-          const active = item === tab;
-          item.setAttribute('aria-selected', String(active));
-          item.tabIndex = active ? 0 : -1;
-        });
-        panels.forEach(
-          (panel) => (panel.hidden = panel.dataset.eventPanel !== id),
-        );
-        if (id && updateUrl) {
-          const url = new URL(location.href);
-          url.searchParams.set('event', id);
-          history.replaceState(null, '', url);
-        }
-        if (focus) tab.focus();
-        if (focus || updateUrl) {
-          tab.scrollIntoView({
-            block: 'nearest',
-            inline: 'nearest',
-            behavior: reducedMotion.matches ? 'auto' : 'smooth',
-          });
-        }
-      };
-
-      const requested = new URLSearchParams(location.search).get('event');
-      const requestedTab = requested
-        ? tabs.find((tab) => tab.dataset.eventId === requested)
-        : null;
-      if (requestedTab) selectTab(requestedTab);
-
-      tabs.forEach((tab, index) => {
-        tab.addEventListener('click', () => selectTab(tab));
-        tab.addEventListener('keydown', (event) => {
-          let target: number | null = null;
-          if (event.key === 'ArrowRight') target = (index + 1) % tabs.length;
-          if (event.key === 'ArrowLeft')
-            target = (index - 1 + tabs.length) % tabs.length;
-          if (event.key === 'Home') target = 0;
-          if (event.key === 'End') target = tabs.length - 1;
-          if (target !== null) {
-            event.preventDefault();
-            const next = tabs[target];
-            if (next) selectTab(next, true);
-          }
-        });
-      });
-
-      const currentIndex = () =>
-        Math.max(
-          0,
-          tabs.findIndex((tab) => tab.getAttribute('aria-selected') === 'true'),
-        );
-      schedule
-        .querySelector('[data-event-previous]')
-        ?.addEventListener('click', () => {
-          const tab = tabs[(currentIndex() - 1 + tabs.length) % tabs.length];
-          if (tab) selectTab(tab, true);
-        });
-      schedule
-        .querySelector('[data-event-next]')
-        ?.addEventListener('click', () => {
-          const tab = tabs[(currentIndex() + 1) % tabs.length];
-          if (tab) selectTab(tab, true);
-        });
-
-      const playback = schedule.querySelector<HTMLButtonElement>(
-        '[data-archive-playback]',
-      );
-      let autoplay: number | undefined;
-      let manuallyPaused = false;
-      const stopAutoplay = () => {
-        if (autoplay !== undefined) window.clearInterval(autoplay);
-        autoplay = undefined;
-      };
-      const updatePlayback = () => {
-        if (!playback) return;
-        if (reducedMotion.matches) {
-          playback.disabled = true;
-          playback.textContent = 'Motion off';
-          playback.setAttribute('aria-pressed', 'true');
-          playback.setAttribute(
-            'aria-label',
-            'Archive autoplay disabled by reduced-motion preference',
-          );
-          return;
-        }
-        playback.disabled = false;
-        playback.textContent = manuallyPaused ? 'Play' : 'Pause';
-        playback.setAttribute('aria-pressed', String(manuallyPaused));
-        playback.setAttribute(
-          'aria-label',
-          manuallyPaused ? 'Play archive autoplay' : 'Pause archive autoplay',
-        );
-      };
-      const startAutoplay = () => {
-        stopAutoplay();
-        if (
-          schedule.dataset.archiveAutoplay !== 'true' ||
-          reducedMotion.matches ||
-          manuallyPaused
-        )
-          return;
-        autoplay = window.setInterval(() => {
-          if (
-            schedule.hidden ||
-            schedule.matches(':hover') ||
-            schedule.contains(document.activeElement)
-          )
-            return;
-          const tab = tabs[(currentIndex() + 1) % tabs.length];
-          if (tab) selectTab(tab, false, false);
-        }, 5000);
-      };
-      schedule.addEventListener('pointerenter', stopAutoplay);
-      schedule.addEventListener('pointerleave', startAutoplay);
-      schedule.addEventListener('focusin', stopAutoplay);
-      schedule.addEventListener('focusout', (event) => {
-        if (!schedule.contains(event.relatedTarget as Node | null))
-          startAutoplay();
-      });
-      schedule.addEventListener('touchstart', stopAutoplay, { passive: true });
-      playback?.addEventListener('click', () => {
-        manuallyPaused = !manuallyPaused;
-        updatePlayback();
-        if (manuallyPaused) stopAutoplay();
-        else startAutoplay();
-      });
-      reducedMotion.addEventListener('change', () => {
-        updatePlayback();
-        startAutoplay();
-      });
-      updatePlayback();
-      startAutoplay();
-    });
-</script>

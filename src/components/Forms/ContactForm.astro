@@ -35,7 +35,6 @@ const categories = [
       data-contact-form
       data-endpoint={endpoint || ''}
       data-enabled={String(enabled)}
-      novalidate
     >
       <div class="contact-form__row">
         <div class="field">
@@ -122,10 +121,8 @@ const categories = [
           <div
             class="cf-turnstile"
             data-sitekey={turnstileSiteKey}
-            data-action="vgzt_contact"
-            data-callback="vgztTurnstileComplete"
-            data-expired-callback="vgztTurnstileExpired"
-            data-error-callback="vgztTurnstileExpired"
+            data-contact-turnstile
+            tabindex="-1"
           />
         )
       }
@@ -147,6 +144,7 @@ const categories = [
           class="contact-form__status"
           role="status"
           aria-live="polite"
+          tabindex="-1"
           data-form-status
         >
         </p>
@@ -159,7 +157,8 @@ const categories = [
   turnstileSiteKey && (
     <script
       is:inline
-      src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+      src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
+      data-contact-turnstile-api
       async
       defer
     />
@@ -223,7 +222,7 @@ const categories = [
   }
 
   .field label {
-    font-size: 0.78rem;
+    font-size: var(--font-ui-small);
     font-weight: 950;
     letter-spacing: 0.04em;
   }
@@ -253,14 +252,14 @@ const categories = [
   .field__meta {
     display: flex;
     color: var(--vgzt-muted);
-    font-size: 0.7rem;
+    font-size: var(--font-ui-small);
     justify-content: space-between;
   }
 
   .field__error {
     min-height: 1em;
     color: var(--vgzt-error);
-    font-size: 0.72rem;
+    font-size: var(--font-ui-small);
     font-weight: 800;
   }
 
@@ -277,7 +276,7 @@ const categories = [
     grid-template-columns: auto 1fr;
     gap: 0.7rem;
     align-items: start;
-    font-size: 0.8rem;
+    font-size: var(--font-ui-small);
     font-weight: 650;
   }
 
@@ -306,7 +305,7 @@ const categories = [
 
   .contact-form__status {
     margin: 0;
-    font-size: 0.8rem;
+    font-size: var(--font-ui-small);
     font-weight: 800;
   }
 
@@ -332,12 +331,18 @@ const categories = [
 </style>
 
 <script>
-  declare global {
-    interface Window {
-      vgztTurnstileComplete?: (token: string) => void;
-      vgztTurnstileExpired?: () => void;
-      turnstile?: { reset: () => void };
-    }
+  interface TurnstileApi {
+    render: (
+      container: HTMLElement,
+      options: {
+        sitekey: string;
+        action: string;
+        callback: (token: string) => void;
+        'expired-callback': () => void;
+        'error-callback': () => void;
+      },
+    ) => string;
+    reset: (widgetId?: string) => void;
   }
 
   document
@@ -353,14 +358,53 @@ const categories = [
         'message',
       ) as HTMLTextAreaElement | null;
       const count = form.querySelector<HTMLElement>('[data-message-count]');
+      const turnstileContainer = form.querySelector<HTMLElement>(
+        '[data-contact-turnstile]',
+      );
       let turnstileToken = '';
+      let turnstileWidgetId: string | undefined;
+      form.noValidate = true;
 
-      window.vgztTurnstileComplete = (token) => {
-        turnstileToken = token;
+      const getTurnstile = (): TurnstileApi | null => {
+        const candidate: unknown = Reflect.get(window, 'turnstile');
+        return typeof candidate === 'object' &&
+          candidate !== null &&
+          'render' in candidate &&
+          typeof candidate.render === 'function' &&
+          'reset' in candidate &&
+          typeof candidate.reset === 'function'
+          ? (candidate as TurnstileApi)
+          : null;
       };
-      window.vgztTurnstileExpired = () => {
-        turnstileToken = '';
+
+      const renderTurnstile = () => {
+        const turnstile = getTurnstile();
+        const sitekey = turnstileContainer?.dataset.sitekey;
+        if (!turnstile || !turnstileContainer || !sitekey || turnstileWidgetId)
+          return;
+        turnstileWidgetId = turnstile.render(turnstileContainer, {
+          sitekey,
+          action: 'vgzt_contact',
+          callback: (token) => {
+            turnstileToken = token;
+            if (status) status.textContent = '';
+          },
+          'expired-callback': () => {
+            turnstileToken = '';
+          },
+          'error-callback': () => {
+            turnstileToken = '';
+          },
+        });
       };
+      const turnstileScript = document.querySelector<HTMLScriptElement>(
+        '[data-contact-turnstile-api]',
+      );
+      if (getTurnstile()) renderTurnstile();
+      else
+        turnstileScript?.addEventListener('load', renderTurnstile, {
+          once: true,
+        });
 
       message?.addEventListener('input', () => {
         if (count) count.textContent = String(message.value.length);
@@ -370,21 +414,38 @@ const categories = [
         form
           .querySelectorAll('[aria-invalid="true"]')
           .forEach((field) => field.removeAttribute('aria-invalid'));
-        form
-          .querySelectorAll<HTMLElement>('.field__error')
-          .forEach((error) => (error.textContent = ''));
+        form.querySelectorAll<HTMLElement>('.field__error').forEach((error) => {
+          error.textContent = '';
+          if (!error.id) return;
+          form
+            .querySelectorAll<HTMLElement>(`[aria-describedby~="${error.id}"]`)
+            .forEach((field) => {
+              const tokens = (field.getAttribute('aria-describedby') || '')
+                .split(/\s+/)
+                .filter((token) => token && token !== error.id);
+              if (tokens.length > 0)
+                field.setAttribute('aria-describedby', tokens.join(' '));
+              else field.removeAttribute('aria-describedby');
+            });
+        });
+      };
+
+      const addDescription = (field: HTMLElement, id: string) => {
+        const tokens = new Set(
+          (field.getAttribute('aria-describedby') || '')
+            .split(/\s+/)
+            .filter(Boolean),
+        );
+        tokens.add(id);
+        field.setAttribute('aria-describedby', [...tokens].join(' '));
       };
 
       const setError = (name: string, text: string) => {
         const field = form.elements.namedItem(name) as HTMLElement | null;
         field?.setAttribute('aria-invalid', 'true');
-        field?.setAttribute(
-          'aria-describedby',
-          `contact-${name === 'privacyAccepted' ? 'privacy' : name}-error`,
-        );
-        const error = form.querySelector<HTMLElement>(
-          `#contact-${name === 'privacyAccepted' ? 'privacy' : name}-error`,
-        );
+        const errorId = `contact-${name === 'privacyAccepted' ? 'privacy' : name}-error`;
+        if (field) addDescription(field, errorId);
+        const error = form.querySelector<HTMLElement>(`#${errorId}`);
         if (error) error.textContent = text;
       };
 
@@ -434,7 +495,14 @@ const categories = [
           invalid = true;
         }
         if (invalid) {
-          form.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus();
+          const firstInvalid = form.querySelector<HTMLElement>(
+            '[aria-invalid="true"]',
+          );
+          if (firstInvalid) firstInvalid.focus();
+          else {
+            status?.focus();
+            turnstileContainer?.focus();
+          }
           return;
         }
 
@@ -466,7 +534,7 @@ const categories = [
           if (count) count.textContent = '0';
           if (status)
             status.textContent = 'Thanks — your message has been sent.';
-          window.turnstile?.reset();
+          getTurnstile()?.reset(turnstileWidgetId);
         } catch (error) {
           if (status) {
             status.textContent =
@@ -474,7 +542,8 @@ const categories = [
                 ? error.message
                 : 'Message could not be sent. Try again.';
           }
-          window.turnstile?.reset();
+          status?.focus();
+          getTurnstile()?.reset(turnstileWidgetId);
           turnstileToken = '';
         } finally {
           if (submit) submit.disabled = false;

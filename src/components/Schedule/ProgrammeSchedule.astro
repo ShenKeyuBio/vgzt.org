@@ -1,5 +1,6 @@
 ---
 import type { EventViewModel } from '../../lib/view-models';
+import ScheduleController from './ScheduleController.astro';
 import ScheduleStage from './ScheduleStage.astro';
 
 export interface ProgrammeSeasonViewModel {
@@ -52,6 +53,7 @@ const archiveSeason = seasons.find(
                 : 'Programme';
           return (
             <button
+              id={`programme-tab-${season.id}`}
               type="button"
               role="tab"
               aria-selected={selected}
@@ -72,6 +74,7 @@ const archiveSeason = seasons.find(
   seasons.map((season) => (
     <ScheduleStage
       sectionId={`programme-${season.id}`}
+      tabId={`programme-tab-${season.id}`}
       seasonLabel={season.label}
       events={season.events}
       selectedId={season.selectedId}
@@ -90,6 +93,8 @@ const archiveSeason = seasons.find(
   ))
 }
 
+<ScheduleController />
+
 <style>
   .programme-switcher {
     padding-top: clamp(2rem, 5vw, 4rem);
@@ -103,6 +108,9 @@ const archiveSeason = seasons.find(
     overflow-x: auto;
     border: var(--keyline);
     background: var(--vgzt-paper-strong);
+    overscroll-behavior-inline: contain;
+    scrollbar-color: var(--vgzt-ink) var(--vgzt-paper);
+    scroll-snap-type: x proximity;
   }
 
   .programme-switcher__tabs button {
@@ -115,6 +123,7 @@ const archiveSeason = seasons.find(
     background: transparent;
     color: var(--vgzt-ink);
     font-weight: 950;
+    scroll-snap-align: start;
   }
 
   .programme-switcher__tabs button:last-child {
@@ -125,62 +134,3 @@ const archiveSeason = seasons.find(
     background: var(--vgzt-orange);
   }
 </style>
-
-<script>
-  document
-    .querySelectorAll<HTMLElement>('[data-programme-switcher]')
-    .forEach((switcher) => {
-      const tabs = [
-        ...switcher.querySelectorAll<HTMLButtonElement>(
-          '[data-programme-season-tab]',
-        ),
-      ];
-      const panels = tabs
-        .map((tab) =>
-          document.getElementById(tab.getAttribute('aria-controls') || ''),
-        )
-        .filter((panel): panel is HTMLElement => panel !== null);
-
-      const selectSeason = (tab: HTMLButtonElement, focus = false) => {
-        const seasonId = tab.dataset.programmeSeasonTab;
-        tabs.forEach((item) => {
-          const active = item === tab;
-          item.setAttribute('aria-selected', String(active));
-          item.tabIndex = active ? 0 : -1;
-        });
-        panels.forEach((panel) => {
-          panel.hidden = panel.id !== tab.getAttribute('aria-controls');
-        });
-        if (seasonId) {
-          const url = new URL(location.href);
-          url.searchParams.set('season', seasonId);
-          url.searchParams.delete('event');
-          history.replaceState(null, '', url);
-        }
-        if (focus) tab.focus();
-      };
-
-      const requested = new URLSearchParams(location.search).get('season');
-      const requestedTab = requested
-        ? tabs.find((tab) => tab.dataset.programmeSeasonTab === requested)
-        : null;
-      if (requestedTab) selectSeason(requestedTab);
-
-      tabs.forEach((tab, index) => {
-        tab.addEventListener('click', () => selectSeason(tab));
-        tab.addEventListener('keydown', (event) => {
-          let target: number | null = null;
-          if (event.key === 'ArrowRight') target = (index + 1) % tabs.length;
-          if (event.key === 'ArrowLeft')
-            target = (index - 1 + tabs.length) % tabs.length;
-          if (event.key === 'Home') target = 0;
-          if (event.key === 'End') target = tabs.length - 1;
-          if (target !== null) {
-            event.preventDefault();
-            const next = tabs[target];
-            if (next) selectSeason(next, true);
-          }
-        });
-      });
-    });
-</script>

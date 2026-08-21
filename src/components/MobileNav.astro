@@ -6,9 +6,16 @@ interface NavigationItem {
 
 interface Props {
   items: NavigationItem[];
+  currentPath?: string;
 }
 
-const { items } = Astro.props;
+const { items, currentPath = '/' } = Astro.props;
+const isCurrent = (href: string) => {
+  const path = href.split('#')[0] || '/';
+  return path === '/'
+    ? currentPath === '/' || currentPath.startsWith('/events/')
+    : currentPath === path;
+};
 ---
 
 <details class="mobile-nav" data-mobile-nav>
@@ -19,11 +26,23 @@ const { items } = Astro.props;
         {
           items.map((item) => (
             <li>
-              <a href={item.href}>{item.label}</a>
+              <a
+                href={item.href}
+                aria-current={isCurrent(item.href) ? 'page' : undefined}
+              >
+                {item.label}
+              </a>
             </li>
           ))
         }
-        <li><a href="/subscribe/">Subscribe VGZT Talks</a></li>
+        <li>
+          <a
+            href="/subscribe/"
+            aria-current={currentPath === '/subscribe/' ? 'page' : undefined}
+          >
+            Subscribe VGZT Talks
+          </a>
+        </li>
       </ul>
     </nav>
   </div>
@@ -33,6 +52,14 @@ const { items } = Astro.props;
   document
     .querySelectorAll<HTMLDetailsElement>('[data-mobile-nav]')
     .forEach((menu) => {
+      const summary = menu.querySelector<HTMLElement>('summary');
+      const updateLabel = () => {
+        summary?.setAttribute(
+          'aria-label',
+          menu.open ? 'Close site navigation' : 'Open site navigation',
+        );
+      };
+      menu.addEventListener('toggle', updateLabel);
       menu.querySelectorAll('a').forEach((link) => {
         link.addEventListener('click', () => menu.removeAttribute('open'));
       });
@@ -40,8 +67,17 @@ const { items } = Astro.props;
       document.addEventListener('keydown', (event) => {
         if (event.key === 'Escape' && menu.open) {
           menu.open = false;
-          menu.querySelector('summary')?.focus();
+          summary?.focus();
         }
       });
+      document.addEventListener('pointerdown', (event) => {
+        if (menu.open && !menu.contains(event.target as Node))
+          menu.open = false;
+      });
+      const desktop = window.matchMedia('(min-width: 56.001rem)');
+      desktop.addEventListener('change', (event) => {
+        if (event.matches) menu.open = false;
+      });
+      updateLabel();
     });
 </script>

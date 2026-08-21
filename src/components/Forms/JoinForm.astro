@@ -62,7 +62,6 @@ const careerStages = [
       data-newsletter-url={newsletterUrl || ''}
       data-newsletter-embed-script-url={newsletterEmbedScriptUrl || ''}
       data-newsletter-form-id={newsletterFormId || ''}
-      novalidate
     >
       <fieldset
         class="join-form__choices"
@@ -90,75 +89,77 @@ const careerStages = [
       </fieldset>
       <span class="field__error" id="join-services-error"></span>
 
-      <div class="join-form__row">
-        <div class="field">
-          <label for="join-name">Name</label>
-          <input
-            id="join-name"
-            name="name"
-            autocomplete="name"
-            required
-            maxlength="100"
-          />
-          <span class="field__error" id="join-name-error"></span>
+      <div class="join-form__details">
+        <div class="join-form__row">
+          <div class="field">
+            <label for="join-name">Name</label>
+            <input
+              id="join-name"
+              name="name"
+              autocomplete="name"
+              required
+              maxlength="100"
+            />
+            <span class="field__error" id="join-name-error"></span>
+          </div>
+
+          <div class="field">
+            <label for="join-organization">Organization</label>
+            <input
+              id="join-organization"
+              name="organization"
+              autocomplete="organization"
+              required
+              maxlength="160"
+            />
+            <span class="field__error" id="join-organization-error"></span>
+          </div>
         </div>
 
         <div class="field">
-          <label for="join-organization">Organization</label>
-          <input
-            id="join-organization"
-            name="organization"
-            autocomplete="organization"
-            required
-            maxlength="160"
-          />
-          <span class="field__error" id="join-organization-error"></span>
-        </div>
-      </div>
-
-      <div class="field">
-        <label for="join-career-stage">Career stage</label>
-        <select id="join-career-stage" name="careerStage" required>
-          <option value="">Select your career stage</option>
-          {
-            careerStages.map((stage) => (
-              <option value={stage.value}>{stage.label}</option>
-            ))
-          }
-        </select>
-        <span class="field__error" id="join-careerStage-error"></span>
-      </div>
-
-      <div class="join-form__row">
-        <div class="field">
-          <label for="join-email">Contact email</label>
-          <input
-            id="join-email"
-            name="email"
-            type="email"
-            inputmode="email"
-            autocomplete="email"
-            required
-            maxlength="254"
-          />
-          <span class="field__error" id="join-email-error"></span>
+          <label for="join-career-stage">Career stage</label>
+          <select id="join-career-stage" name="careerStage" required>
+            <option value="">Select your career stage</option>
+            {
+              careerStages.map((stage) => (
+                <option value={stage.value}>{stage.label}</option>
+              ))
+            }
+          </select>
+          <span class="field__error" id="join-careerStage-error"></span>
         </div>
 
-        <div class="field">
-          <label for="join-slack-email">Email linked to Slack</label>
-          <input
-            id="join-slack-email"
-            name="slackEmail"
-            type="email"
-            inputmode="email"
-            autocomplete="email"
-            aria-describedby="join-slack-email-hint join-slackEmail-error"
-            maxlength="254"
-          />
-          <span class="field__hint" id="join-slack-email-hint"
-            >Required only when joining Slack; otherwise leave it blank.</span
-          >
-          <span class="field__error" id="join-slackEmail-error"></span>
+        <div class="join-form__row">
+          <div class="field">
+            <label for="join-email">Contact email</label>
+            <input
+              id="join-email"
+              name="email"
+              type="email"
+              inputmode="email"
+              autocomplete="email"
+              required
+              maxlength="254"
+            />
+            <span class="field__error" id="join-email-error"></span>
+          </div>
+
+          <div class="field">
+            <label for="join-slack-email">Email linked to Slack</label>
+            <input
+              id="join-slack-email"
+              name="slackEmail"
+              type="email"
+              inputmode="email"
+              autocomplete="email"
+              aria-describedby="join-slack-email-hint join-slackEmail-error"
+              maxlength="254"
+            />
+            <span class="field__hint" id="join-slack-email-hint"
+              >Required only when joining Slack; otherwise leave it blank.</span
+            >
+            <span class="field__error" id="join-slackEmail-error"></span>
+          </div>
         </div>
       </div>
 
@@ -190,7 +191,12 @@ const careerStages = [
       <span class="field__error" id="join-privacy-error"></span>
 
       <div class="join-form__submit-row">
-        <button class="button button--ink" type="submit">
+        <button
+          class="button button--ink"
+          type="submit"
+          data-join-submit
+          disabled
+        >
           Subscribe VGZT Talks <span aria-hidden="true">→</span>
         </button>
         <p
@@ -200,6 +206,10 @@ const careerStages = [
           data-form-status
         >
         </p>
+        <noscript>
+          JavaScript is required to complete this protected subscription flow.
+          Email <a href={`mailto:${email}`}>{email}</a> for help.
+        </noscript>
       </div>
 
       <section
@@ -308,6 +318,7 @@ const careerStages = [
             class="join-form__status"
             role="status"
             aria-live="polite"
+            tabindex="-1"
             data-fallback-status
           >
           </p>
@@ -389,7 +400,7 @@ const careerStages = [
 
   .join-form__choices legend {
     margin-bottom: 0.75rem;
-    font-size: 0.78rem;
+    font-size: var(--font-ui-small);
     font-weight: 950;
     letter-spacing: 0.04em;
     text-transform: uppercase;
@@ -421,13 +432,20 @@ const careerStages = [
     gap: 1rem;
   }
 
+  .join-form__details {
+    display: grid;
+    padding-block: 1rem;
+    border-block: var(--keyline);
+    gap: 1rem;
+  }
+
   .field {
     display: grid;
     gap: 0.35rem;
   }
 
   .field label {
-    font-size: 0.78rem;
+    font-size: var(--font-ui-small);
     font-weight: 950;
     letter-spacing: 0.04em;
   }
@@ -450,13 +468,13 @@ const careerStages = [
 
   .field__hint {
     color: var(--vgzt-muted);
-    font-size: 0.72rem;
+    font-size: var(--font-ui-small);
   }
 
   .field__error {
     min-height: 1em;
     color: var(--vgzt-error);
-    font-size: 0.72rem;
+    font-size: var(--font-ui-small);
     font-weight: 800;
   }
 
@@ -473,7 +491,7 @@ const careerStages = [
     grid-template-columns: auto 1fr;
     gap: 0.7rem;
     align-items: start;
-    font-size: 0.8rem;
+    font-size: var(--font-ui-small);
     font-weight: 650;
   }
 
@@ -490,7 +508,7 @@ const careerStages = [
 
   .join-form__status {
     margin: 0;
-    font-size: 0.8rem;
+    font-size: var(--font-ui-small);
     font-weight: 800;
   }
 
@@ -597,6 +615,8 @@ const careerStages = [
     .querySelectorAll<HTMLFormElement>('[data-join-form]')
     .forEach((form) => {
       const status = form.querySelector<HTMLElement>('[data-form-status]');
+      const primarySubmit =
+        form.querySelector<HTMLButtonElement>('[data-join-submit]');
       const resultPanel = form.querySelector<HTMLElement>(
         '[data-subscription-result]',
       );
@@ -627,6 +647,8 @@ const careerStages = [
       let pendingSubmission: PendingSubmission | null = null;
       let turnstileToken = '';
       let turnstileWidgetId: string | undefined;
+      form.noValidate = true;
+      if (primarySubmit) primarySubmit.disabled = false;
       const getTurnstile = (): TurnstileApi | null => {
         const candidate: unknown = Reflect.get(window, 'turnstile');
         return typeof candidate === 'object' &&
@@ -643,9 +665,30 @@ const careerStages = [
         form
           .querySelectorAll('[aria-invalid="true"]')
           .forEach((field) => field.removeAttribute('aria-invalid'));
-        form
-          .querySelectorAll<HTMLElement>('.field__error')
-          .forEach((error) => (error.textContent = ''));
+        form.querySelectorAll<HTMLElement>('.field__error').forEach((error) => {
+          error.textContent = '';
+          if (!error.id) return;
+          form
+            .querySelectorAll<HTMLElement>(`[aria-describedby~="${error.id}"]`)
+            .forEach((field) => {
+              const tokens = (field.getAttribute('aria-describedby') || '')
+                .split(/\s+/)
+                .filter((token) => token && token !== error.id);
+              if (tokens.length > 0)
+                field.setAttribute('aria-describedby', tokens.join(' '));
+              else field.removeAttribute('aria-describedby');
+            });
+        });
+      };
+
+      const addDescription = (field: HTMLElement, id: string) => {
+        const tokens = new Set(
+          (field.getAttribute('aria-describedby') || '')
+            .split(/\s+/)
+            .filter(Boolean),
+        );
+        tokens.add(id);
+        field.setAttribute('aria-describedby', [...tokens].join(' '));
       };
 
       const setError = (name: string, text: string) => {
@@ -660,7 +703,7 @@ const careerStages = [
             : name === 'privacyAccepted'
               ? 'join-privacy-error'
               : `join-${name}-error`;
-        field?.setAttribute('aria-describedby', errorId);
+        if (field) addDescription(field, errorId);
         const error = form.querySelector<HTMLElement>(`#${errorId}`);
         if (error) error.textContent = text;
       };
@@ -810,8 +853,13 @@ const careerStages = [
 
       form.addEventListener('submit', (event) => {
         event.preventDefault();
+        if (primarySubmit?.disabled) return;
+        if (primarySubmit) primarySubmit.disabled = true;
         const submission = readAndValidate();
-        if (!submission) return;
+        if (!submission) {
+          if (primarySubmit) primarySubmit.disabled = false;
+          return;
+        }
 
         const flow = resolveSubscriptionFlow(
           'primary',
@@ -821,7 +869,10 @@ const careerStages = [
           },
           links,
         );
-        if (!flow.valid) return;
+        if (!flow.valid) {
+          if (primarySubmit) primarySubmit.disabled = false;
+          return;
+        }
 
         const slackResult = form.querySelector<HTMLElement>(
           '[data-slack-result]',
@@ -864,6 +915,7 @@ const careerStages = [
         if (flow.newsletter?.state === 'embedded') {
           ensureNewsletterEmbed();
         }
+        if (primarySubmit) primarySubmit.disabled = false;
       });
 
       form.addEventListener('input', (event) => {
@@ -908,6 +960,7 @@ const careerStages = [
           if (fallbackStatus)
             fallbackStatus.textContent =
               'Complete the anti-abuse check, then click the request button again.';
+          fallbackStatus?.focus();
           return;
         }
 
@@ -944,6 +997,7 @@ const careerStages = [
                 ? error.message
                 : 'Request could not be sent. Try again.';
           }
+          fallbackStatus?.focus();
           turnstileToken = '';
           getTurnstile()?.reset(turnstileWidgetId);
           fallbackButton.disabled = false;

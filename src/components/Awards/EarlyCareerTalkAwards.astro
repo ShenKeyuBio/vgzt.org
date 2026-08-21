@@ -16,19 +16,25 @@ interface EarlyCareerTalkAward {
 
 interface Props {
   award: EarlyCareerTalkAward;
+  variant?: 'full' | 'inline';
 }
 
-const { award } = Astro.props;
+const { award, variant = 'full' } = Astro.props;
 ---
 
 {
   award.enabled && (
     <section
       id="early-career-awards"
-      class="section section--blue early-career-awards"
+      class:list={[
+        'early-career-awards',
+        variant === 'full'
+          ? 'section section--blue'
+          : 'early-career-awards--inline',
+      ]}
       aria-labelledby="early-career-awards-title"
     >
-      <div class="container">
+      <div class:list={{ container: variant === 'full' }}>
         <div class="section-heading early-career-awards__heading">
           <div>
             <p class="eyebrow">{award.eyebrow}</p>
@@ -57,6 +63,28 @@ const { award } = Astro.props;
 <style>
   .early-career-awards__heading {
     align-items: start;
+  }
+
+  .early-career-awards--inline {
+    margin-block: 3rem;
+    padding: clamp(1.25rem, 3vw, 2rem);
+    border: var(--keyline);
+    background: var(--vgzt-blue);
+    color: var(--vgzt-paper-strong);
+  }
+
+  .early-career-awards--inline .early-career-awards__heading {
+    grid-template-columns: 1fr;
+    margin-bottom: 1.5rem;
+  }
+
+  .early-career-awards--inline .early-career-awards__heading h2 {
+    max-width: 14ch;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+  }
+
+  .early-career-awards--inline .early-career-awards__grid {
+    grid-template-columns: 1fr;
   }
 
   .early-career-awards__heading h2 {

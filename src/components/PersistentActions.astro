@@ -3,25 +3,26 @@ import type { AbstractCallState } from '../lib/config';
 
 interface Props {
   abstractState: AbstractCallState;
-  isAbstractsPage?: boolean;
 }
 
-const { abstractState, isAbstractsPage = false } = Astro.props;
+const { abstractState } = Astro.props;
 const showSubmit = abstractState.canSubmit && Boolean(abstractState.ctaUrl);
 ---
 
 <nav class="persistent-actions" aria-label="Quick actions">
-  {
-    showSubmit && !isAbstractsPage ? (
-      <a
-        class="button button--pink persistent-actions__desktop"
-        href={abstractState.ctaUrl ?? '/abstracts/'}
-        data-persistent-desktop-submit
-      >
-        Submit an abstract
-      </a>
-    ) : null
-  }
+  <div class="persistent-actions__desktop" data-persistent-desktop-actions>
+    {
+      showSubmit ? (
+        <a
+          class="button button--pink"
+          href={abstractState.ctaUrl ?? '/abstracts/'}
+        >
+          Submit an abstract
+        </a>
+      ) : null
+    }
+    <a class="button" href="/subscribe/">Subscribe</a>
+  </div>
 
   <div
     class:list={[
@@ -29,7 +30,6 @@ const showSubmit = abstractState.canSubmit && Boolean(abstractState.ctaUrl);
       { 'persistent-actions__mobile--single': !showSubmit },
     ]}
     data-persistent-mobile-actions
-    data-abstracts-page={isAbstractsPage ? 'true' : 'false'}
   >
     {
       showSubmit ? (
@@ -50,13 +50,32 @@ const showSubmit = abstractState.canSubmit && Boolean(abstractState.ctaUrl);
   .persistent-actions__desktop {
     position: fixed;
     z-index: 25;
-    right: 0;
-    bottom: 1.25rem;
-    min-height: 2.85rem;
-    padding: 0.68rem 0.9rem;
-    border-right: 0;
-    border-radius: var(--radius-small) 0 0 var(--radius-small);
-    font-size: 0.84rem;
+    top: 50%;
+    right: max(1rem, env(safe-area-inset-right));
+    display: grid;
+    width: 7rem;
+    grid-template-columns: repeat(2, var(--tap-target));
+    padding: 0.65rem;
+    transform: translateY(-50%);
+    border: var(--keyline);
+    background: var(--vgzt-paper);
+    gap: 0.45rem;
+    align-content: center;
+    justify-content: center;
+    box-shadow: -0.45rem 0.45rem 0 rgb(11 11 11 / 9%);
+  }
+
+  .persistent-actions__desktop .button {
+    min-width: var(--tap-target);
+    min-height: 8.75rem;
+    padding: 0.65rem;
+    font-size: var(--font-ui-small);
+    line-height: 1.15;
+    writing-mode: vertical-rl;
+  }
+
+  .persistent-actions__desktop .button:hover {
+    transform: none;
   }
 
   .persistent-actions__mobile {
@@ -90,6 +109,7 @@ const showSubmit = abstractState.canSubmit && Boolean(abstractState.ctaUrl);
       background: var(--vgzt-ink);
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 0.55rem;
+      transition: transform 120ms ease;
     }
 
     .persistent-actions__mobile--single {
@@ -99,6 +119,11 @@ const showSubmit = abstractState.canSubmit && Boolean(abstractState.ctaUrl);
     .persistent-actions__mobile .button {
       min-height: 3.25rem;
       padding-inline: 0.75rem;
+    }
+
+    .persistent-actions__mobile[data-form-focus='true'] {
+      pointer-events: none;
+      transform: translateY(110%);
     }
   }
 
@@ -114,50 +139,25 @@ const showSubmit = abstractState.canSubmit && Boolean(abstractState.ctaUrl);
 </style>
 
 <script>
-  const desktopSubmit = document.querySelector<HTMLElement>(
-    '[data-persistent-desktop-submit]',
-  );
-  const submitSources = [
-    ...document.querySelectorAll<HTMLElement>(
-      '[data-submit-source], [data-persistent-action-obstacle]',
-    ),
-  ];
-
-  if (desktopSubmit && submitSources.length > 0) {
-    const visibleSources = new Set<Element>();
-    const sourceObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) visibleSources.add(entry.target);
-          else visibleSources.delete(entry.target);
-        });
-        desktopSubmit.hidden = visibleSources.size > 0;
-      },
-      { threshold: 0.15 },
-    );
-    submitSources.forEach((source) => sourceObserver.observe(source));
-  }
-
   const mobileActions = document.querySelector<HTMLElement>(
-    '[data-persistent-mobile-actions][data-abstracts-page="true"]',
+    '[data-persistent-mobile-actions]',
   );
-  const submitAction = mobileActions?.querySelector<HTMLElement>(
-    '[data-persistent-submit]',
-  );
-  const submitSection = document.getElementById('submit');
-
-  if (mobileActions && submitAction && submitSection) {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        const submitIsVisible = Boolean(entry?.isIntersecting);
-        submitAction.hidden = submitIsVisible;
-        mobileActions.classList.toggle(
-          'persistent-actions__mobile--single',
-          submitIsVisible,
-        );
-      },
-      { threshold: 0.15 },
+  if (mobileActions) {
+    const formControl =
+      'input:not([type="hidden"]), select, textarea, [contenteditable="true"], [role="status"][tabindex="-1"], [data-subscription-result][tabindex="-1"]';
+    const updateSafety = () => {
+      const focused = document.activeElement?.matches(formControl) ?? false;
+      const keyboardOpen = Boolean(
+        window.visualViewport &&
+        window.visualViewport.height < window.innerHeight * 0.76,
+      );
+      mobileActions.dataset.formFocus = String(focused || keyboardOpen);
+    };
+    document.addEventListener('focusin', updateSafety);
+    document.addEventListener('focusout', () =>
+      requestAnimationFrame(updateSafety),
     );
-    observer.observe(submitSection);
+    window.visualViewport?.addEventListener('resize', updateSafety);
+    updateSafety();
   }
 </script>

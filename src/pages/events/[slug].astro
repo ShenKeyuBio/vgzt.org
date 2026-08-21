@@ -3,6 +3,8 @@ import type { GetStaticPaths } from 'astro';
 import { getCollection } from 'astro:content';
 import EventMetadata from '../../components/Schedule/EventMetadata.astro';
 import PosterViewer from '../../components/Schedule/PosterViewer.astro';
+import ScheduleController from '../../components/Schedule/ScheduleController.astro';
+import TimezoneSelector from '../../components/Schedule/TimezoneSelector.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { resolvePoster } from '../../lib/config';
 import { canonicalEventInstant, eventEndInstant } from '../../lib/time';
@@ -99,7 +101,7 @@ const dateLabel = new Intl.DateTimeFormat('en-GB', {
   social={getFooterSocial(social)}
   masterLogo={site.masterLogo}
 >
-  <header class="page-hero page-hero--blue">
+  <header class="page-hero page-hero--blue event-page-hero">
     <div class="container">
       <p class="eyebrow">
         {event.sessionType}
@@ -114,19 +116,35 @@ const dateLabel = new Intl.DateTimeFormat('en-GB', {
     </div>
   </header>
   <section class="section event-page" data-schedule>
-    <div class="container event-page__grid">
-      <EventMetadata event={event} />
-      <PosterViewer id={event.id} src={event.posterSrc} alt={event.posterAlt} />
+    <div class="container">
+      <TimezoneSelector controlId={`${event.id}-timezone`} />
+      <div class="event-page__grid">
+        <EventMetadata event={event} showDetailsLink={false} />
+        <PosterViewer
+          id={event.id}
+          src={event.posterSrc}
+          alt={event.posterAlt}
+        />
+      </div>
     </div>
   </section>
+  <ScheduleController />
 </BaseLayout>
 
 <style>
+  :global(.event-page-hero h1) {
+    max-width: 15ch;
+  }
+
   .event-page__grid {
     display: grid;
     overflow: hidden;
     border: var(--keyline);
     grid-template-columns: minmax(20rem, 0.8fr) minmax(25rem, 1.2fr);
+  }
+
+  .event-page :global(.timezone-control) {
+    margin-bottom: 1rem;
   }
 
   .event-page__grid > :global(:first-child) {
