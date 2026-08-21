@@ -4,6 +4,9 @@ import { eventRoute, stabilizePage, waitForStableLayout } from './helpers';
 async function openStable(page: Page, route: string) {
   await stabilizePage(page, true);
   await page.goto(route);
+  await page.addStyleTag({
+    content: '* { content-visibility: visible !important; }',
+  });
   await waitForStableLayout(page);
 }
 
