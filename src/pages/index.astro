@@ -168,14 +168,6 @@ const enthusiastAward = currentSeason.data.awards?.attendance;
       : 0}
     expectedSpeakerUrl="#speaker-preview"
   />
-  {
-    speakerPreview?.enabled && speakerPreview.speakers.length > 0 ? (
-      <SpeakerPreview
-        disclaimer={speakerPreview.disclaimer}
-        speakers={speakerPreview.speakers}
-      />
-    ) : null
-  }
   <ProgrammeSchedule
     seasons={programmeSeasons}
     defaultSeasonId={defaultProgrammeSeason}
@@ -185,6 +177,14 @@ const enthusiastAward = currentSeason.data.awards?.attendance;
     abstractCtaUrl={abstractState.ctaUrl}
     abstractCtaLabel={abstractState.ctaLabel}
   />
+  {
+    speakerPreview?.enabled && speakerPreview.speakers.length > 0 ? (
+      <SpeakerPreview
+        disclaimer={speakerPreview.disclaimer}
+        speakers={speakerPreview.speakers}
+      />
+    ) : null
+  }
   <SeasonFormat
     easternTime={eastern?.time}
     westernTime={western?.time}

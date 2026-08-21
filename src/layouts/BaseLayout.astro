@@ -27,6 +27,7 @@ interface Props {
   email?: string;
   social?: SocialItem[];
   masterLogo?: string | null;
+  showCampaignChrome?: boolean;
 }
 
 const {
@@ -38,6 +39,7 @@ const {
   email = 'organizers@vgzt.org',
   social = [],
   masterLogo = null,
+  showCampaignChrome = true,
 } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const fullTitle =
@@ -85,7 +87,6 @@ const structuredData = {
 };
 const abstractCall = getAbstractCallSettings();
 const abstractState = getAbstractCallState(abstractCall);
-const isAbstractsPage = /^\/abstracts\/?$/.test(Astro.url.pathname);
 const [currentSeason, abstractSeason] = await Promise.all([
   getEntry('seasons', siteSettings.currentSeason),
   getEntry('seasons', abstractCall.season),
@@ -96,7 +97,7 @@ const [currentSeason, abstractSeason] = await Promise.all([
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
@@ -124,24 +125,35 @@ const [currentSeason, abstractSeason] = await Promise.all([
     <meta name="twitter:description" content={description} />
     {socialImage && <meta name="twitter:image" content={socialImage} />}
   </head>
-  <body>
+  <body
+    data-has-announcement={showCampaignChrome && abstractState.showBanner
+      ? 'true'
+      : 'false'}
+    data-campaign-chrome={showCampaignChrome ? 'true' : 'false'}
+  >
     <a class="skip-link" href="#main-content">Skip to main content</a>
-    <AnnouncementBar
-      state={abstractState}
-      seasonLabel={abstractSeason?.data.label || abstractCall.season}
-      audience={abstractCall.audience}
-    />
+    {
+      showCampaignChrome ? (
+        <AnnouncementBar
+          state={abstractState}
+          seasonLabel={abstractSeason?.data.label || abstractCall.season}
+          audience={abstractCall.audience}
+        />
+      ) : null
+    }
     <Header
       masterLogo={effectiveMasterLogo}
       seasonNumber={currentSeason?.data.season ?? null}
+      currentPath={Astro.url.pathname}
     />
     <main id="main-content" tabindex="-1">
       <slot />
     </main>
-    <PersistentActions
-      abstractState={abstractState}
-      isAbstractsPage={isAbstractsPage}
-    />
+    {
+      showCampaignChrome ? (
+        <PersistentActions abstractState={abstractState} />
+      ) : null
+    }
     <Footer
       email={email}
       social={social}
@@ -149,15 +161,19 @@ const [currentSeason, abstractSeason] = await Promise.all([
       seasonNumber={currentSeason?.data.season ?? null}
     />
     <script>
-      const alignHashTarget = () => {
+      const hashTarget = () => {
         if (!location.hash) return;
         let targetId = location.hash.slice(1);
         try {
           targetId = decodeURIComponent(targetId);
         } catch {
-          return;
+          return null;
         }
-        const target = document.getElementById(targetId);
+        return document.getElementById(targetId);
+      };
+
+      const alignHashTarget = () => {
+        const target = hashTarget();
         if (!target) return;
         const root = document.documentElement;
         const previousScrollBehavior = root.style.scrollBehavior;
@@ -176,6 +192,53 @@ const [currentSeason, abstractSeason] = await Promise.all([
       if (document.readyState === 'complete') alignHashAfterLayout();
       else
         window.addEventListener('load', alignHashAfterLayout, { once: true });
+
+      let userHashNavigation = false;
+      const focusHashTarget = () => {
+        if (!userHashNavigation) return;
+        const target = hashTarget();
+        if (!target) return;
+        const hadTabIndex = target.hasAttribute('tabindex');
+        if (!hadTabIndex) target.setAttribute('tabindex', '-1');
+        target.focus({ preventScroll: true });
+        if (!hadTabIndex) {
+          target.addEventListener(
+            'blur',
+            () => target.removeAttribute('tabindex'),
+            { once: true },
+          );
+        }
+        userHashNavigation = false;
+      };
+
+      document.addEventListener('click', (event) => {
+        const link = (
+          event.target as Element | null
+        )?.closest<HTMLAnchorElement>('a[href*="#"]');
+        if (!link) return;
+        const targetUrl = new URL(link.href, location.href);
+        if (
+          targetUrl.origin === location.origin &&
+          targetUrl.pathname === location.pathname &&
+          targetUrl.search === location.search &&
+          targetUrl.hash
+        ) {
+          userHashNavigation = true;
+          requestAnimationFrame(() =>
+            requestAnimationFrame(() => {
+              alignHashTarget();
+              focusHashTarget();
+            }),
+          );
+        }
+      });
+      window.addEventListener('hashchange', () => {
+        if (!userHashNavigation) return;
+        requestAnimationFrame(() => {
+          alignHashTarget();
+          focusHashTarget();
+        });
+      });
     </script>
   </body>
 </html>

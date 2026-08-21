@@ -39,7 +39,7 @@ const formatDate = (value: string) =>
     <span class="status-badge">{type}</span>
     {featured && <span class="opportunity-card__featured">Featured</span>}
   </div>
-  <h2>{title}</h2>
+  <h3>{title}</h3>
   <p class="opportunity-card__institution">
     {institution}
     <span aria-hidden="true">·</span>
@@ -91,12 +91,12 @@ const formatDate = (value: string) =>
   }
 
   .opportunity-card__featured {
-    font-size: 0.7rem;
+    font-size: var(--font-ui-small);
     font-weight: 950;
     text-transform: uppercase;
   }
 
-  h2 {
+  h3 {
     margin: 0;
     font-size: clamp(1.7rem, 3vw, 2.5rem);
   }
@@ -118,7 +118,7 @@ const formatDate = (value: string) =>
   }
 
   dt {
-    font-size: 0.65rem;
+    font-size: var(--font-ui-small);
     font-weight: 950;
     text-transform: uppercase;
   }
