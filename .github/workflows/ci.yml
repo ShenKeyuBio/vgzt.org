@@ -130,21 +130,8 @@ jobs:
       - name: Build production site
         run: pnpm run build
 
-      - name: Generate candidate Linux visual baselines
-        if: ${{ github.head_ref == 'codex/visual-accessibility-2026-08' }}
-        run: pnpm exec playwright test tests/e2e/visual.spec.ts --update-snapshots
-
       - name: Run browser test suite
         run: pnpm exec playwright test
-
-      - name: Upload candidate Linux visual baselines
-        if: ${{ github.head_ref == 'codex/visual-accessibility-2026-08' }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: linux-chromium-visual-baselines
-          path: tests/e2e/__screenshots__
-          if-no-files-found: error
-          retention-days: 3
 
       - name: Upload browser diagnostics on failure
         if: ${{ failure() }}
