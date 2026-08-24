@@ -19,15 +19,17 @@ pending:
     resolvedAt: null
     notes: Add only confirmed sessions; no example event is published.
 
-  - key: abstractCall.deadline
-    label: Season 8 abstract submission deadline
-    type: date
+  - key: abstractCall.submissionTimeline
+    label: Season 8 abstract submission timeline
+    type: configuration
     intendedLocation: Abstracts page and announcement bar
     status: resolved
     requiredForLaunch: true
-    replaceVia: Pages CMS > Abstract Call > Deadline
-    resolvedAt: 2026-08-18
-    notes: Season 8 intentionally uses a rolling call rather than a fixed submission deadline.
+    replaceVia: Pages CMS > Abstract Call > Submission timeline
+    resolvedAt: 2026-08-24
+    notes: >-
+      Approved campaign dates are date-only milestones: early-bird 20 September
+      2026, second 20 December 2026, then rolling until full.
 
   - key: abstractCall.formUrl
     label: Season 8 abstract submission URL

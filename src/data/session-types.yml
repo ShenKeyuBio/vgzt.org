@@ -23,6 +23,22 @@ sessionTypes:
     qaMinutesPerSpeaker: 10
     description: One keynote presentation followed by questions.
 
+  - id: featured-seminar
+    label: Featured Seminar
+    speakerCount: 1
+    totalDurationMinutes: 60
+    presentationMinutesPerSpeaker: 50
+    qaMinutesPerSpeaker: 10
+    description: One featured seminar presentation followed by questions and discussion.
+
+  - id: paired-research-session
+    label: Paired Research Session
+    speakerCount: 2
+    totalDurationMinutes: 60
+    presentationMinutesPerSpeaker: 25
+    qaMinutesPerSpeaker: 5
+    description: Two related research talks, each followed by questions.
+
 timeSlots:
   - id: eastern
     label: Eastern session

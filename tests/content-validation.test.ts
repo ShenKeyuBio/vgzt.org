@@ -110,9 +110,14 @@ function validGraph(): ContentGraph {
     abstractCall: {
       state: 'closed',
       season: 'season-08',
-      audience: 'Early Career Researchers',
-      deadline: null,
+      audience: 'Early-career researchers',
+      submissionTimeline: [
+        { label: 'Early-bird deadline', date: '2026-09-20' },
+        { label: 'Second deadline', date: '2026-12-20' },
+      ],
+      rollingLabel: 'Rolling until full',
       formUrl: null,
+      fallbackFormUrl: null,
       preferredTimeSlots: ['eastern', 'western', 'alternative'],
       whatToSubmit: [],
       faq: [],
@@ -136,6 +141,7 @@ function validGraph(): ContentGraph {
       linkedinUrl: null,
       blueskyUrl: null,
       xUrl: null,
+      instagramUrl: null,
     },
     pending: [],
   };
@@ -243,7 +249,7 @@ describe('content graph validation', () => {
       earlyCareerTalk: {
         enabled: true,
         eyebrow: 'Season 8 recognition',
-        title: 'Two Early Career Talk Awards.*',
+        title: 'Early-Career Talk Awards*',
         intro: 'VGZT will recognise two awardees.',
         categories: [
           {
@@ -262,7 +268,7 @@ describe('content graph validation', () => {
       attendance: {
         enabled: true,
         eyebrow: 'Season 8 community award',
-        title: 'VGZT Enthusiast Award.*',
+        title: 'VGZT Enthusiast Award*',
         intro: 'Recognising attendance across the regular slots.',
         slots: [
           {

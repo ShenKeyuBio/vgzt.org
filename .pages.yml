@@ -197,6 +197,9 @@ content:
           - name: xUrl
             label: X URL
             component: nullable_https_url
+          - name: instagramUrl
+            label: Instagram URL
+            component: nullable_https_url
 
       - name: abstract_call
         label: Abstract Call
@@ -233,31 +236,37 @@ content:
             label: Audience / eligibility
             type: text
             required: true
-          - name: deadline
-            label: Submission deadline
+          - name: submissionTimeline
+            label: Submission timeline
             type: object
-            default: null
-            description: 'Optional. Leave empty for a rolling call with no fixed deadline. When the call is open and no deadline is set, the public page displays that submissions remain open until available slots are filled.'
+            required: true
+            list:
+              min: 1
+              collapsible:
+                collapsed: true
+                summary: '{label}'
             fields:
+              - name: label
+                label: Milestone label
+                type: string
+                required: true
               - name: date
-                label: Deadline date
+                label: Milestone date
                 component: calendar_date
-              - name: time
-                label: Deadline wall-clock time
-                type: string
-                required: true
-                pattern:
-                  regex: '^(?:[01][0-9]|2[0-3]):[0-5][0-9]$'
-                  message: 'Use 24-hour HH:mm.'
-              - name: timezone
-                label: Deadline IANA timezone
-                type: string
-                required: true
-                default: America/New_York
+          - name: rollingLabel
+            label: Rolling submission label
+            type: string
+            required: true
+            options:
+              maxlength: 120
           - name: formUrl
             label: Submission form URL
             component: nullable_https_url
             description: 'Canonical HTTPS submission/form embed destination. Use the complete HTTPS URL; leave empty rather than using # or a guessed URL.'
+          - name: fallbackFormUrl
+            label: Short submission form URL
+            component: nullable_https_url
+            description: 'Optional short HTTPS URL used for the open-form link; keep the long formUrl for embedding.'
           - name: description
             label: Call description
             type: text
@@ -624,6 +633,10 @@ content:
                   label: Two-speaker session
                 - name: keynote
                   label: Keynote
+                - name: featured-seminar
+                  label: Featured Seminar
+                - name: paired-research-session
+                  label: Paired Research Session
           - name: timeSlot
             label: Timing / daypart mode
             type: select

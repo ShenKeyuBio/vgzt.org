@@ -24,6 +24,7 @@ export interface SocialSettings {
   linkedinUrl: string | null;
   blueskyUrl: string | null;
   xUrl: string | null;
+  instagramUrl: string | null;
 }
 
 export interface SessionTypeSettings {
@@ -47,10 +48,9 @@ export interface SessionSettings {
   timeSlots: TimeSlotSettings[];
 }
 
-export interface AbstractDeadline {
+export interface AbstractSubmissionMilestone {
+  label: string;
   date: string;
-  time: string;
-  timezone: string;
 }
 
 export interface AbstractFaqItem {
@@ -62,8 +62,10 @@ export interface AbstractCallSettings {
   state: 'opening-soon' | 'open' | 'closed';
   season: string;
   audience: string;
-  deadline: AbstractDeadline | null;
+  submissionTimeline: AbstractSubmissionMilestone[];
+  rollingLabel: string;
   formUrl: string | null;
+  fallbackFormUrl: string | null;
   description: string | null;
   eligibility: string | null;
   whatToSubmit: string[];
@@ -111,5 +113,6 @@ export function getFooterSocial(settings: SocialSettings) {
     { label: 'LinkedIn', url: settings.linkedinUrl, external: true },
     { label: 'Bluesky', url: settings.blueskyUrl, external: true },
     { label: 'X', url: settings.xUrl, external: true },
+    { label: 'Instagram', url: settings.instagramUrl, external: true },
   ];
 }

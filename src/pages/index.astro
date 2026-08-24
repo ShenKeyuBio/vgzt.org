@@ -140,8 +140,8 @@ const seasonDates = `${new Intl.DateTimeFormat('en-GB', { month: 'long', year: '
 const eastern = timeSlotsById.get('eastern');
 const western = timeSlotsById.get('western');
 const alternative = timeSlotsById.get('alternative');
-const twoSpeaker = sessionTypesById.get('two-speaker');
-const keynote = sessionTypesById.get('keynote');
+const pairedResearchSession = sessionTypesById.get('paired-research-session');
+const featuredSeminar = sessionTypesById.get('featured-seminar');
 const speakerPreview = currentSeason.data.speakerPreview;
 const enthusiastAward = currentSeason.data.awards?.attendance;
 ---
@@ -189,10 +189,10 @@ const enthusiastAward = currentSeason.data.awards?.attendance;
     easternTime={eastern?.time}
     westernTime={western?.time}
     alternativeTime={alternative?.time}
-    twoSpeakerPresentation={twoSpeaker?.presentationMinutesPerSpeaker}
-    twoSpeakerQa={twoSpeaker?.qaMinutesPerSpeaker}
-    keynotePresentation={keynote?.presentationMinutesPerSpeaker}
-    keynoteQa={keynote?.qaMinutesPerSpeaker}
+    pairedResearchPresentation={pairedResearchSession?.presentationMinutesPerSpeaker}
+    pairedResearchQa={pairedResearchSession?.qaMinutesPerSpeaker}
+    featuredSeminarPresentation={featuredSeminar?.presentationMinutesPerSpeaker}
+    featuredSeminarQa={featuredSeminar?.qaMinutesPerSpeaker}
   />
   {
     enthusiastAward?.enabled ? (

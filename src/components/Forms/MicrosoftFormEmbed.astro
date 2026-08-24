@@ -1,15 +1,18 @@
 ---
 interface Props {
   formUrl: string;
+    externalUrl?: string | undefined;
   title: string;
   externalLabel?: string;
 }
 
 const {
   formUrl,
+  externalUrl,
   title,
   externalLabel = 'Open form in a new tab',
 } = Astro.props;
+const directUrl = externalUrl || formUrl;
 ---
 
 <div class="form-shell" aria-busy="true" data-form-shell>
@@ -25,7 +28,7 @@ const {
     </div>
     <a
       class="button button--ink"
-      href={formUrl}
+      href={directUrl}
       target="_blank"
       rel="noopener noreferrer"
     >

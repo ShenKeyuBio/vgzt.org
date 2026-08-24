@@ -142,6 +142,7 @@ describe('central social configuration', () => {
         'https://www.linkedin.com/company/virtual-gastrulation-zoom-talks-vgzt/',
       blueskyUrl: 'https://bsky.app/profile/vgzt2021.bsky.social',
       xUrl: 'https://x.com/VGZT2020_21',
+      instagramUrl: 'https://www.instagram.com/vgzt_gastrulation_talks/',
     });
     expect(getFooterSocial(social)).toContainEqual({
       label: 'Slack',

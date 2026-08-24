@@ -4,14 +4,14 @@ label: Season 8
 start: '2026-09-18'
 end: '2027-07-30'
 timezone: America/New_York
-status: draft
+status: published
 description: null
 organizers:
   - guangxin-zhang
-  - guoye-guan
-  - keyu-shen
   - manisha-goyal
+  - guoye-guan
   - sanskriti-saxena
+  - keyu-shen
 speakerPreview:
   enabled: true
   disclaimer: >-
@@ -28,8 +28,6 @@ speakerPreview:
       affiliation: European Molecular Biology Laboratory (EMBL)
     - name: Allon Klein
       affiliation: Harvard University
-    - name: Amanda Collier
-      affiliation: University of California, Los Angeles (UCLA)
     - name: Anupama Hemalatha
       affiliation: Friedrich Miescher Institute for Biomedical Research (FMI)
     - name: Ashley Solmonson
@@ -96,8 +94,8 @@ awards:
   earlyCareerTalk:
     enabled: true
     eyebrow: Season 8 recognition
-    title: Two Early Career Talk Awards.*
-    intro: At the end of Season 8, VGZT will recognise two Early Career Talk awardees.
+    title: Early-Career Talk Awards*
+    intro: At the end of Season 8, VGZT will recognise two Early-Career Talk awardees.
     categories:
       - id: student-pre-doctoral
         label: Student / pre-doctoral
@@ -110,7 +108,7 @@ awards:
   attendance:
     enabled: true
     eyebrow: Season 8 community award
-    title: VGZT Enthusiast Award.*
+    title: VGZT Enthusiast Award*
     intro: >-
       We also want to recognise the people who keep showing up for the VGZT
       community. Based on recorded Season 8 attendance, the attendee with the

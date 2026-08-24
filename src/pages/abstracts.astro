@@ -12,7 +12,6 @@ import {
   getSiteSettings,
   getSocialSettings,
 } from '../lib/site-data';
-import { formatEventTime } from '../lib/time';
 
 const site = getSiteSettings();
 const social = getSocialSettings();
@@ -28,34 +27,33 @@ const timeSlots = sessions.timeSlots.filter((slot) =>
   call.preferredTimeSlots.includes(slot.id),
 );
 const formUrl = safeHttpsUrl(call.formUrl);
-const twoSpeaker = sessions.sessionTypes.find(({ id }) => id === 'two-speaker');
-const twoSpeakerTiming = twoSpeaker
+const fallbackFormUrl = safeHttpsUrl(call.fallbackFormUrl);
+const pairedResearchSession = sessions.sessionTypes.find(
+  ({ id }) => id === 'paired-research-session',
+);
+const pairedResearchTiming = pairedResearchSession
   ? {
       slot:
-        twoSpeaker.presentationMinutesPerSpeaker +
-        twoSpeaker.qaMinutesPerSpeaker,
-      presentation: twoSpeaker.presentationMinutesPerSpeaker,
-      qa: twoSpeaker.qaMinutesPerSpeaker,
+        pairedResearchSession.presentationMinutesPerSpeaker +
+        pairedResearchSession.qaMinutesPerSpeaker,
+      presentation: pairedResearchSession.presentationMinutesPerSpeaker,
+      qa: pairedResearchSession.qaMinutesPerSpeaker,
     }
   : null;
-const twoSpeakerSlotLabel = twoSpeakerTiming
-  ? `${twoSpeakerTiming.slot}-minute`
+const pairedResearchSlotLabel = pairedResearchTiming
+  ? `${pairedResearchTiming.slot}-minute`
   : null;
-const deadline = call.deadline
-  ? formatEventTime(
-      {
-        date: call.deadline.date,
-        time: call.deadline.time,
-        timezone: call.deadline.timezone,
-      },
-      call.deadline.timezone,
-    ).reference
-  : null;
-const deadlineLabel = deadline
-  ? `${deadline.dateLabel}, ${deadline.timeLabel}`
-  : state.mode === 'open'
-    ? 'Rolling · until available slots are filled'
-    : 'To be confirmed';
+const formatDateOnly = (date: string) =>
+  new Intl.DateTimeFormat('en-GB', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    timeZone: 'UTC',
+  }).format(new Date(`${date}T12:00:00Z`));
+const submissionTimeline = call.submissionTimeline.map(({ label, date }) => ({
+  label,
+  date: formatDateOnly(date),
+}));
 const supportingLine =
   'Submit a short abstract to present alongside a VGZT speaker.';
 const configuredDescription =
@@ -90,6 +88,10 @@ const reviewParagraphs = toParagraphs(
   <header class="page-hero page-hero--orange">
     <div class="container">
       <p class="eyebrow">
+        ABSTRACT CALL {
+          state.mode === 'open' ? 'OPEN' : state.mode.toUpperCase()
+        }
+        <span aria-hidden="true">·</span>
         {seasonLabel}
         <span aria-hidden="true">·</span>
         {call.audience}
@@ -126,7 +128,7 @@ const reviewParagraphs = toParagraphs(
       {
         earlyCareerTalkAward?.enabled ? (
           <a class="abstract-hero__award-link" href="#early-career-awards">
-            Season 8 includes two Early Career Talk Awards
+            Season 8 includes two Early-Career Talk awardees
             <span aria-hidden="true">→</span>
           </a>
         ) : null
@@ -141,7 +143,11 @@ const reviewParagraphs = toParagraphs(
     <div class="container">
       <div class="abstract-glance__heading">
         <div>
-          <p class="eyebrow">Abstract call</p>
+          <p class="eyebrow">
+            ABSTRACT CALL {
+              state.mode === 'open' ? 'OPEN' : state.mode.toUpperCase()
+            }
+          </p>
           <h2 id="abstract-glance-title">At a glance.</h2>
         </div>
         {
@@ -154,9 +160,27 @@ const reviewParagraphs = toParagraphs(
       </div>
       <dl class="abstract-glance__grid">
         <div><dt>Audience</dt><dd>{call.audience}</dd></div>
+        <div><dt>Scope</dt><dd>Peri-gastrulation development</dd></div>
         <div><dt>Abstract</dt><dd>{abstractWordLimit}</dd></div>
-        <div><dt>Selection</dt><dd>Not competitively ranked</dd></div>
-        <div><dt>Deadline</dt><dd>{deadlineLabel}</dd></div>
+        <div><dt>Selection</dt><dd>Rolling · not ranked</dd></div>
+        <div>
+          <dt>Submission timeline</dt>
+          <dd>
+            <ul class="abstract-timeline">
+              {
+                submissionTimeline.map(({ label, date }) => (
+                  <li>
+                    <>
+                      <span>{label}</span>
+                      <strong>{date}</strong>
+                    </>
+                  </li>
+                ))
+              }
+              <li><span>Then</span><strong>{call.rollingLabel}</strong></li>
+            </ul>
+          </dd>
+        </div>
         {
           earlyCareerTalkAward?.enabled ? (
             <div>
@@ -166,6 +190,10 @@ const reviewParagraphs = toParagraphs(
           ) : null
         }
       </dl>
+      <p class="abstract-glance__note">
+        After the second deadline, submissions continue to be considered on a
+        rolling basis until available presentation slots are filled.
+      </p>
     </div>
   </section>
 
@@ -190,8 +218,8 @@ const reviewParagraphs = toParagraphs(
             <div><dt>Season</dt><dd>{seasonLabel}</dd></div>
             <div><dt>Audience</dt><dd>{call.audience}</dd></div>
             <div>
-              <dt>Deadline</dt>
-              <dd>{deadlineLabel}</dd>
+              <dt>Submission timeline</dt>
+              <dd>{call.rollingLabel}</dd>
             </div>
           </dl>
         </div>
@@ -214,7 +242,7 @@ const reviewParagraphs = toParagraphs(
               {
                 earlyCareerTalkAward?.enabled ? (
                   <li>
-                    <a href="#early-career-awards">Early Career Talk Awards</a>
+                    <a href="#early-career-awards">Early-Career Talk Awards</a>
                   </li>
                 ) : null
               }
@@ -283,23 +311,23 @@ const reviewParagraphs = toParagraphs(
         <section id="seminar-format" class="abstracts-copy__section">
           <h2>Seminar format</h2>
           <p>
-            Early-career speakers normally share a two-speaker session with a
+            Early-career speakers normally join a Paired Research Session with a
             related VGZT speaker. Pairings are based on scientific theme.
           </p>
           {
-            twoSpeakerTiming ? (
+            pairedResearchTiming ? (
               <dl class="seminar-format">
                 <div>
                   <dt>Slot</dt>
-                  <dd>{twoSpeakerSlotLabel}</dd>
+                  <dd>{pairedResearchSlotLabel}</dd>
                 </div>
                 <div>
                   <dt>Presentation</dt>
-                  <dd>{twoSpeakerTiming.presentation} minutes</dd>
+                  <dd>{pairedResearchTiming.presentation} minutes</dd>
                 </div>
                 <div>
                   <dt>Questions</dt>
-                  <dd>{twoSpeakerTiming.qa} minutes</dd>
+                  <dd>{pairedResearchTiming.qa} minutes</dd>
                 </div>
               </dl>
             ) : null
@@ -385,6 +413,7 @@ const reviewParagraphs = toParagraphs(
           </div>
           <MicrosoftFormEmbed
             formUrl={formUrl}
+            externalUrl={fallbackFormUrl ?? undefined}
             title="VGZT Season 8 abstract submission form"
           />
         </div>
@@ -453,6 +482,34 @@ const reviewParagraphs = toParagraphs(
 
   .abstract-glance__grid dd {
     overflow-wrap: anywhere;
+  }
+
+  .abstract-timeline {
+    display: grid;
+    margin: 0.2rem 0 0;
+    padding: 0;
+    gap: 0.45rem;
+    list-style: none;
+  }
+
+  .abstract-timeline li {
+    display: grid;
+    gap: 0.1rem;
+  }
+
+  .abstract-timeline span {
+    font-size: var(--font-ui-small);
+    font-weight: 850;
+  }
+
+  .abstract-timeline strong {
+    font-weight: 950;
+  }
+
+  .abstract-glance__note {
+    max-width: 48rem;
+    margin: 1rem 0 0;
+    font-weight: 750;
   }
 
   .abstract-hero__supporting {

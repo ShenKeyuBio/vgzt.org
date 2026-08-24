@@ -137,8 +137,10 @@ export interface AbstractCallRecord {
   state: 'opening-soon' | 'open' | 'closed';
   season: string;
   audience: string;
-  deadline: { date: string; time: string; timezone: string } | null;
+  submissionTimeline: { label: string; date: string }[];
+  rollingLabel: string;
   formUrl: string | null;
+  fallbackFormUrl: string | null;
   preferredTimeSlots: string[];
   whatToSubmit: string[];
   faq: { question: string; answer: string }[];
@@ -164,6 +166,7 @@ export interface SocialRecord {
   linkedinUrl: string | null;
   blueskyUrl: string | null;
   xUrl: string | null;
+  instagramUrl: string | null;
 }
 
 export interface PendingRecord {
@@ -959,6 +962,7 @@ export function validateContentGraph(
     'linkedinUrl',
     'blueskyUrl',
     'xUrl',
+    'instagramUrl',
   ] as const) {
     checkNullableUrl(issues, `src/data/social.yml:${key}`, graph.social[key]);
   }
@@ -1267,32 +1271,45 @@ export function validateContentGraph(
     'src/data/abstract-call.yml:formUrl',
     graph.abstractCall.formUrl,
   );
-  if (graph.abstractCall.deadline !== null) {
-    if (!isDateOnly(graph.abstractCall.deadline.date)) {
-      add(
+  checkNullableUrl(
+    issues,
+    'src/data/abstract-call.yml:fallbackFormUrl',
+    graph.abstractCall.fallbackFormUrl,
+  );
+  if (!Array.isArray(graph.abstractCall.submissionTimeline)) {
+    add(
+      issues,
+      'invalid_shape',
+      'src/data/abstract-call.yml:submissionTimeline',
+      'Submission timeline must be a list.',
+    );
+  } else {
+    for (const [
+      index,
+      milestone,
+    ] of graph.abstractCall.submissionTimeline.entries()) {
+      checkRequiredText(
         issues,
-        'invalid_date',
-        'src/data/abstract-call.yml:deadline.date',
-        'Use YYYY-MM-DD.',
+        `src/data/abstract-call.yml:submissionTimeline[${index}].label`,
+        milestone?.label,
+        120,
       );
-    }
-    if (!TIME_PATTERN.test(graph.abstractCall.deadline.time)) {
-      add(
-        issues,
-        'invalid_time',
-        'src/data/abstract-call.yml:deadline.time',
-        'Use 24-hour HH:mm.',
-      );
-    }
-    if (!isIanaTimeZone(graph.abstractCall.deadline.timezone)) {
-      add(
-        issues,
-        'invalid_timezone',
-        'src/data/abstract-call.yml:deadline.timezone',
-        'Use an IANA timezone.',
-      );
+      if (!isDateOnly(milestone?.date)) {
+        add(
+          issues,
+          'invalid_date',
+          `src/data/abstract-call.yml:submissionTimeline[${index}].date`,
+          'Use YYYY-MM-DD.',
+        );
+      }
     }
   }
+  checkRequiredText(
+    issues,
+    'src/data/abstract-call.yml:rollingLabel',
+    graph.abstractCall.rollingLabel,
+    120,
+  );
   if (!Array.isArray(graph.abstractCall.preferredTimeSlots)) {
     add(
       issues,

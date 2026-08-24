@@ -1,8 +1,14 @@
 state: open
 season: season-08
-audience: Early Career Researchers
-deadline: null
+audience: Early-career researchers
+submissionTimeline:
+  - label: Early-bird deadline
+    date: '2026-09-20'
+  - label: Second deadline
+    date: '2026-12-20'
+rollingLabel: Rolling until full
 formUrl: 'https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=B3jtTq3rWkGnqZFwlH9OrscM_7z6UFVOiVCj04ix33hURVdFWDhBUUJPNzY3MUxWRVRBUzRHTU9QVi4u&embed=true'
+fallbackFormUrl: https://forms.cloud.microsoft/e/T5xbTx7YEP
 description: >-
   Submit a short abstract to present alongside a VGZT speaker. Season 8 welcomes
   early-career research on peri-gastrulation development.

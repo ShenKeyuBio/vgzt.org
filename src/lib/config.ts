@@ -76,7 +76,7 @@ export function getAbstractCallState(
     showBanner: true,
     canSubmit: true,
     ctaUrl: '/abstracts/#submit',
-    ctaLabel: 'Submit an abstract',
+    ctaLabel: 'Open call for talks',
     external: false,
   };
 }

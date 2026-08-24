@@ -5,20 +5,20 @@ interface Props {
   easternTime?: string | undefined;
   westernTime?: string | undefined;
   alternativeTime?: string | undefined;
-  twoSpeakerPresentation?: number | undefined;
-  twoSpeakerQa?: number | undefined;
-  keynotePresentation?: number | undefined;
-  keynoteQa?: number | undefined;
+  pairedResearchPresentation?: number | undefined;
+  pairedResearchQa?: number | undefined;
+  featuredSeminarPresentation?: number | undefined;
+  featuredSeminarQa?: number | undefined;
 }
 
 const {
   easternTime = '10:00',
   westernTime = '12:30',
   alternativeTime = '21:00',
-  twoSpeakerPresentation = 25,
-  twoSpeakerQa = 5,
-  keynotePresentation = 50,
-  keynoteQa = 10,
+  pairedResearchPresentation = 25,
+  pairedResearchQa = 5,
+  featuredSeminarPresentation = 50,
+  featuredSeminarQa = 10,
 } = Astro.props;
 ---
 
@@ -32,20 +32,22 @@ const {
     <article class="format__band format__band--blue">
       <div class="container format__band-inner">
         <div>
-          <span class="status-badge">Two-speaker session</span>
-          <h3>PI + student or postdoc</h3>
+          <span class="status-badge">Paired Research Session</span>
+          <h3>Two related research talks</h3>
         </div>
-        <ol aria-label="Two-speaker session timing">
+        <ol aria-label="Paired Research Session timing">
           <li>
-            <strong>{twoSpeakerPresentation} min</strong><span>Speaker one</span
+            <strong>{pairedResearchPresentation} min</strong><span
+              >Speaker one</span
             >
           </li>
-          <li><strong>{twoSpeakerQa} min</strong><span>Q&amp;A</span></li>
+          <li><strong>{pairedResearchQa} min</strong><span>Q&amp;A</span></li>
           <li>
-            <strong>{twoSpeakerPresentation} min</strong><span>Speaker two</span
+            <strong>{pairedResearchPresentation} min</strong><span
+              >Speaker two</span
             >
           </li>
-          <li><strong>{twoSpeakerQa} min</strong><span>Q&amp;A</span></li>
+          <li><strong>{pairedResearchQa} min</strong><span>Q&amp;A</span></li>
         </ol>
       </div>
     </article>
@@ -53,15 +55,18 @@ const {
     <article class="format__band format__band--orange">
       <div class="container format__band-inner">
         <div>
-          <span class="status-badge">Keynote</span>
-          <h3>One speaker, one focused hour</h3>
+          <span class="status-badge">Featured Seminar</span>
+          <h3>One featured speaker, one focused hour</h3>
         </div>
-        <ol aria-label="Keynote session timing">
+        <ol aria-label="Featured Seminar timing">
           <li>
-            <strong>{keynotePresentation} min</strong><span>Presentation</span>
+            <strong>{featuredSeminarPresentation} min</strong><span
+              >Presentation</span
+            >
           </li>
           <li>
-            <strong>{keynoteQa} min</strong><span>Questions and discussion</span
+            <strong>{featuredSeminarQa} min</strong><span
+              >Questions and discussion</span
             >
           </li>
         </ol>
@@ -71,7 +76,8 @@ const {
     <div class="format__timing" id="global-session-times">
       <div class="container format__timing-inner">
         <p class="eyebrow">
-          Usual Friday starts <span aria-hidden="true">·</span> global time
+          Fridays <span aria-hidden="true">·</span> 3–4 sessions/month
+          <span aria-hidden="true">·</span> global time
         </p>
         <ul>
           <li>
