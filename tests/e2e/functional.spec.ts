@@ -338,7 +338,11 @@ test.describe('abstract, people and forms', () => {
     });
     const externalHref = await external.getAttribute('href');
     expect(externalHref).not.toBeNull();
-    await expect(frame).toHaveAttribute('src', externalHref!);
+    expect(externalHref).toBe('https://forms.cloud.microsoft/e/T5xbTx7YEP');
+    await expect(frame).toHaveAttribute(
+      'src',
+      /\/Pages\/ResponsePage\.aspx\?.*embed=true$/,
+    );
     await expect(external).toBeVisible();
     await page.locator('#submit').scrollIntoViewIfNeeded();
     await expect(
