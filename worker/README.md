@@ -3,8 +3,9 @@
 This isolated Cloudflare Worker serves `POST https://api.vgzt.org/contact` and
 `POST https://api.vgzt.org/join` for the static VGZT website. It does not store
 submissions or require a database. It validates each request, applies
-Cloudflare-native rate limits, verifies Turnstile server-side, awaits an email
-notification, and sends a structured Slack alert on a best-effort basis.
+Cloudflare-native rate limits, and verifies Turnstile server-side. Contact
+submissions retain organizer email and Slack notifications. Join submissions
+go directly to EmailOctopus and/or return the protected Slack invitation.
 
 ## Request contract
 
@@ -23,26 +24,20 @@ at 32 KiB. The frontend sends:
 }
 ```
 
-`POST /join` sends the fields needed for manual invitation:
+`POST /join` sends one email and the selected services:
 
 ```json
 {
-  "name": "Jane Smith",
-  "organization": "Example University",
-  "careerStage": "postdoc",
   "email": "jane@example.com",
-  "slackEmail": "jane@example.com",
   "joinSlack": true,
   "joinMailingList": true,
-  "privacyAccepted": true,
   "website": "",
   "turnstileToken": "token-returned-by-turnstile"
 }
 ```
 
 `joinSlack` and `joinMailingList` are the visitor's actual selections and at
-least one must be `true`. `slackEmail` may be `null` when only the mailing list
-is requested.
+least one must be `true`.
 
 `category` must be one of:
 
@@ -65,6 +60,13 @@ Successful responses have this shape:
   "requestId": "00000000-0000-4000-8000-000000000000"
 }
 ```
+
+Successful Join responses additionally return small `mailingList` and `slack`
+objects. EmailOctopus contacts are created without forcing a status so that the
+list's double-opt-in setting creates a pending contact and sends the configured
+confirmation email. Repeated contacts are reported as `already-known`. The
+Slack invite is returned only after successful Turnstile verification and is
+never stored in frontend configuration.
 
 Safe field-validation messages can be returned for a `400`. Provider,
 configuration, webhook, and internal failures are deliberately generic. Every
@@ -152,19 +154,17 @@ pnpm wrangler secret put SLACK_WEBHOOK_URL
 ```
 
 Only standard Slack or Slack Gov HTTPS webhook hosts are accepted. Contact
-alerts contain the submitted message; Join alerts contain the fields needed for
-manual Slack and mailing-list invitations. Both omit IP, Turnstile token, and
-user agent. All content uses Block Kit `plain_text`; user values cannot create
-mentions or links.
+alerts contain the submitted message and omit IP, Turnstile token, and user
+agent. All content uses Block Kit `plain_text`; user values cannot create
+mentions or links. Join submissions never notify organizers.
 
 Slack runs under `ExecutionContext.waitUntil()` after email acceptance. Slack
 failure is logged using a non-sensitive error code and never changes the public
 success response. The webhook URL and webhook response body are never logged.
 
-`TURNSTILE_SECRET` is declared as required in `wrangler.jsonc`, allowing
-`wrangler types` and deployment to validate it. Slack is intentionally optional,
-so its secret name is discovered defensively at runtime rather than declared as
-a required secret.
+`TURNSTILE_SECRET`, `EMAILOCTOPUS_API_KEY`, and `SLACK_INVITE_URL` are declared
+as required in `wrangler.jsonc`, allowing `wrangler types` and deployment to
+validate them. The EmailOctopus List ID is a non-secret Worker variable.
 
 ## Local development
 
@@ -214,8 +214,9 @@ That command performs:
 
 The tests cover exact-origin preflight behavior, method/content-type rejection,
 declared and streamed body limits, validation boundaries, honeypot behavior,
-both rate-limit short circuits, Turnstile hostname/action checks, generic mail
-failures, and Slack data minimization.
+both rate-limit short circuits, Turnstile hostname/action checks, Contact
+delivery, EmailOctopus result mapping, partial Join success, and Slack data
+minimization.
 
 Before a deliberate deploy:
 

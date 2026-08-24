@@ -1,4 +1,4 @@
-import { applyApiHeaders } from "./cors";
+import { applyApiHeaders } from './cors';
 
 export interface ApiErrorBody {
   ok: false;
@@ -13,6 +13,26 @@ export interface ApiSuccessBody {
   requestId: string;
 }
 
+export type JoinMailingListResult =
+  | { requested: false }
+  | {
+      requested: true;
+      state:
+        'confirmation-required' | 'already-known' | 'temporarily-unavailable';
+    };
+
+export type JoinSlackResult =
+  | { requested: false }
+  | { requested: true; inviteUrl: string }
+  | { requested: true; state: 'temporarily-unavailable' };
+
+export interface JoinApiSuccessBody {
+  ok: true;
+  requestId: string;
+  mailingList: JoinMailingListResult;
+  slack: JoinSlackResult;
+}
+
 interface JsonResponseOptions {
   status: number;
   requestId: string;
@@ -21,16 +41,16 @@ interface JsonResponseOptions {
 }
 
 export function jsonResponse(
-  body: ApiErrorBody | ApiSuccessBody,
+  body: ApiErrorBody | ApiSuccessBody | JoinApiSuccessBody,
   options: JsonResponseOptions,
 ): Response {
   const headers = new Headers({
-    "content-type": "application/json; charset=utf-8",
-    "x-request-id": options.requestId,
+    'content-type': 'application/json; charset=utf-8',
+    'x-request-id': options.requestId,
   });
   applyApiHeaders(headers, options.allowedOrigin);
   if (options.retryAfter !== undefined) {
-    headers.set("retry-after", String(options.retryAfter));
+    headers.set('retry-after', String(options.retryAfter));
   }
 
   return Response.json(body, { status: options.status, headers });

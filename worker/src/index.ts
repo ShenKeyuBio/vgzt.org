@@ -1,16 +1,28 @@
-import { parseCsvSet } from "./cors";
-import { sendContactEmail, sendJoinEmail } from "./email";
-import { handleFormRequest, type ContactHandlerDependencies } from "./handler";
-import { digestRateLimitKey } from "./hash";
-import { structuredLogger } from "./logging";
-import { sendContactSlack, sendJoinSlack } from "./slack";
-import { verifyTurnstile } from "./turnstile";
+import { parseCsvSet } from './cors';
+import { sendContactEmail } from './email';
+import { subscribeToEmailOctopus } from './emailoctopus';
+import { handleFormRequest, type ContactHandlerDependencies } from './handler';
+import { digestRateLimitKey } from './hash';
+import { structuredLogger } from './logging';
+import { sendContactSlack } from './slack';
+import { verifyTurnstile } from './turnstile';
 
 function getOptionalSlackWebhook(env: Env): string | undefined {
-  const value: unknown = Reflect.get(env, "SLACK_WEBHOOK_URL");
-  return typeof value === "string" && value.trim().length > 0
+  const value: unknown = Reflect.get(env, 'SLACK_WEBHOOK_URL');
+  return typeof value === 'string' && value.trim().length > 0
     ? value.trim()
     : undefined;
+}
+
+function getSlackInviteUrl(env: Env): string | null {
+  try {
+    const url = new URL(env.SLACK_INVITE_URL.trim());
+    return url.protocol === 'https:' && url.hostname === 'join.slack.com'
+      ? url.href
+      : null;
+  } catch {
+    return null;
+  }
 }
 
 function createDependencies(env: Env): ContactHandlerDependencies {
@@ -20,12 +32,12 @@ function createDependencies(env: Env): ContactHandlerDependencies {
     createRequestId: () => crypto.randomUUID(),
     now: () => new Date(),
     limitIp: async (identifier) => {
-      const key = await digestRateLimitKey("contact-ip", identifier);
+      const key = await digestRateLimitKey('contact-ip', identifier);
       const result = await env.CONTACT_IP_RATE.limit({ key });
       return result.success;
     },
     limitEmail: async (identifier) => {
-      const key = await digestRateLimitKey("contact-email", identifier);
+      const key = await digestRateLimitKey('contact-email', identifier);
       const result = await env.CONTACT_EMAIL_RATE.limit({ key });
       return result.success;
     },
@@ -42,13 +54,12 @@ function createDependencies(env: Env): ContactHandlerDependencies {
         requestId,
         receivedAt,
       }),
-    sendJoinEmail: async (submission, requestId, receivedAt) =>
-      sendJoinEmail(env.CONTACT_EMAIL, submission, {
-        from: env.CONTACT_FROM,
-        to: env.CONTACT_TO,
-        requestId,
-        receivedAt,
+    subscribeToMailingList: async (email) =>
+      subscribeToEmailOctopus(email, {
+        apiKey: env.EMAILOCTOPUS_API_KEY,
+        listId: env.EMAILOCTOPUS_LIST_ID,
       }),
+    slackInviteUrl: getSlackInviteUrl(env),
     log: structuredLogger,
   };
 
@@ -60,8 +71,6 @@ function createDependencies(env: Env): ContactHandlerDependencies {
     ...dependencies,
     sendSlack: async (submission, requestId) =>
       sendContactSlack(slackWebhook, submission, requestId),
-    sendJoinSlack: async (submission, requestId) =>
-      sendJoinSlack(slackWebhook, submission, requestId),
   };
 }
 

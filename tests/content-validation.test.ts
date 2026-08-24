@@ -134,10 +134,6 @@ function validGraph(): ContentGraph {
       turnstileSiteKey: null,
     },
     social: {
-      newsletterUrl: null,
-      newsletterEmbedScriptUrl: null,
-      newsletterFormId: null,
-      slackInviteUrl: null,
       linkedinUrl: null,
       blueskyUrl: null,
       xUrl: null,

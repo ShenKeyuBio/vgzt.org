@@ -4,8 +4,6 @@ import { stabilizePage } from './helpers';
 const abstractFormUrl =
   'https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=B3jtTq3rWkGnqZFwlH9OrscM_7z6UFVOiVCj04ix33hURVdFWDhBUUJPNzY3MUxWRVRBUzRHTU9QVi4u&embed=true';
 const abstractFallbackUrl = 'https://forms.cloud.microsoft/e/T5xbTx7YEP';
-const slackInviteUrl =
-  'https://join.slack.com/t/gastrulationseminars/shared_invite/zt-3ygitwchd-AD29YjXgMZ7Md~RpDggsww';
 
 test.beforeEach(async ({ page }) => stabilizePage(page));
 
@@ -43,9 +41,13 @@ test('printed Subscribe URL and gated destinations remain exact', async ({
     'action',
     '/subscribe/',
   );
-  await expect(page.locator('[data-slack-action]')).toHaveAttribute(
+  await expect(page.locator('[data-join-form]')).not.toHaveAttribute(
+    'data-slack-url',
+    /.+/,
+  );
+  await expect(page.locator('[data-slack-action]')).not.toHaveAttribute(
     'href',
-    slackInviteUrl,
+    /.+/,
   );
   await expect(page.locator('[data-subscription-result]')).toBeHidden();
 });

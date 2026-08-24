@@ -81,26 +81,6 @@ pending:
     resolvedAt: 2026-08-18
     notes: Approved Season 8 rolling-call FAQ is published.
 
-  - key: social.newsletterUrl
-    label: Canonical VGZT mailing-list subscription URL
-    type: url
-    intendedLocation: Subscribe page
-    status: pending
-    requiredForLaunch: false
-    replaceVia: Pages CMS > Social Links > Newsletter subscription URL
-    resolvedAt: null
-    notes: No public signup URL has been supplied. The configured EmailOctopus embed is active, so this does not block subscriptions.
-
-  - key: social.slackInviteUrl
-    label: Canonical VGZT Slack invitation
-    type: url
-    intendedLocation: Subscribe page and footer
-    status: resolved
-    requiredForLaunch: false
-    replaceVia: Pages CMS > Social Links > VGZT Slack invitation URL
-    resolvedAt: 2026-08-14
-    notes: The canonical direct Slack invitation is configured centrally.
-
   - key: social.linkedinUrl
     label: Verified canonical VGZT LinkedIn URL
     type: url

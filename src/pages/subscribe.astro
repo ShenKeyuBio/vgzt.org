@@ -24,10 +24,7 @@ const joinEndpoint =
     <div class="container">
       <p class="eyebrow">Subscribe VGZT Talks</p>
       <h1>Stay connected with VGZT.</h1>
-      <p>
-        Choose the channels that suit you, then continue directly to the
-        relevant signup option.
-      </p>
+      <p>Choose seminar email updates, the VGZT Slack community, or both.</p>
     </div>
   </header>
 
@@ -35,9 +32,5 @@ const joinEndpoint =
     endpoint={joinEndpoint}
     turnstileSiteKey={site.turnstileSiteKey}
     email={site.publicEmail}
-    slackInviteUrl={social.slackInviteUrl}
-    newsletterUrl={social.newsletterUrl}
-    newsletterEmbedScriptUrl={social.newsletterEmbedScriptUrl}
-    newsletterFormId={social.newsletterFormId}
   />
 </BaseLayout>

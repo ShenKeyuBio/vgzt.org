@@ -5,6 +5,7 @@ import {
   expectBasicPageIntegrity,
   expectFocusNotObscured,
   htmlRoutes,
+  mockJoinFlow,
   stabilizePage,
   waitForStableLayout,
 } from './helpers';
@@ -389,41 +390,83 @@ test.describe('abstract, people and forms', () => {
     await expect(page.locator('[data-people-search]')).toHaveValue('keyu');
   });
 
-  test('Subscribe preserves the required gate and fallback boundary', async ({
+  test('Subscribe sends one email, two choices and one Turnstile token', async ({
     page,
   }) => {
+    await mockJoinFlow(page);
     await stabilizePage(page);
     await page.goto('/subscribe/');
     const form = page.locator('[data-join-form]');
     const submit = form.locator('[data-join-submit]');
+
+    await expect(form.locator('input[type="email"]')).toHaveCount(1);
+    await expect(form.locator('input[type="checkbox"]')).toHaveCount(2);
+    await expect(form.locator('#join-mailing-list')).not.toBeChecked();
+    await expect(form.locator('#join-slack')).not.toBeChecked();
+    await expect(form.locator('[data-turnstile-mock]')).toHaveCount(1);
+    await expect(form.locator('#join-name')).toHaveCount(0);
+    await expect(form.locator('#join-organization')).toHaveCount(0);
+    await expect(form.locator('#join-career-stage')).toHaveCount(0);
+    await expect(form.locator('#join-slack-email')).toHaveCount(0);
+    await expect(form.locator('#join-privacy')).toHaveCount(0);
+
     await submit.click();
     await expect(form.locator('#join-services-error')).not.toBeEmpty();
     await expect(form.locator('[data-subscription-result]')).toBeHidden();
 
+    await form.locator('#join-email').fill('test@example.org');
+    await form.locator('#join-mailing-list').check();
     await form.locator('#join-slack').check();
     await submit.click();
-    await expect(form.locator('#join-slack-email')).toHaveAttribute(
-      'aria-invalid',
-      'true',
-    );
-    await expect(form.locator('#join-slack-email')).toHaveAttribute(
-      'aria-describedby',
-      /join-slack-email-hint.*join-slackEmail-error|join-slackEmail-error.*join-slack-email-hint/,
-    );
-    await form.locator('#join-name').fill('Test Researcher');
-    await form.locator('#join-organization').fill('Test Institute');
-    await form.locator('#join-career-stage').selectOption({ index: 1 });
-    await form.locator('#join-email').fill('test@example.org');
-    await form.locator('#join-slack-email').fill('slack@example.org');
-    await form.locator('#join-privacy').check();
-    await submit.click();
     await expect(form.locator('[data-subscription-result]')).toBeVisible();
-    const expectedSlackUrl = await form.getAttribute('data-slack-url');
-    await expect(form.locator('[data-slack-action]')).toHaveAttribute(
-      'href',
-      expectedSlackUrl!,
+    await expect(form.locator('[data-mailing-list-message]')).toHaveText(
+      'Check your inbox to confirm your VGZT Talks subscription.',
     );
-    await expect(form.locator('[data-manual-fallback]')).toBeVisible();
+    await expect(form.locator('[data-slack-action]')).toBeVisible();
+    await expect(form.locator('[data-join-fields]')).toBeHidden();
+    expect(
+      await page.evaluate(() => Reflect.get(window, '__joinRequests')),
+    ).toEqual([
+      {
+        email: 'test@example.org',
+        joinMailingList: true,
+        joinSlack: true,
+        website: '',
+        turnstileToken: 'test-turnstile-token',
+      },
+    ]);
+    expect(
+      await page.evaluate(() =>
+        Number(Reflect.get(window, '__turnstileRenderCount')),
+      ),
+    ).toBe(1);
+    await expect(page.locator('script[src*="eomail5"]')).toHaveCount(0);
+    await expect(form).not.toHaveAttribute('data-slack-url', /.+/);
+  });
+
+  test('Subscribe renders the mailing-list-only confirmation state', async ({
+    page,
+  }) => {
+    await mockJoinFlow(page, {
+      ok: true,
+      requestId: 'mailing-only',
+      mailingList: { requested: true, state: 'confirmation-required' },
+      slack: { requested: false },
+    });
+    await stabilizePage(page);
+    await page.goto('/subscribe/');
+    const form = page.locator('[data-join-form]');
+    await form.locator('#join-email').fill('test@example.org');
+    await form.locator('#join-mailing-list').check();
+    await form.locator('[data-join-submit]').click();
+
+    await expect(form.locator('[data-result-title]')).toHaveText(
+      "You're almost there.",
+    );
+    await expect(form.locator('[data-mailing-list-support]')).toHaveText(
+      "We've sent a confirmation email to the address you provided.",
+    );
+    await expect(form.locator('[data-slack-result]')).toBeHidden();
   });
 
   test('Subscribe no-JS state exposes no gated provider link', async ({
@@ -433,7 +476,7 @@ test.describe('abstract, people and forms', () => {
     const page = await context.newPage();
     await page.goto('/subscribe/');
     await expect(page.locator('[data-slack-action]')).toBeHidden();
-    await expect(page.locator('[data-newsletter-action]')).toBeHidden();
+    await expect(page.locator('[data-join-submit]')).toBeDisabled();
     await expect(
       page.getByRole('link', { name: /organizers@vgzt.org/i }).first(),
     ).toBeVisible();

@@ -1,12 +1,7 @@
 export interface JoinSubmission {
-  name: string;
-  organization: string;
-  careerStage: string;
   email: string;
-  slackEmail: string | null;
   joinSlack: boolean;
   joinMailingList: boolean;
-  privacyAccepted: true;
   turnstileToken: string;
 }
 
@@ -21,5 +16,4 @@ export interface JoinValidationSuccess {
 }
 
 export type JoinValidationResult =
-  | JoinValidationFailure
-  | JoinValidationSuccess;
+  JoinValidationFailure | JoinValidationSuccess;

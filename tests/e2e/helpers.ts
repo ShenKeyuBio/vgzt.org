@@ -62,6 +62,77 @@ export async function waitForStableLayout(page: Page) {
   });
 }
 
+export interface MockJoinResponse {
+  ok: true;
+  requestId: string;
+  mailingList:
+    | { requested: false }
+    | {
+        requested: true;
+        state:
+          'confirmation-required' | 'already-known' | 'temporarily-unavailable';
+      };
+  slack:
+    | { requested: false }
+    | { requested: true; inviteUrl: string }
+    | { requested: true; state: 'temporarily-unavailable' };
+}
+
+export async function mockJoinFlow(
+  page: Page,
+  response: MockJoinResponse = {
+    ok: true,
+    requestId: 'test-request',
+    mailingList: { requested: true, state: 'confirmation-required' },
+    slack: {
+      requested: true,
+      inviteUrl: 'https://join.slack.com/t/example/shared_invite/test',
+    },
+  },
+) {
+  await page.addInitScript((apiResponse) => {
+    const nativeFetch = window.fetch.bind(window);
+    Reflect.set(window, '__joinRequests', []);
+    Reflect.set(window, '__turnstileRenderCount', 0);
+    Reflect.set(window, 'turnstile', {
+      render: (
+        container: HTMLElement,
+        options: { callback: (token: string) => void },
+      ) => {
+        const count = Number(
+          Reflect.get(window, '__turnstileRenderCount') || 0,
+        );
+        Reflect.set(window, '__turnstileRenderCount', count + 1);
+        const mock = document.createElement('div');
+        mock.dataset.turnstileMock = '';
+        mock.textContent = 'Verification complete';
+        mock.style.cssText =
+          'display:grid;min-height:65px;width:100%;border:2px solid #151515;background:#fff;place-items:center;font-weight:800;';
+        container.append(mock);
+        options.callback('test-turnstile-token');
+        return 'test-widget';
+      },
+      reset: () => undefined,
+    });
+    Reflect.set(
+      window,
+      'fetch',
+      async (input: RequestInfo | URL, init?: RequestInit) => {
+        const url = input instanceof Request ? input.url : String(input);
+        if (url === 'https://api.vgzt.org/join') {
+          const requests = Reflect.get(window, '__joinRequests') as unknown[];
+          requests.push(JSON.parse(String(init?.body || '{}')));
+          return new Response(JSON.stringify(apiResponse), {
+            status: 200,
+            headers: { 'content-type': 'application/json' },
+          });
+        }
+        return nativeFetch(input, init);
+      },
+    );
+  }, response);
+}
+
 export async function expectBasicPageIntegrity(page: Page) {
   await expect(page.locator('main:visible')).toHaveCount(1);
   await expect(page.locator('h1:visible')).toHaveCount(1);

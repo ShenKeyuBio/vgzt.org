@@ -17,10 +17,6 @@ export interface SiteSettings {
 }
 
 export interface SocialSettings {
-  newsletterUrl: string | null;
-  newsletterEmbedScriptUrl: string | null;
-  newsletterFormId: string | null;
-  slackInviteUrl: string | null;
   linkedinUrl: string | null;
   blueskyUrl: string | null;
   xUrl: string | null;
@@ -95,19 +91,15 @@ export function getAbstractCallSettings(): AbstractCallSettings {
 }
 
 export function getFooterSocial(settings: SocialSettings) {
-  const hasNewsletterEmbed = Boolean(
-    settings.newsletterEmbedScriptUrl && settings.newsletterFormId,
-  );
   return [
     {
       label: 'Mailing list',
-      url:
-        settings.newsletterUrl || (hasNewsletterEmbed ? '/subscribe/' : null),
-      external: Boolean(settings.newsletterUrl),
+      url: '/subscribe/',
+      external: false,
     },
     {
       label: 'Slack',
-      url: settings.slackInviteUrl ? '/subscribe/' : null,
+      url: '/subscribe/',
       external: false,
     },
     { label: 'LinkedIn', url: settings.linkedinUrl, external: true },

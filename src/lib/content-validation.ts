@@ -159,10 +159,6 @@ export interface SiteRecord {
 }
 
 export interface SocialRecord {
-  newsletterUrl: string | null;
-  newsletterEmbedScriptUrl: string | null;
-  newsletterFormId: string | null;
-  slackInviteUrl: string | null;
   linkedinUrl: string | null;
   blueskyUrl: string | null;
   xUrl: string | null;
@@ -956,27 +952,12 @@ export function validateContentGraph(
     );
   }
   for (const key of [
-    'newsletterUrl',
-    'newsletterEmbedScriptUrl',
-    'slackInviteUrl',
     'linkedinUrl',
     'blueskyUrl',
     'xUrl',
     'instagramUrl',
   ] as const) {
     checkNullableUrl(issues, `src/data/social.yml:${key}`, graph.social[key]);
-  }
-  if (
-    graph.social.newsletterFormId !== null &&
-    (typeof graph.social.newsletterFormId !== 'string' ||
-      !/^[a-z0-9-]{1,100}$/iu.test(graph.social.newsletterFormId))
-  ) {
-    add(
-      issues,
-      'invalid_configuration',
-      'src/data/social.yml:newsletterFormId',
-      'Newsletter form ID must be null or a short provider form identifier.',
-    );
   }
 
   for (const [index, event] of graph.events.entries()) {

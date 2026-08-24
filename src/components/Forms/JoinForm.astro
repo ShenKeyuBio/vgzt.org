@@ -3,53 +3,23 @@ interface Props {
   endpoint?: string | null;
   turnstileSiteKey?: string | null;
   email: string;
-  slackInviteUrl?: string | null;
-  newsletterUrl?: string | null;
-  newsletterEmbedScriptUrl?: string | null;
-  newsletterFormId?: string | null;
 }
 
-const {
-  endpoint = null,
-  turnstileSiteKey = null,
-  email,
-  slackInviteUrl = null,
-  newsletterUrl = null,
-  newsletterEmbedScriptUrl = null,
-  newsletterFormId = null,
-} = Astro.props;
-const fallbackEnabled = Boolean(endpoint && turnstileSiteKey);
-const careerStages = [
-  { value: 'undergraduate', label: 'Undergraduate student' },
-  { value: 'masters', label: "Master's student" },
-  { value: 'phd', label: 'PhD student' },
-  { value: 'postdoc', label: 'Postdoctoral researcher' },
-  { value: 'research-staff', label: 'Research staff' },
-  { value: 'faculty-pi', label: 'Faculty / group leader / PI' },
-  { value: 'professional', label: 'Professional services / industry' },
-  { value: 'other', label: 'Other' },
-];
+const { endpoint = null, turnstileSiteKey = null, email } = Astro.props;
+const formEnabled = Boolean(endpoint && turnstileSiteKey);
 ---
 
 <section class="join-section" aria-labelledby="join-form-title">
   <div class="container join-section__grid">
     <div class="join-section__intro">
-      <p class="eyebrow">Choose how to stay connected</p>
-      <h2 id="join-form-title">Subscribe VGZT Talks.</h2>
-      <p>
-        Choose Slack, seminar emails, or both. Your details stay in this page
-        unless you explicitly ask the organizers for help.
-      </p>
+      <p class="eyebrow">Stay connected</p>
+      <h2 id="join-form-title">Stay connected with VGZT.</h2>
+      <p>Choose seminar email updates, the VGZT Slack community, or both.</p>
       <ul class="join-benefits">
-        <li>Seminar announcements and reminders</li>
+        <li>Talk announcements and speaker updates</li>
         <li>Developmental-biology discussion</li>
         <li>Opportunities and community news</li>
       </ul>
-      <p class="join-section__note">
-        Already connected or need help? Email <a href={`mailto:${email}`}
-          >{email}</a
-        >.
-      </p>
     </div>
 
     <form
@@ -58,162 +28,123 @@ const careerStages = [
       action="/subscribe/"
       data-join-form
       data-endpoint={endpoint || ''}
-      data-slack-url={slackInviteUrl || ''}
-      data-newsletter-url={newsletterUrl || ''}
-      data-newsletter-embed-script-url={newsletterEmbedScriptUrl || ''}
-      data-newsletter-form-id={newsletterFormId || ''}
     >
-      <fieldset
-        class="join-form__choices"
-        aria-describedby="join-services-error"
-      >
-        <legend>What would you like to subscribe to?</legend>
-        <label for="join-slack">
-          <input
-            id="join-slack"
-            name="joinSlack"
-            type="checkbox"
-            value="true"
-          />
-          <span>Join VGZT Slack</span>
-        </label>
-        <label for="join-mailing-list">
-          <input
-            id="join-mailing-list"
-            name="joinMailingList"
-            type="checkbox"
-            value="true"
-          />
-          <span>Subscribe to VGZT mailing list</span>
-        </label>
-      </fieldset>
-      <span class="field__error" id="join-services-error"></span>
-
-      <div class="join-form__details">
-        <div class="join-form__row">
-          <div class="field">
-            <label for="join-name">Name</label>
-            <input
-              id="join-name"
-              name="name"
-              autocomplete="name"
-              required
-              maxlength="100"
-            />
-            <span class="field__error" id="join-name-error"></span>
-          </div>
-
-          <div class="field">
-            <label for="join-organization">Organization</label>
-            <input
-              id="join-organization"
-              name="organization"
-              autocomplete="organization"
-              required
-              maxlength="160"
-            />
-            <span class="field__error" id="join-organization-error"></span>
-          </div>
-        </div>
-
+      <div class="join-form__fields" data-join-fields>
         <div class="field">
-          <label for="join-career-stage">Career stage</label>
-          <select id="join-career-stage" name="careerStage" required>
-            <option value="">Select your career stage</option>
-            {
-              careerStages.map((stage) => (
-                <option value={stage.value}>{stage.label}</option>
-              ))
-            }
-          </select>
-          <span class="field__error" id="join-careerStage-error"></span>
+          <label for="join-email">Email</label>
+          <input
+            id="join-email"
+            name="email"
+            type="email"
+            inputmode="email"
+            autocomplete="email"
+            placeholder="name@example.com"
+            required
+            maxlength="254"
+          />
+          <span class="field__error" id="join-email-error"></span>
         </div>
 
-        <div class="join-form__row">
-          <div class="field">
-            <label for="join-email">Contact email</label>
-            <input
-              id="join-email"
-              name="email"
-              type="email"
-              inputmode="email"
-              autocomplete="email"
-              required
-              maxlength="254"
-            />
-            <span class="field__error" id="join-email-error"></span>
+        <fieldset
+          class="join-form__choices"
+          aria-describedby="join-services-error"
+        >
+          <legend>Choose what you'd like</legend>
+          <div class="join-form__choice-grid">
+            <label for="join-mailing-list">
+              <input
+                id="join-mailing-list"
+                name="joinMailingList"
+                type="checkbox"
+                value="true"
+              />
+              <span>
+                <strong>Seminar email updates</strong>
+                <small>
+                  Talk announcements, speaker updates and programme news.
+                </small>
+              </span>
+            </label>
+            <label for="join-slack">
+              <input
+                id="join-slack"
+                name="joinSlack"
+                type="checkbox"
+                value="true"
+              />
+              <span>
+                <strong>VGZT Slack community</strong>
+                <small>Discussion, opportunities and community updates.</small>
+              </span>
+            </label>
           </div>
+        </fieldset>
+        <span class="field__error" id="join-services-error"></span>
 
-          <div class="field">
-            <label for="join-slack-email">Email linked to Slack</label>
-            <input
-              id="join-slack-email"
-              name="slackEmail"
-              type="email"
-              inputmode="email"
-              autocomplete="email"
-              aria-describedby="join-slack-email-hint join-slackEmail-error"
-              maxlength="254"
-            />
-            <span class="field__hint" id="join-slack-email-hint"
-              >Required only when joining Slack; otherwise leave it blank.</span
-            >
-            <span class="field__error" id="join-slackEmail-error"></span>
-          </div>
+        <div class="field field--honeypot" aria-hidden="true">
+          <label for="join-website">Website</label>
+          <input
+            id="join-website"
+            name="website"
+            tabindex="-1"
+            autocomplete="off"
+          />
         </div>
-      </div>
 
-      <div class="field field--honeypot" aria-hidden="true">
-        <label for="join-website">Website</label>
-        <input
-          id="join-website"
-          name="website"
-          tabindex="-1"
-          autocomplete="off"
-        />
-      </div>
+        <div class="join-form__verification">
+          <p id="join-verification-label">Security check</p>
+          {
+            formEnabled ? (
+              <div
+                class="join-form__turnstile"
+                role="group"
+                aria-labelledby="join-verification-label"
+                aria-describedby="join-verification-error"
+                data-turnstile-container
+                data-sitekey={turnstileSiteKey}
+              />
+            ) : (
+              <p>
+                The secure subscription form is temporarily unavailable. Email{' '}
+                <a href={`mailto:${email}`}>{email}</a> for help.
+              </p>
+            )
+          }
+          <span class="field__error" id="join-verification-error"></span>
+        </div>
 
-      <label class="privacy-check" for="join-privacy">
-        <input
-          id="join-privacy"
-          name="privacyAccepted"
-          type="checkbox"
-          required
-          value="true"
-        />
-        <span
-          >I agree that, if I send a manual request, VGZT may use these details
-          to arrange the selected invitation(s). See the <a href="/privacy/"
-            >privacy notice</a
-          >.</span
-        >
-      </label>
-      <span class="field__error" id="join-privacy-error"></span>
+        <div class="join-form__submit-row">
+          <button
+            class="button button--ink"
+            type="submit"
+            data-join-submit
+            disabled
+          >
+            Continue <span aria-hidden="true">→</span>
+          </button>
+          <p
+            class="join-form__status"
+            role="status"
+            aria-live="polite"
+            tabindex="-1"
+            data-form-status
+          >
+          </p>
+          <noscript>
+            JavaScript is required to complete this protected subscription flow.
+            Email <a href={`mailto:${email}`}>{email}</a> for help.
+          </noscript>
+        </div>
 
-      <div class="join-form__submit-row">
-        <button
-          class="button button--ink"
-          type="submit"
-          data-join-submit
-          disabled
-        >
-          Subscribe VGZT Talks <span aria-hidden="true">→</span>
-        </button>
-        <p
-          class="join-form__status"
-          role="status"
-          aria-live="polite"
-          data-form-status
-        >
+        <p class="join-form__privacy">
+          By continuing, VGZT will use your email only for the service(s) you
+          choose. <a href="/privacy/"
+            >Privacy notice <span aria-hidden="true">→</span></a
+          >
         </p>
-        <noscript>
-          JavaScript is required to complete this protected subscription flow.
-          Email <a href={`mailto:${email}`}>{email}</a> for help.
-        </noscript>
       </div>
 
       <section
-        id="subscription-options"
         class="subscription-result"
         aria-labelledby="subscription-result-title"
         aria-live="polite"
@@ -221,107 +152,39 @@ const careerStages = [
         data-subscription-result
         hidden
       >
-        <p class="eyebrow">Your subscription options</p>
-        <h3 id="subscription-result-title">
-          Continue with your selected service.
+        <p class="eyebrow">Stay connected</p>
+        <h3 id="subscription-result-title" data-result-title>
+          You're almost there.
         </h3>
 
-        <div class="subscription-result__actions">
-          <div data-slack-result hidden>
-            <a
-              class="button button--ink"
-              href={slackInviteUrl || undefined}
-              target="_blank"
-              rel="noopener noreferrer"
-              data-slack-action
-              hidden={!slackInviteUrl}
-            >
-              Join VGZT Slack <span aria-hidden="true">↗</span>
-              <span class="visually-hidden"> (opens in a new tab)</span>
-            </a>
-            <p data-slack-unavailable hidden={Boolean(slackInviteUrl)}>
-              The Slack invitation is temporarily unavailable.
-            </p>
-          </div>
-
-          <div data-newsletter-result hidden>
-            <a
-              class="button button--ink"
-              href={newsletterUrl || undefined}
-              target="_blank"
-              rel="noopener noreferrer"
-              data-newsletter-action
-              hidden={!newsletterUrl}
-            >
-              Subscribe to the mailing list <span aria-hidden="true">↗</span>
-              <span class="visually-hidden"> (opens in a new tab)</span>
-            </a>
-            <p
-              class="subscription-result__coming-soon"
-              data-newsletter-coming-soon
-              hidden={Boolean(newsletterUrl)}
-            >
-              Mailing list signup coming soon
-            </p>
-            <div
-              class="subscription-result__embed"
-              data-newsletter-embed
-              tabindex="-1"
-              hidden
-            >
-              <p data-newsletter-loading role="status">
-                Loading mailing list signup…
-              </p>
-              <p data-newsletter-failed role="status" hidden>
-                The mailing list form could not load. Please try again or email{
-                  ' '
-                }
-                <a href={`mailto:${email}`}>{email}</a>.
-              </p>
-              <noscript>
-                JavaScript is required for the mailing list form. Email{' '}
-                <a href={`mailto:${email}`}>{email}</a> for help.
-              </noscript>
-            </div>
-          </div>
+        <div
+          class="subscription-result__service"
+          data-mailing-list-result
+          hidden
+        >
+          <p class="subscription-result__label">Email updates</p>
+          <p class="subscription-result__message" data-mailing-list-message></p>
+          <p class="subscription-result__support" data-mailing-list-support></p>
         </div>
 
-        <div class="manual-fallback">
-          <p>
-            <strong>Not working?</strong> Ask the VGZT organizers to invite you manually.
-          </p>
-          {
-            fallbackEnabled ? (
-              <>
-                <div
-                  class="manual-fallback__turnstile"
-                  data-turnstile-container
-                  data-sitekey={turnstileSiteKey}
-                  hidden
-                />
-                <button
-                  class="button button--quiet"
-                  type="button"
-                  data-manual-fallback
-                >
-                  Send a request to the organizers
-                </button>
-              </>
-            ) : (
-              <p>
-                The secure request form is being connected. Email{' '}
-                <a href={`mailto:${email}`}>{email}</a> instead.
-              </p>
-            )
-          }
-          <p
-            class="join-form__status"
-            role="status"
-            aria-live="polite"
-            tabindex="-1"
-            data-fallback-status
+        <div class="subscription-result__service" data-slack-result hidden>
+          <p class="subscription-result__label">VGZT Slack</p>
+          <p class="subscription-result__message" data-slack-message></p>
+          <a
+            class="button button--ink"
+            target="_blank"
+            rel="noopener noreferrer"
+            data-slack-action
+            hidden
           >
-          </p>
+            Join VGZT Slack <span aria-hidden="true">↗</span>
+            <span class="visually-hidden"> (opens in a new tab)</span>
+          </a>
+        </div>
+
+        <div class="subscription-result__help">
+          <p><strong>Having trouble?</strong></p>
+          <p>Contact <a href={`mailto:${email}`}>{email}</a>.</p>
         </div>
       </section>
     </form>
@@ -329,7 +192,7 @@ const careerStages = [
 </section>
 
 {
-  fallbackEnabled && (
+  formEnabled && (
     <script
       is:inline
       src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
@@ -359,7 +222,7 @@ const careerStages = [
   }
 
   .join-section__intro h2 {
-    max-width: 9ch;
+    max-width: 11ch;
     margin-bottom: 1.5rem;
   }
 
@@ -369,106 +232,57 @@ const careerStages = [
   }
 
   .join-benefits {
-    margin-block: 1.5rem;
+    margin-block: 1.5rem 0;
     padding-left: 1.2rem;
   }
 
-  .join-section__note {
-    font-size: 0.88rem;
-  }
-
-  .join-section__note a {
-    font-weight: 900;
-  }
-
   .join-form {
-    display: grid;
+    min-width: 0;
     padding: clamp(1.25rem, 3vw, 2.5rem);
     border: var(--keyline);
     background: var(--vgzt-paper-strong);
-    gap: 1.1rem;
   }
 
-  .join-form__choices {
+  .join-form__fields,
+  .subscription-result {
     display: grid;
-    margin: 0;
-    padding: 0 0 1rem;
-    border: 0;
-    border-bottom: var(--keyline);
-    gap: 0.7rem;
+    gap: 1.25rem;
   }
 
-  .join-form__choices legend {
-    margin-bottom: 0.75rem;
+  .join-form__fields[hidden],
+  .subscription-result[hidden],
+  .subscription-result [hidden] {
+    display: none;
+  }
+
+  .field {
+    display: grid;
+    gap: 0.4rem;
+  }
+
+  .field label,
+  .join-form__choices legend,
+  .join-form__verification > p:first-child {
     font-size: var(--font-ui-small);
     font-weight: 950;
     letter-spacing: 0.04em;
     text-transform: uppercase;
   }
 
-  .join-form__choices label {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: 0.65rem;
-    align-items: center;
-    font-weight: 850;
-  }
-
-  .join-form__choices input,
-  .privacy-check input {
-    width: 1.25rem;
-    height: 1.25rem;
-    margin: 0;
-    accent-color: var(--vgzt-ink);
-  }
-
-  .join-form__choices[aria-invalid='true'] {
-    border-color: var(--vgzt-error);
-  }
-
-  .join-form__row {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1rem;
-  }
-
-  .join-form__details {
-    display: grid;
-    padding-block: 1rem;
-    border-block: var(--keyline);
-    gap: 1rem;
-  }
-
-  .field {
-    display: grid;
-    gap: 0.35rem;
-  }
-
-  .field label {
-    font-size: var(--font-ui-small);
-    font-weight: 950;
-    letter-spacing: 0.04em;
-  }
-
-  .field input,
-  .field select {
+  .field input {
     width: 100%;
-    min-height: 3rem;
-    padding: 0.7rem 0.8rem;
+    min-height: 3.2rem;
+    padding: 0.75rem 0.85rem;
     border: var(--keyline);
     border-radius: 0;
     background: var(--vgzt-paper);
   }
 
   .field input[aria-invalid='true'],
-  .field select[aria-invalid='true'] {
+  .join-form__choices[aria-invalid='true'],
+  .join-form__turnstile[aria-invalid='true'] {
     border-color: var(--vgzt-error);
     box-shadow: inset 0 0 0 1px var(--vgzt-error);
-  }
-
-  .field__hint {
-    color: var(--vgzt-muted);
-    font-size: var(--font-ui-small);
   }
 
   .field__error {
@@ -486,17 +300,78 @@ const careerStages = [
     clip: rect(0 0 0 0);
   }
 
-  .privacy-check {
+  .join-form__choices {
     display: grid;
-    grid-template-columns: auto 1fr;
-    gap: 0.7rem;
-    align-items: start;
-    font-size: var(--font-ui-small);
-    font-weight: 650;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    gap: 0.8rem;
   }
 
-  .privacy-check input {
-    margin-top: 0.08rem;
+  .join-form__choices legend {
+    margin-bottom: 0.8rem;
+  }
+
+  .join-form__choice-grid {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .join-form__choices label {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    min-width: 0;
+    padding: 1rem;
+    border: 2px solid var(--vgzt-ink);
+    background: var(--vgzt-paper);
+    gap: 0.8rem;
+    align-items: start;
+    cursor: pointer;
+  }
+
+  .join-form__choices label:has(input:checked) {
+    background: color-mix(in srgb, var(--vgzt-pink) 45%, var(--vgzt-paper));
+  }
+
+  .join-form__choices input {
+    width: 1.25rem;
+    height: 1.25rem;
+    margin: 0.15rem 0 0;
+    accent-color: var(--vgzt-ink);
+  }
+
+  .join-form__choices span {
+    display: grid;
+    gap: 0.2rem;
+  }
+
+  .join-form__choices strong {
+    font-weight: 950;
+  }
+
+  .join-form__choices small {
+    color: var(--vgzt-muted);
+    font-size: var(--font-ui-small);
+    font-weight: 650;
+    line-height: 1.45;
+  }
+
+  .join-form__verification {
+    display: grid;
+    min-width: 0;
+    padding-top: 1.1rem;
+    border-top: var(--keyline);
+    gap: 0.65rem;
+  }
+
+  .join-form__verification > p {
+    margin: 0;
+  }
+
+  .join-form__turnstile {
+    width: 100%;
+    min-width: 0;
+    min-height: 4.1rem;
   }
 
   .join-form__submit-row {
@@ -512,18 +387,21 @@ const careerStages = [
     font-weight: 800;
   }
 
-  .subscription-result {
-    display: grid;
-    margin-top: 0.5rem;
-    padding: clamp(1rem, 3vw, 1.6rem);
-    border: var(--keyline);
-    background: color-mix(in srgb, var(--vgzt-pink) 38%, var(--vgzt-paper));
-    gap: 1rem;
+  .join-form__privacy {
+    margin: 0;
+    font-size: var(--font-ui-small);
+    font-weight: 650;
   }
 
-  .subscription-result[hidden],
-  .subscription-result [hidden] {
-    display: none;
+  .join-form__privacy a,
+  .subscription-result__help a {
+    font-weight: 900;
+  }
+
+  .subscription-result {
+    padding: clamp(1rem, 3vw, 1.6rem);
+    border: var(--keyline);
+    background: color-mix(in srgb, var(--vgzt-pink) 42%, var(--vgzt-paper));
   }
 
   .subscription-result h3,
@@ -531,34 +409,42 @@ const careerStages = [
     margin: 0;
   }
 
-  .subscription-result__actions {
+  .subscription-result__service {
     display: grid;
-    gap: 0.8rem;
+    padding: 1rem;
+    border: 2px solid var(--vgzt-ink);
+    background: var(--vgzt-paper);
+    gap: 0.65rem;
   }
 
-  .subscription-result__coming-soon {
-    padding: 0.85rem;
-    border-left: 0.4rem solid var(--vgzt-orange);
-    background: var(--vgzt-paper);
+  .subscription-result__label {
+    font-size: var(--font-ui-small);
+    font-weight: 950;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .subscription-result__message {
+    font-size: clamp(1.05rem, 2vw, 1.25rem);
     font-weight: 900;
   }
 
-  .subscription-result__embed {
-    min-height: 7rem;
-    padding: 0.85rem;
-    border: 2px solid var(--vgzt-ink);
-    background: var(--vgzt-paper);
+  .subscription-result__support {
+    color: var(--vgzt-muted);
+    font-size: var(--font-ui-small);
+    font-weight: 700;
   }
 
-  .manual-fallback {
+  .subscription-result__service .button {
+    justify-self: start;
+    margin-top: 0.25rem;
+  }
+
+  .subscription-result__help {
     display: grid;
     padding-top: 1rem;
     border-top: 2px solid var(--vgzt-ink);
-    gap: 0.8rem;
-  }
-
-  .manual-fallback__turnstile {
-    min-height: 4.1rem;
+    gap: 0.2rem;
   }
 
   @media (max-width: 56rem) {
@@ -572,25 +458,26 @@ const careerStages = [
   }
 
   @media (max-width: 36rem) {
-    .join-form__row {
-      grid-template-columns: 1fr;
-    }
-
     .join-form__submit-row {
       display: grid;
+    }
+
+    .join-form__submit-row .button,
+    .subscription-result__service .button {
+      width: 100%;
+      justify-content: center;
     }
   }
 </style>
 
 <script>
-  import { resolveSubscriptionFlow } from '../../lib/subscription';
-
   interface TurnstileApi {
     render: (
       container: HTMLElement,
       options: {
         sitekey: string;
         action: string;
+        size: 'flexible';
         callback: (token: string) => void;
         'expired-callback': () => void;
         'error-callback': () => void;
@@ -599,56 +486,70 @@ const careerStages = [
     reset: (widgetId?: string) => void;
   }
 
-  interface PendingSubmission {
-    name: string;
-    organization: string;
-    careerStage: string;
-    email: string;
-    slackEmail: string | null;
-    joinSlack: boolean;
-    joinMailingList: boolean;
-    website: string;
-    privacyAccepted: true;
-  }
+  type MailingListState =
+    'confirmation-required' | 'already-known' | 'temporarily-unavailable';
+
+  type JoinApiResponse =
+    | {
+        ok: true;
+        requestId: string;
+        mailingList:
+          { requested: false } | { requested: true; state: MailingListState };
+        slack:
+          | { requested: false }
+          | { requested: true; inviteUrl: string }
+          | { requested: true; state: 'temporarily-unavailable' };
+      }
+    | {
+        ok: false;
+        code?: string;
+        message?: string;
+        fields?: Record<string, string>;
+      };
 
   document
     .querySelectorAll<HTMLFormElement>('[data-join-form]')
     .forEach((form) => {
+      const fieldsPanel = form.querySelector<HTMLElement>('[data-join-fields]');
       const status = form.querySelector<HTMLElement>('[data-form-status]');
-      const primarySubmit =
+      const submit =
         form.querySelector<HTMLButtonElement>('[data-join-submit]');
-      const resultPanel = form.querySelector<HTMLElement>(
+      const result = form.querySelector<HTMLElement>(
         '[data-subscription-result]',
       );
-      const fallbackStatus = form.querySelector<HTMLElement>(
-        '[data-fallback-status]',
+      const resultTitle = form.querySelector<HTMLElement>(
+        '[data-result-title]',
       );
-      const fallbackButton = form.querySelector<HTMLButtonElement>(
-        '[data-manual-fallback]',
+      const mailingListResult = form.querySelector<HTMLElement>(
+        '[data-mailing-list-result]',
+      );
+      const mailingListMessage = form.querySelector<HTMLElement>(
+        '[data-mailing-list-message]',
+      );
+      const mailingListSupport = form.querySelector<HTMLElement>(
+        '[data-mailing-list-support]',
+      );
+      const slackResult = form.querySelector<HTMLElement>(
+        '[data-slack-result]',
+      );
+      const slackMessage = form.querySelector<HTMLElement>(
+        '[data-slack-message]',
+      );
+      const slackAction = form.querySelector<HTMLAnchorElement>(
+        '[data-slack-action]',
       );
       const turnstileContainer = form.querySelector<HTMLElement>(
         '[data-turnstile-container]',
       );
-      const newsletterEmbed = form.querySelector<HTMLElement>(
-        '[data-newsletter-embed]',
-      );
-      const newsletterLoading = form.querySelector<HTMLElement>(
-        '[data-newsletter-loading]',
-      );
-      const newsletterFailed = form.querySelector<HTMLElement>(
-        '[data-newsletter-failed]',
-      );
-      const links = {
-        slackInviteUrl: form.dataset.slackUrl || null,
-        newsletterUrl: form.dataset.newsletterUrl || null,
-        newsletterEmbedScriptUrl: form.dataset.newsletterEmbedScriptUrl || null,
-        newsletterFormId: form.dataset.newsletterFormId || null,
-      };
-      let pendingSubmission: PendingSubmission | null = null;
       let turnstileToken = '';
       let turnstileWidgetId: string | undefined;
+      let turnstileAttempts = 0;
+
       form.noValidate = true;
-      if (primarySubmit) primarySubmit.disabled = false;
+      if (submit && form.dataset.endpoint && turnstileContainer) {
+        submit.disabled = false;
+      }
+
       const getTurnstile = (): TurnstileApi | null => {
         const candidate: unknown = Reflect.get(window, 'turnstile');
         return typeof candidate === 'object' &&
@@ -661,26 +562,6 @@ const careerStages = [
           : null;
       };
 
-      const clearErrors = () => {
-        form
-          .querySelectorAll('[aria-invalid="true"]')
-          .forEach((field) => field.removeAttribute('aria-invalid'));
-        form.querySelectorAll<HTMLElement>('.field__error').forEach((error) => {
-          error.textContent = '';
-          if (!error.id) return;
-          form
-            .querySelectorAll<HTMLElement>(`[aria-describedby~="${error.id}"]`)
-            .forEach((field) => {
-              const tokens = (field.getAttribute('aria-describedby') || '')
-                .split(/\s+/)
-                .filter((token) => token && token !== error.id);
-              if (tokens.length > 0)
-                field.setAttribute('aria-describedby', tokens.join(' '));
-              else field.removeAttribute('aria-describedby');
-            });
-        });
-      };
-
       const addDescription = (field: HTMLElement, id: string) => {
         const tokens = new Set(
           (field.getAttribute('aria-describedby') || '')
@@ -691,317 +572,288 @@ const careerStages = [
         field.setAttribute('aria-describedby', [...tokens].join(' '));
       };
 
-      const setError = (name: string, text: string) => {
-        const field =
-          name === 'services'
-            ? form.querySelector<HTMLElement>('.join-form__choices')
-            : (form.elements.namedItem(name) as HTMLElement | null);
-        field?.setAttribute('aria-invalid', 'true');
-        const errorId =
-          name === 'services'
-            ? 'join-services-error'
-            : name === 'privacyAccepted'
-              ? 'join-privacy-error'
-              : `join-${name}-error`;
-        if (field) addDescription(field, errorId);
-        const error = form.querySelector<HTMLElement>(`#${errorId}`);
-        if (error) error.textContent = text;
+      const clearErrors = () => {
+        form
+          .querySelectorAll('[aria-invalid="true"]')
+          .forEach((field) => field.removeAttribute('aria-invalid'));
+        form.querySelectorAll<HTMLElement>('.field__error').forEach((error) => {
+          error.textContent = '';
+        });
       };
 
-      const ensureTurnstile = () => {
+      const setError = (name: string, message: string) => {
+        const normalizedName =
+          name === 'joinSlack' || name === 'joinMailingList'
+            ? 'services'
+            : name;
+        const field =
+          normalizedName === 'services'
+            ? form.querySelector<HTMLElement>('.join-form__choices')
+            : normalizedName === 'verification'
+              ? turnstileContainer
+              : (form.elements.namedItem(normalizedName) as HTMLElement | null);
+        const errorId = `join-${normalizedName}-error`;
+        field?.setAttribute('aria-invalid', 'true');
+        if (field) addDescription(field, errorId);
+        const error = form.querySelector<HTMLElement>(`#${errorId}`);
+        if (error) error.textContent = message;
+      };
+
+      const resetTurnstile = () => {
+        turnstileToken = '';
+        getTurnstile()?.reset(turnstileWidgetId);
+      };
+
+      const ensureTurnstile = (): boolean => {
+        if (turnstileWidgetId || !turnstileContainer) return true;
         const turnstile = getTurnstile();
-        if (turnstileWidgetId || !turnstileContainer || !turnstile) {
-          return;
-        }
         const sitekey = turnstileContainer.dataset.sitekey;
-        if (!sitekey) return;
+        if (!turnstile || !sitekey) return false;
+
         turnstileWidgetId = turnstile.render(turnstileContainer, {
           sitekey,
           action: 'vgzt_join',
+          size: 'flexible',
           callback: (token) => {
             turnstileToken = token;
-            if (fallbackStatus) fallbackStatus.textContent = '';
+            turnstileContainer.removeAttribute('aria-invalid');
+            const error = form.querySelector<HTMLElement>(
+              '#join-verification-error',
+            );
+            if (error) error.textContent = '';
+            if (status) status.textContent = '';
           },
           'expired-callback': () => {
             turnstileToken = '';
+            setError(
+              'verification',
+              'Verification expired. Complete the check again.',
+            );
           },
           'error-callback': () => {
             turnstileToken = '';
+            setError(
+              'verification',
+              'Verification could not complete. Please try again.',
+            );
           },
         });
+        return true;
       };
 
-      const focusNewsletterEmbed = () => {
-        const focusTarget = newsletterEmbed?.querySelector<HTMLElement>(
-          'input:not([type="hidden"]), iframe, select, textarea, button, a[href]',
+      const initializeTurnstile = () => {
+        if (ensureTurnstile()) return;
+        turnstileAttempts += 1;
+        if (turnstileAttempts < 100) {
+          window.setTimeout(initializeTurnstile, 100);
+          return;
+        }
+        setError(
+          'verification',
+          'Verification could not load. Refresh the page or contact the organizers.',
         );
-        (focusTarget || newsletterEmbed)?.focus();
       };
 
-      const ensureNewsletterEmbed = () => {
-        if (!newsletterEmbed) return;
-        if (newsletterEmbed.querySelector('[data-newsletter-embed-script]')) {
-          focusNewsletterEmbed();
-          return;
+      const safeSlackUrl = (value: unknown): string | null => {
+        if (typeof value !== 'string') return null;
+        try {
+          const url = new URL(value);
+          return url.protocol === 'https:' && url.hostname === 'join.slack.com'
+            ? url.href
+            : null;
+        } catch {
+          return null;
         }
-        if (!links.newsletterEmbedScriptUrl || !links.newsletterFormId) {
-          if (newsletterLoading) newsletterLoading.hidden = true;
-          if (newsletterFailed) newsletterFailed.hidden = false;
-          return;
-        }
-
-        const script = document.createElement('script');
-        script.async = true;
-        script.src = links.newsletterEmbedScriptUrl;
-        script.dataset.form = links.newsletterFormId;
-        script.dataset.newsletterEmbedScript = '';
-        script.addEventListener('load', () => {
-          if (newsletterLoading) newsletterLoading.hidden = true;
-          focusNewsletterEmbed();
-        });
-        script.addEventListener('error', () => {
-          if (newsletterLoading) newsletterLoading.hidden = true;
-          if (newsletterFailed) newsletterFailed.hidden = false;
-          newsletterEmbed.focus();
-        });
-        newsletterEmbed.append(script);
       };
 
-      const readAndValidate = (): PendingSubmission | null => {
+      const renderResult = (body: Extract<JoinApiResponse, { ok: true }>) => {
+        if (resultTitle) {
+          resultTitle.textContent = body.mailingList.requested
+            ? "You're almost there."
+            : "You're ready.";
+        }
+
+        if (mailingListResult) {
+          mailingListResult.hidden = !body.mailingList.requested;
+        }
+        if (body.mailingList.requested && mailingListMessage) {
+          if (body.mailingList.state === 'confirmation-required') {
+            mailingListMessage.textContent =
+              'Check your inbox to confirm your VGZT Talks subscription.';
+            if (mailingListSupport) {
+              mailingListSupport.textContent =
+                "We've sent a confirmation email to the address you provided.";
+            }
+          } else if (body.mailingList.state === 'already-known') {
+            mailingListMessage.textContent =
+              'This email is already known to the VGZT mailing list.';
+            if (mailingListSupport) {
+              mailingListSupport.textContent =
+                'If confirmation is still required, please check your inbox.';
+            }
+          } else {
+            mailingListMessage.textContent =
+              "We couldn't start the email subscription right now. Please try again.";
+            if (mailingListSupport) mailingListSupport.textContent = '';
+          }
+        }
+
+        if (slackResult) slackResult.hidden = !body.slack.requested;
+        if (body.slack.requested) {
+          const inviteUrl =
+            'inviteUrl' in body.slack
+              ? safeSlackUrl(body.slack.inviteUrl)
+              : null;
+          if (inviteUrl) {
+            if (slackMessage) {
+              slackMessage.textContent = 'Your Slack invitation is ready.';
+            }
+            if (slackAction) {
+              slackAction.href = inviteUrl;
+              slackAction.hidden = false;
+            }
+          } else {
+            if (slackMessage) {
+              slackMessage.textContent =
+                'Slack access is temporarily unavailable. Please contact the VGZT organizers.';
+            }
+            if (slackAction) {
+              slackAction.removeAttribute('href');
+              slackAction.hidden = true;
+            }
+          }
+        }
+
+        if (status) status.textContent = '';
+        if (fieldsPanel) fieldsPanel.hidden = true;
+        if (result) {
+          result.hidden = false;
+          result.focus();
+        }
+        turnstileToken = '';
+      };
+
+      const readSelection = () => {
+        const data = new FormData(form);
+        return {
+          email: String(data.get('email') || '').trim(),
+          joinMailingList: data.get('joinMailingList') === 'true',
+          joinSlack: data.get('joinSlack') === 'true',
+          website: String(data.get('website') || ''),
+        };
+      };
+
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        if (!submit || submit.disabled) return;
+
         clearErrors();
         if (status) status.textContent = '';
-
-        const data = new FormData(form);
-        const name = String(data.get('name') || '').trim();
-        const organization = String(data.get('organization') || '').trim();
-        const careerStage = String(data.get('careerStage') || '');
-        const email = String(data.get('email') || '').trim();
-        const slackEmail = String(data.get('slackEmail') || '').trim();
-        const joinSlack = data.get('joinSlack') === 'true';
-        const joinMailingList = data.get('joinMailingList') === 'true';
-        const website = String(data.get('website') || '');
-        const privacyAccepted = data.get('privacyAccepted') === 'true';
-        const flow = resolveSubscriptionFlow(
-          'primary',
-          { joinSlack, joinMailingList },
-          links,
-        );
+        const submission = readSelection();
         let invalid = false;
 
-        if (!flow.valid) {
-          setError('services', flow.message);
-          invalid = true;
-        }
-        if (!name || name.length > 100) {
-          setError('name', 'Enter your name (up to 100 characters).');
-          invalid = true;
-        }
-        if (!organization || organization.length > 160) {
-          setError(
-            'organization',
-            'Enter your organization (up to 160 characters).',
-          );
-          invalid = true;
-        }
-        if (!careerStage) {
-          setError('careerStage', 'Select your career stage.');
-          invalid = true;
-        }
-        if (!/^\S+@\S+\.\S+$/.test(email) || email.length > 254) {
-          setError('email', 'Enter a valid contact email address.');
-          invalid = true;
-        }
         if (
-          (joinSlack && !/^\S+@\S+\.\S+$/.test(slackEmail)) ||
-          slackEmail.length > 254
+          !/^\S+@\S+\.\S+$/u.test(submission.email) ||
+          submission.email.length > 254
         ) {
-          setError('slackEmail', 'Enter the email address linked to Slack.');
+          setError('email', 'Enter a valid email address.');
           invalid = true;
         }
-        if (slackEmail && !joinSlack && !/^\S+@\S+\.\S+$/.test(slackEmail)) {
-          setError(
-            'slackEmail',
-            'Enter a valid email address or leave it blank.',
-          );
+        if (!submission.joinMailingList && !submission.joinSlack) {
+          setError('services', 'Select email updates, Slack, or both.');
           invalid = true;
         }
-        if (!privacyAccepted) {
-          setError(
-            'privacyAccepted',
-            'Confirm how your details may be used for a manual request.',
-          );
+        if (!turnstileToken) {
+          setError('verification', 'Complete the verification and try again.');
           invalid = true;
         }
 
         if (invalid) {
           form.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus();
-          return null;
-        }
-
-        return {
-          name,
-          organization,
-          careerStage,
-          email,
-          slackEmail: slackEmail || null,
-          joinSlack,
-          joinMailingList,
-          website,
-          privacyAccepted: true,
-        };
-      };
-
-      form.addEventListener('submit', (event) => {
-        event.preventDefault();
-        if (primarySubmit?.disabled) return;
-        if (primarySubmit) primarySubmit.disabled = true;
-        const submission = readAndValidate();
-        if (!submission) {
-          if (primarySubmit) primarySubmit.disabled = false;
           return;
         }
 
-        const flow = resolveSubscriptionFlow(
-          'primary',
-          {
-            joinSlack: submission.joinSlack,
-            joinMailingList: submission.joinMailingList,
-          },
-          links,
-        );
-        if (!flow.valid) {
-          if (primarySubmit) primarySubmit.disabled = false;
+        const endpoint = form.dataset.endpoint;
+        if (!endpoint) {
+          if (status) {
+            status.textContent =
+              'The secure subscription form is temporarily unavailable.';
+            status.focus();
+          }
           return;
         }
 
-        const slackResult = form.querySelector<HTMLElement>(
-          '[data-slack-result]',
-        );
-        const slackAction = form.querySelector<HTMLElement>(
-          '[data-slack-action]',
-        );
-        const slackUnavailable = form.querySelector<HTMLElement>(
-          '[data-slack-unavailable]',
-        );
-        const newsletterResult = form.querySelector<HTMLElement>(
-          '[data-newsletter-result]',
-        );
-        const newsletterAction = form.querySelector<HTMLElement>(
-          '[data-newsletter-action]',
-        );
-        const newsletterComingSoon = form.querySelector<HTMLElement>(
-          '[data-newsletter-coming-soon]',
-        );
+        submit.disabled = true;
+        if (status) status.textContent = 'Sending…';
 
-        if (slackResult) slackResult.hidden = !submission.joinSlack;
-        if (slackAction) slackAction.hidden = flow.slackUrl === null;
-        if (slackUnavailable) slackUnavailable.hidden = flow.slackUrl !== null;
-        if (newsletterResult)
-          newsletterResult.hidden = flow.newsletter === null;
-        if (newsletterAction)
-          newsletterAction.hidden = flow.newsletter?.state !== 'available';
-        if (newsletterComingSoon)
-          newsletterComingSoon.hidden =
-            flow.newsletter?.state !== 'coming-soon';
-        if (newsletterEmbed)
-          newsletterEmbed.hidden = flow.newsletter?.state !== 'embedded';
+        try {
+          const response = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              ...submission,
+              turnstileToken,
+            }),
+          });
+          const responseBody = (await response
+            .json()
+            .catch(() => null)) as JoinApiResponse | null;
 
-        pendingSubmission = submission;
-        if (fallbackStatus) fallbackStatus.textContent = '';
-        if (resultPanel) {
-          resultPanel.hidden = false;
-          resultPanel.focus();
+          if (!response.ok || responseBody?.ok !== true) {
+            if (responseBody?.ok === false && responseBody.fields) {
+              Object.entries(responseBody.fields).forEach(([name, message]) => {
+                setError(name, message);
+              });
+            }
+            const unavailableMessage =
+              responseBody?.ok === false &&
+              responseBody.code === 'MAILING_LIST_UNAVAILABLE'
+                ? "We couldn't start the email subscription right now. Please try again."
+                : responseBody?.ok === false &&
+                    responseBody.code === 'SLACK_UNAVAILABLE'
+                  ? 'Slack access is temporarily unavailable. Please contact the VGZT organizers.'
+                  : responseBody?.ok === false && responseBody.message
+                    ? responseBody.message
+                    : 'The request could not be completed. Please try again.';
+            if (status) {
+              status.textContent = unavailableMessage;
+              status.focus();
+            }
+            resetTurnstile();
+            return;
+          }
+
+          renderResult(responseBody);
+        } catch {
+          if (status) {
+            status.textContent =
+              'The request could not be completed. Check your connection and try again.';
+            status.focus();
+          }
+          resetTurnstile();
+        } finally {
+          if (submit && !fieldsPanel?.hidden) submit.disabled = false;
         }
-        if (flow.newsletter?.state === 'embedded') {
-          ensureNewsletterEmbed();
-        }
-        if (primarySubmit) primarySubmit.disabled = false;
       });
 
       form.addEventListener('input', (event) => {
         const target = event.target;
-        if (
-          !(target instanceof HTMLInputElement) &&
-          !(target instanceof HTMLSelectElement)
-        ) {
-          return;
+        if (!(target instanceof HTMLInputElement)) return;
+        target.removeAttribute('aria-invalid');
+        if (target.name === 'email') {
+          const error = form.querySelector<HTMLElement>('#join-email-error');
+          if (error) error.textContent = '';
         }
-        if (
-          target.name === 'cf-turnstile-response' ||
-          target.closest('[data-turnstile-container]')
-        ) {
-          return;
-        }
-        if (!pendingSubmission) return;
-        pendingSubmission = null;
-        turnstileToken = '';
-        if (resultPanel) resultPanel.hidden = true;
-        if (turnstileContainer) turnstileContainer.hidden = true;
-        if (fallbackStatus) fallbackStatus.textContent = '';
-        if (fallbackButton) fallbackButton.disabled = false;
-        getTurnstile()?.reset(turnstileWidgetId);
-      });
-
-      fallbackButton?.addEventListener('click', async () => {
-        if (!pendingSubmission) return;
-        const flow = resolveSubscriptionFlow(
-          'manual-fallback',
-          {
-            joinSlack: pendingSubmission.joinSlack,
-            joinMailingList: pendingSubmission.joinMailingList,
-          },
-          links,
-        );
-        if (!flow.valid || !flow.notifyOrganizers) return;
-
-        if (!turnstileToken) {
-          if (turnstileContainer) turnstileContainer.hidden = false;
-          ensureTurnstile();
-          if (fallbackStatus)
-            fallbackStatus.textContent =
-              'Complete the anti-abuse check, then click the request button again.';
-          fallbackStatus?.focus();
-          return;
-        }
-
-        fallbackButton.disabled = true;
-        if (fallbackStatus) fallbackStatus.textContent = 'Sending…';
-
-        try {
-          const response = await fetch(form.dataset.endpoint || '', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              ...pendingSubmission,
-              turnstileToken,
-            }),
-          });
-          const responseBody = (await response.json().catch(() => ({}))) as {
-            message?: string;
-          };
-          if (!response.ok) {
-            throw new Error(
-              responseBody.message || 'Request could not be sent.',
-            );
-          }
-
-          if (fallbackStatus)
-            fallbackStatus.textContent =
-              'Thanks — your request has been sent to the VGZT organizers.';
-          turnstileToken = '';
-          getTurnstile()?.reset(turnstileWidgetId);
-        } catch (error) {
-          if (fallbackStatus) {
-            fallbackStatus.textContent =
-              error instanceof Error
-                ? error.message
-                : 'Request could not be sent. Try again.';
-          }
-          fallbackStatus?.focus();
-          turnstileToken = '';
-          getTurnstile()?.reset(turnstileWidgetId);
-          fallbackButton.disabled = false;
+        if (target.name === 'joinMailingList' || target.name === 'joinSlack') {
+          const choices = form.querySelector<HTMLElement>(
+            '.join-form__choices',
+          );
+          choices?.removeAttribute('aria-invalid');
+          const error = form.querySelector<HTMLElement>('#join-services-error');
+          if (error) error.textContent = '';
         }
       });
+
+      if (turnstileContainer) initializeTurnstile();
     });
 </script>

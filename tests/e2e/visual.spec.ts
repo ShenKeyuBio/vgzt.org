@@ -1,5 +1,10 @@
 import { expect, test, type Page } from '@playwright/test';
-import { eventRoute, stabilizePage, waitForStableLayout } from './helpers';
+import {
+  eventRoute,
+  mockJoinFlow,
+  stabilizePage,
+  waitForStableLayout,
+} from './helpers';
 
 async function openStable(page: Page, route: string) {
   await stabilizePage(page, true);
@@ -27,15 +32,11 @@ async function openStable(page: Page, route: string) {
   await waitForStableLayout(page);
 }
 
-async function fillSubscribeGate(page: Page) {
+async function fillSubscribeForm(page: Page) {
   const form = page.locator('[data-join-form]');
-  await form.locator('#join-slack').check();
-  await form.locator('#join-name').fill('Test Researcher');
-  await form.locator('#join-organization').fill('Test Institute');
-  await form.locator('#join-career-stage').selectOption({ index: 1 });
   await form.locator('#join-email').fill('test@example.org');
-  await form.locator('#join-slack-email').fill('slack@example.org');
-  await form.locator('#join-privacy').check();
+  await form.locator('#join-mailing-list').check();
+  await form.locator('#join-slack').check();
   await form.locator('[data-join-submit]').click();
   return form;
 }
@@ -103,23 +104,27 @@ test('people-mobile-filtered', async ({ page }, testInfo) => {
   });
 });
 
-test('subscribe-desktop-gated-primary', async ({ page }, testInfo) => {
+test('subscribe-desktop-both-success', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'desktop-1440');
+  await mockJoinFlow(page);
   await openStable(page, '/subscribe/');
-  const form = await fillSubscribeGate(page);
+  const form = await fillSubscribeForm(page);
   const result = form.locator('[data-subscription-result]');
   await result.scrollIntoViewIfNeeded();
-  await expect(result).toHaveScreenshot('subscribe-desktop-gated-primary.png');
+  await expect(result).toHaveScreenshot('subscribe-desktop-both-success.png');
 });
 
-test('subscribe-mobile-manual-fallback', async ({ page }, testInfo) => {
+test('subscribe-mobile-primary-form', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'mobile-390');
+  await mockJoinFlow(page);
   await openStable(page, '/subscribe/');
-  const form = await fillSubscribeGate(page);
-  await form.locator('[data-manual-fallback]').click();
-  const result = form.locator('[data-subscription-result]');
-  await result.scrollIntoViewIfNeeded();
-  await expect(result).toHaveScreenshot('subscribe-mobile-manual-fallback.png');
+  const form = page.locator('[data-join-form]');
+  await form.locator('#join-email').focus();
+  await expect(
+    page.locator('[data-persistent-mobile-actions]'),
+  ).toHaveAttribute('data-form-focus', 'true');
+  await form.scrollIntoViewIfNeeded();
+  await expect(form).toHaveScreenshot('subscribe-mobile-primary-form.png');
 });
 
 test('contact-mobile-error', async ({ page }, testInfo) => {

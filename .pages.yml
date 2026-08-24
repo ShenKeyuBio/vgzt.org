@@ -172,22 +172,6 @@ content:
         operations:
           delete: false
         fields:
-          - name: newsletterUrl
-            label: Newsletter subscription URL
-            component: nullable_https_url
-            description: 'Optional direct subscription URL. Leave empty while the EmailOctopus embed is used.'
-          - name: newsletterEmbedScriptUrl
-            label: Newsletter embed script URL
-            component: nullable_https_url
-            description: 'EmailOctopus embed script loaded only when a visitor selects the mailing list on the Subscribe page.'
-          - name: newsletterFormId
-            label: Newsletter form ID
-            type: string
-            description: 'Provider form identifier used by the EmailOctopus embed.'
-          - name: slackInviteUrl
-            label: VGZT Slack invitation URL
-            component: nullable_https_url
-            description: 'Canonical invite used by the Subscribe page and footer.'
           - name: linkedinUrl
             label: LinkedIn URL
             component: nullable_https_url

@@ -3,6 +3,7 @@ import { expect, test, type Page } from '@playwright/test';
 import {
   eventRoute,
   htmlRoutes,
+  mockJoinFlow,
   stabilizePage,
   waitForStableLayout,
 } from './helpers';
@@ -71,23 +72,19 @@ test.describe('expanded and error states', () => {
     await expectNoSeriousAxeViolations(page);
   });
 
-  test('Subscribe gated result and fallback error state', async ({
+  test('Subscribe primary form and combined result state', async ({
     page,
   }, testInfo) => {
     test.skip(testInfo.project.name !== 'desktop-1440');
+    await mockJoinFlow(page);
     await stabilizePage(page);
     await page.goto('/subscribe/');
     const form = page.locator('[data-join-form]');
-    await form.locator('#join-slack').check();
-    await form.locator('#join-name').fill('Test Researcher');
-    await form.locator('#join-organization').fill('Test Institute');
-    await form.locator('#join-career-stage').selectOption({ index: 1 });
     await form.locator('#join-email').fill('test@example.org');
-    await form.locator('#join-slack-email').fill('slack@example.org');
-    await form.locator('#join-privacy').check();
-    await form.locator('[data-join-submit]').click();
+    await form.locator('#join-mailing-list').check();
+    await form.locator('#join-slack').check();
     await expectNoSeriousAxeViolations(page);
-    await form.locator('[data-manual-fallback]').click();
+    await form.locator('[data-join-submit]').click();
     await expectNoSeriousAxeViolations(page);
   });
 

@@ -1,6 +1,9 @@
 # Copy this file to .dev.vars and replace the value locally.
 # Never commit .dev.vars or a production secret.
 TURNSTILE_SECRET="replace-with-a-development-turnstile-secret"
+CONTACT_TO="organizers@example.test"
+EMAILOCTOPUS_API_KEY="test-emailoctopus-key"
+SLACK_INVITE_URL="https://join.slack.com/t/example/shared_invite/test"
 
 # Optional. Omit this key entirely to disable Slack notifications.
 SLACK_WEBHOOK_URL="https://hooks.slack.com/services/EXAMPLE/EXAMPLE/EXAMPLE"
