@@ -3,6 +3,7 @@ import { stabilizePage } from './helpers';
 
 const abstractFormUrl =
   'https://forms.cloud.microsoft/Pages/ResponsePage.aspx?id=B3jtTq3rWkGnqZFwlH9OrscM_7z6UFVOiVCj04ix33hURVdFWDhBUUJPNzY3MUxWRVRBUzRHTU9QVi4u&embed=true';
+const abstractFallbackUrl = 'https://forms.cloud.microsoft/e/T5xbTx7YEP';
 const slackInviteUrl =
   'https://join.slack.com/t/gastrulationseminars/shared_invite/zt-3ygitwchd-AD29YjXgMZ7Md~RpDggsww';
 
@@ -23,7 +24,7 @@ test('printed Abstract URL contract remains exact', async ({ page }) => {
   );
   await expect(page.locator('#submit a[target="_blank"]')).toHaveAttribute(
     'href',
-    abstractFormUrl,
+    abstractFallbackUrl,
   );
 });
 
