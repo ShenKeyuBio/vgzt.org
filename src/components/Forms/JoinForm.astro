@@ -31,6 +31,34 @@ const formEnabled = Boolean(endpoint && turnstileSiteKey);
     >
       <div class="join-form__fields" data-join-fields>
         <div class="field">
+          <label for="join-name">Full name</label>
+          <input
+            id="join-name"
+            name="name"
+            type="text"
+            autocomplete="name"
+            placeholder="e.g. Keyu Shen"
+            required
+            maxlength="100"
+          />
+          <span class="field__error" id="join-name-error"></span>
+        </div>
+
+        <div class="field">
+          <label for="join-affiliation">Affiliation</label>
+          <input
+            id="join-affiliation"
+            name="affiliation"
+            type="text"
+            autocomplete="organization"
+            placeholder="University, institute, company, or Independent"
+            required
+            maxlength="160"
+          />
+          <span class="field__error" id="join-affiliation-error"></span>
+        </div>
+
+        <div class="field">
           <label for="join-email">Email</label>
           <input
             id="join-email"
@@ -137,8 +165,8 @@ const formEnabled = Boolean(endpoint && turnstileSiteKey);
         </div>
 
         <p class="join-form__privacy">
-          By continuing, VGZT will use your email only for the service(s) you
-          choose. <a href="/privacy/"
+          By continuing, VGZT will use these details only to provide the
+          service(s) you choose. <a href="/privacy/"
             >Privacy notice <span aria-hidden="true">→</span></a
           >
         </p>
@@ -736,6 +764,8 @@ const formEnabled = Boolean(endpoint && turnstileSiteKey);
       const readSelection = () => {
         const data = new FormData(form);
         return {
+          name: String(data.get('name') || '').trim(),
+          affiliation: String(data.get('affiliation') || '').trim(),
           email: String(data.get('email') || '').trim(),
           joinMailingList: data.get('joinMailingList') === 'true',
           joinSlack: data.get('joinSlack') === 'true',
@@ -752,6 +782,20 @@ const formEnabled = Boolean(endpoint && turnstileSiteKey);
         const submission = readSelection();
         let invalid = false;
 
+        if (
+          Array.from(submission.name).length === 0 ||
+          Array.from(submission.name).length > 100
+        ) {
+          setError('name', 'Enter your full name.');
+          invalid = true;
+        }
+        if (
+          Array.from(submission.affiliation).length === 0 ||
+          Array.from(submission.affiliation).length > 160
+        ) {
+          setError('affiliation', 'Enter your affiliation.');
+          invalid = true;
+        }
         if (
           !/^\S+@\S+\.\S+$/u.test(submission.email) ||
           submission.email.length > 254
@@ -840,8 +884,14 @@ const formEnabled = Boolean(endpoint && turnstileSiteKey);
         const target = event.target;
         if (!(target instanceof HTMLInputElement)) return;
         target.removeAttribute('aria-invalid');
-        if (target.name === 'email') {
-          const error = form.querySelector<HTMLElement>('#join-email-error');
+        if (
+          target.name === 'name' ||
+          target.name === 'affiliation' ||
+          target.name === 'email'
+        ) {
+          const error = form.querySelector<HTMLElement>(
+            `#join-${target.name}-error`,
+          );
           if (error) error.textContent = '';
         }
         if (target.name === 'joinMailingList' || target.name === 'joinSlack') {

@@ -80,6 +80,8 @@ test.describe('expanded and error states', () => {
     await stabilizePage(page);
     await page.goto('/subscribe/');
     const form = page.locator('[data-join-form]');
+    await form.locator('#join-name').fill('Test Person');
+    await form.locator('#join-affiliation').fill('Test Institute');
     await form.locator('#join-email').fill('test@example.org');
     await form.locator('#join-mailing-list').check();
     await form.locator('#join-slack').check();

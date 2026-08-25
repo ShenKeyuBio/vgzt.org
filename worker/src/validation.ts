@@ -17,6 +17,8 @@ const CONTACT_EXPECTED_KEYS = new Set([
 ]);
 
 const JOIN_EXPECTED_KEYS = new Set([
+  'name',
+  'affiliation',
   'email',
   'joinSlack',
   'joinMailingList',
@@ -192,6 +194,16 @@ export function validateJoinPayload(value: unknown): JoinValidationResult {
     fields.form = 'The form contains unsupported fields.';
   }
 
+  const name = validateSingleLine(value.name, 100);
+  if (name === null) {
+    fields.name = 'Enter your full name.';
+  }
+
+  const affiliation = validateSingleLine(value.affiliation, 160);
+  if (affiliation === null) {
+    fields.affiliation = 'Enter your affiliation.';
+  }
+
   const email = validateEmail(value.email);
   if (email === null) {
     fields.email = 'Enter a valid email address.';
@@ -223,6 +235,8 @@ export function validateJoinPayload(value: unknown): JoinValidationResult {
 
   if (
     Object.keys(fields).length > 0 ||
+    name === null ||
+    affiliation === null ||
     email === null ||
     joinSlack === null ||
     joinMailingList === null
@@ -233,6 +247,8 @@ export function validateJoinPayload(value: unknown): JoinValidationResult {
   return {
     ok: true,
     value: {
+      name,
+      affiliation,
       email,
       joinSlack,
       joinMailingList,

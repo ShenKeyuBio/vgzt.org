@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { MAX_CONTACT_BODY_BYTES } from '../src/body';
 import type { ContactSubmission } from '../src/contact';
+import type { EmailOctopusContactInput } from '../src/emailoctopus';
 import {
   handleContactRequest,
   type ContactExecutionContext,
@@ -32,6 +33,8 @@ function validJoinPayload(
   overrides: Readonly<Record<string, unknown>> = {},
 ): Record<string, unknown> {
   return {
+    name: 'Jane Smith',
+    affiliation: 'Example Institute',
     email: 'jane@example.com',
     joinSlack: true,
     joinMailingList: true,
@@ -62,7 +65,7 @@ interface Harness {
   dependencies: ContactHandlerDependencies;
   context: ContactExecutionContext;
   emails: ContactSubmission[];
-  mailingListEmails: string[];
+  mailingListInputs: EmailOctopusContactInput[];
   logs: ContactLogEvent[];
   pending: Promise<unknown>[];
   calls: {
@@ -78,7 +81,7 @@ function createHarness(
   overrides: Partial<ContactHandlerDependencies> = {},
 ): Harness {
   const emails: ContactSubmission[] = [];
-  const mailingListEmails: string[] = [];
+  const mailingListInputs: EmailOctopusContactInput[] = [];
   const logs: ContactLogEvent[] = [];
   const pending: Promise<unknown>[] = [];
   const calls = {
@@ -106,9 +109,9 @@ function createHarness(
     sendEmail: async (submission) => {
       emails.push(submission);
     },
-    subscribeToMailingList: async (email) => {
+    subscribeToMailingList: async (input) => {
       calls.mailingList += 1;
-      mailingListEmails.push(email);
+      mailingListInputs.push(input);
       return { state: 'confirmation-required' };
     },
     slackInviteUrl: 'https://join.slack.com/t/example/shared_invite/test',
@@ -124,7 +127,7 @@ function createHarness(
     dependencies,
     context,
     emails,
-    mailingListEmails,
+    mailingListInputs,
     logs,
     pending,
     calls,
@@ -345,7 +348,13 @@ describe('contact handler abuse and delivery flow', () => {
 
     expect(response.status).toBe(200);
     expect(verifiedAction).toBe('vgzt_join');
-    expect(harness.mailingListEmails).toEqual(['jane@example.com']);
+    expect(harness.mailingListInputs).toEqual([
+      {
+        email: 'jane@example.com',
+        name: 'Jane Smith',
+        affiliation: 'Example Institute',
+      },
+    ]);
     expect(body.mailingList).toEqual({
       requested: true,
       state: 'confirmation-required',

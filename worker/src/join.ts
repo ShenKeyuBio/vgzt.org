@@ -1,4 +1,6 @@
 export interface JoinSubmission {
+  name: string;
+  affiliation: string;
   email: string;
   joinSlack: boolean;
   joinMailingList: boolean;

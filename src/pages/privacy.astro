@@ -45,22 +45,22 @@ const social = getSocialSettings();
         it is designed not to log message content or email addresses.
       </p>
 
-      <h2>Subscription form and manual requests</h2>
+      <h2>Subscription form</h2>
       <p>
-        The primary subscription flow keeps your entries in your browser and
-        only shows the relevant external signup options. If you explicitly send
-        a manual request, VGZT processes your name, organization, career stage,
-        contact email, selected services, and any Slack-linked email you
-        provide. That request is sent to the organizer email and designated
-        organizer Slack channel. Cloudflare Turnstile supplies anti-abuse
-        verification for this manual pathway.
+        If you use the subscription form, VGZT processes your full name,
+        affiliation, email address, and selected services. Cloudflare Turnstile
+        supplies anti-abuse verification. The subscription service may retain
+        operational logs containing a request identifier and outcome, but it is
+        designed not to log your submitted details.
       </p>
 
       <h2>Email and community services</h2>
       <p>
-        Following an external email-subscription, Slack, or social link takes
-        you to that service, whose own privacy terms apply. The site does not
-        silently embed those provider forms or tracking links.
+        If you select seminar email updates, VGZT sends these details to
+        EmailOctopus to provide the mailing-list service; its privacy terms
+        apply. If you select the VGZT Slack community, the site returns a
+        protected invitation after verification. The site does not embed
+        provider forms or tracking links.
       </p>
 
       <h2>Questions</h2>

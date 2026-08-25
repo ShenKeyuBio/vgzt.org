@@ -9,7 +9,10 @@ import {
   getAllowedOrigin,
   isValidPreflight,
 } from './cors';
-import type { EmailOctopusSubscribeResult } from './emailoctopus';
+import type {
+  EmailOctopusContactInput,
+  EmailOctopusSubscribeResult,
+} from './emailoctopus';
 import type { JoinSubmission } from './join';
 import {
   safeErrorCode,
@@ -58,7 +61,9 @@ export interface ContactHandlerDependencies {
     requestId: string,
     receivedAt: Date,
   ): Promise<void>;
-  subscribeToMailingList(email: string): Promise<EmailOctopusSubscribeResult>;
+  subscribeToMailingList(
+    input: EmailOctopusContactInput,
+  ): Promise<EmailOctopusSubscribeResult>;
   slackInviteUrl: string | null;
   sendSlack?(submission: ContactSubmission, requestId: string): Promise<void>;
   log: ContactLogger;
@@ -388,7 +393,11 @@ export async function handleFormRequest(
         let result: EmailOctopusSubscribeResult;
         try {
           result = await dependencies.subscribeToMailingList(
-            submission.value.email,
+            {
+              email: submission.value.email,
+              name: submission.value.name,
+              affiliation: submission.value.affiliation,
+            },
           );
         } catch {
           result = { state: 'temporarily-unavailable' };

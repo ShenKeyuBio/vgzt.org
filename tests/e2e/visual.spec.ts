@@ -34,6 +34,8 @@ async function openStable(page: Page, route: string) {
 
 async function fillSubscribeForm(page: Page) {
   const form = page.locator('[data-join-form]');
+  await form.locator('#join-name').fill('Test Person');
+  await form.locator('#join-affiliation').fill('Test Institute');
   await form.locator('#join-email').fill('test@example.org');
   await form.locator('#join-mailing-list').check();
   await form.locator('#join-slack').check();

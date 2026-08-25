@@ -25,6 +25,8 @@ function validJoinPayload(
   overrides: Readonly<Record<string, unknown>> = {},
 ): Record<string, unknown> {
   return {
+    name: 'Jane Smith',
+    affiliation: 'Example Institute',
     email: 'jane@example.com',
     joinSlack: true,
     joinMailingList: true,
@@ -127,18 +129,56 @@ describe('contact payload validation', () => {
 });
 
 describe('join payload validation', () => {
-  it('accepts and normalizes the one-email request contract', () => {
+  it('accepts and normalizes Unicode identity details with the one-email request contract', () => {
     const result = validateJoinPayload(
       validJoinPayload({
+        name: '  Jose\u0301 李  ',
+        affiliation: '  Institut für Entwicklungsbiologie  ',
         email: '  researcher@tsinghua.edu.cn  ',
       }),
     );
 
     expect(result.ok).toBe(true);
     if (result.ok) {
+      expect(result.value.name).toBe('José 李');
+      expect(result.value.affiliation).toBe(
+        'Institut für Entwicklungsbiologie',
+      );
       expect(result.value.email).toBe('researcher@tsinghua.edu.cn');
       expect(result.value.joinSlack).toBe(true);
       expect(result.value.joinMailingList).toBe(true);
+    }
+  });
+
+  it('requires a non-empty full name of at most 100 Unicode code points', () => {
+    const missing = validateJoinPayload(validJoinPayload({ name: undefined }));
+    const whitespace = validateJoinPayload(validJoinPayload({ name: '   ' }));
+    const overLimit = validateJoinPayload(
+      validJoinPayload({ name: '𝒜'.repeat(101) }),
+    );
+
+    for (const result of [missing, whitespace, overLimit]) {
+      expect(result.ok).toBe(false);
+      if (!result.ok) expect(result.fields.name).toBe('Enter your full name.');
+    }
+  });
+
+  it('requires a non-empty affiliation of at most 160 Unicode code points', () => {
+    const missing = validateJoinPayload(
+      validJoinPayload({ affiliation: undefined }),
+    );
+    const whitespace = validateJoinPayload(
+      validJoinPayload({ affiliation: '   ' }),
+    );
+    const overLimit = validateJoinPayload(
+      validJoinPayload({ affiliation: '学'.repeat(161) }),
+    );
+
+    for (const result of [missing, whitespace, overLimit]) {
+      expect(result.ok).toBe(false);
+      if (!result.ok) {
+        expect(result.fields.affiliation).toBe('Enter your affiliation.');
+      }
     }
   });
 

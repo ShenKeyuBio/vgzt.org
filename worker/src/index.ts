@@ -54,8 +54,8 @@ function createDependencies(env: Env): ContactHandlerDependencies {
         requestId,
         receivedAt,
       }),
-    subscribeToMailingList: async (email) =>
-      subscribeToEmailOctopus(email, {
+    subscribeToMailingList: async (input) =>
+      subscribeToEmailOctopus(input, {
         apiKey: env.EMAILOCTOPUS_API_KEY,
         listId: env.EMAILOCTOPUS_LIST_ID,
       }),

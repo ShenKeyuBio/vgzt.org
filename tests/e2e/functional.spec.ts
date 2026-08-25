@@ -390,7 +390,7 @@ test.describe('abstract, people and forms', () => {
     await expect(page.locator('[data-people-search]')).toHaveValue('keyu');
   });
 
-  test('Subscribe sends one email, two choices and one Turnstile token', async ({
+  test('Subscribe sends identity details, one email, two choices and one Turnstile token', async ({
     page,
   }) => {
     await mockJoinFlow(page);
@@ -404,16 +404,21 @@ test.describe('abstract, people and forms', () => {
     await expect(form.locator('#join-mailing-list')).not.toBeChecked();
     await expect(form.locator('#join-slack')).not.toBeChecked();
     await expect(form.locator('[data-turnstile-mock]')).toHaveCount(1);
-    await expect(form.locator('#join-name')).toHaveCount(0);
+    await expect(form.locator('#join-name')).toHaveCount(1);
+    await expect(form.locator('#join-affiliation')).toHaveCount(1);
     await expect(form.locator('#join-organization')).toHaveCount(0);
     await expect(form.locator('#join-career-stage')).toHaveCount(0);
     await expect(form.locator('#join-slack-email')).toHaveCount(0);
     await expect(form.locator('#join-privacy')).toHaveCount(0);
 
     await submit.click();
+    await expect(form.locator('#join-name-error')).not.toBeEmpty();
+    await expect(form.locator('#join-affiliation-error')).not.toBeEmpty();
     await expect(form.locator('#join-services-error')).not.toBeEmpty();
     await expect(form.locator('[data-subscription-result]')).toBeHidden();
 
+    await form.locator('#join-name').fill('Test Person');
+    await form.locator('#join-affiliation').fill('Test Institute');
     await form.locator('#join-email').fill('test@example.org');
     await form.locator('#join-mailing-list').check();
     await form.locator('#join-slack').check();
@@ -428,6 +433,8 @@ test.describe('abstract, people and forms', () => {
       await page.evaluate(() => Reflect.get(window, '__joinRequests')),
     ).toEqual([
       {
+        name: 'Test Person',
+        affiliation: 'Test Institute',
         email: 'test@example.org',
         joinMailingList: true,
         joinSlack: true,
@@ -456,6 +463,8 @@ test.describe('abstract, people and forms', () => {
     await stabilizePage(page);
     await page.goto('/subscribe/');
     const form = page.locator('[data-join-form]');
+    await form.locator('#join-name').fill('Test Person');
+    await form.locator('#join-affiliation').fill('Test Institute');
     await form.locator('#join-email').fill('test@example.org');
     await form.locator('#join-mailing-list').check();
     await form.locator('[data-join-submit]').click();

@@ -6,13 +6,19 @@ export interface EmailOctopusConfig {
   timeoutMs?: number;
 }
 
+export interface EmailOctopusContactInput {
+  email: string;
+  name: string;
+  affiliation: string;
+}
+
 export type EmailOctopusSubscribeResult =
   | { state: 'confirmation-required' }
   | { state: 'already-known' }
   | { state: 'temporarily-unavailable' };
 
 export async function subscribeToEmailOctopus(
-  email: string,
+  input: EmailOctopusContactInput,
   config: EmailOctopusConfig,
   fetcher: typeof fetch = fetch,
 ): Promise<EmailOctopusSubscribeResult> {
@@ -32,7 +38,13 @@ export async function subscribeToEmailOctopus(
           authorization: `Bearer ${config.apiKey}`,
           'content-type': 'application/json',
         },
-        body: JSON.stringify({ email_address: email }),
+        body: JSON.stringify({
+          email_address: input.email,
+          fields: {
+            FullName: input.name,
+            Affiliation: input.affiliation,
+          },
+        }),
         signal: controller.signal,
       },
     );

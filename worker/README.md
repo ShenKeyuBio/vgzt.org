@@ -24,10 +24,13 @@ at 32 KiB. The frontend sends:
 }
 ```
 
-`POST /join` sends one email and the selected services:
+`POST /join` sends the visitor's full name, affiliation, one email, and the
+selected services:
 
 ```json
 {
+  "name": "Jane Smith",
+  "affiliation": "Example Institute",
   "email": "jane@example.com",
   "joinSlack": true,
   "joinMailingList": true,

@@ -18,7 +18,11 @@ describe('EmailOctopus subscription', () => {
     };
 
     const result = await subscribeToEmailOctopus(
-      'researcher@example.com',
+      {
+        email: 'researcher@example.com',
+        name: 'Test Person',
+        affiliation: 'Test Institute',
+      },
       config,
       fetcher,
     );
@@ -35,12 +39,20 @@ describe('EmailOctopus subscription', () => {
     });
     expect(JSON.parse(String(requestInit?.body))).toEqual({
       email_address: 'researcher@example.com',
+      fields: {
+        FullName: 'Test Person',
+        Affiliation: 'Test Institute',
+      },
     });
   });
 
   it('maps an existing contact to a safe state', async () => {
     const result = await subscribeToEmailOctopus(
-      'known@example.com',
+      {
+        email: 'known@example.com',
+        name: 'Known Person',
+        affiliation: 'Known Institute',
+      },
       config,
       async () => new Response(null, { status: 409 }),
     );
@@ -50,13 +62,21 @@ describe('EmailOctopus subscription', () => {
 
   it('maps upstream and network failures without exposing response content', async () => {
     const upstreamResult = await subscribeToEmailOctopus(
-      'researcher@example.com',
+      {
+        email: 'researcher@example.com',
+        name: 'Test Person',
+        affiliation: 'Test Institute',
+      },
       config,
       async () =>
         new Response('private upstream contact data', { status: 503 }),
     );
     const networkResult = await subscribeToEmailOctopus(
-      'researcher@example.com',
+      {
+        email: 'researcher@example.com',
+        name: 'Test Person',
+        affiliation: 'Test Institute',
+      },
       config,
       async () => {
         throw new Error('private network details');
