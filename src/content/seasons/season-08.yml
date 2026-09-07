@@ -14,13 +14,6 @@ organizers:
   - keyu-shen
 speakerPreview:
   enabled: true
-  disclaimer: >-
-    The researchers below are expected to take part in VGZT Season 8. Their
-    participation is not yet a fully confirmed programme commitment: dates and
-    times are still being arranged, individual availability may change, and
-    additional speakers will be added as Season 8 develops. Confirmed speakers
-    and dates will appear in the programme as scheduling is finalized. Listed
-    alphabetically.
   speakers:
     - name: Alejandro Aguilera-Castrejon
       affiliation: HHMI Janelia Research Campus
@@ -94,7 +87,7 @@ awards:
   earlyCareerTalk:
     enabled: true
     eyebrow: Season 8 recognition
-    title: Early-Career Talk Awards*
+    title: Early-Career Talk Awards
     intro: At the end of Season 8, VGZT will recognise two Early-Career Talk awardees.
     categories:
       - id: student-pre-doctoral
@@ -103,12 +96,11 @@ awards:
       - id: research-staff
         label: Research staff
         description: Postdoctoral researchers, lab technicians, lab scientists, fellows, and comparable early-career research staff.
-    sponsorNote: >-
-      *Final award names and prize details are subject to sponsorship.
+    sponsorNote: null
   attendance:
     enabled: true
     eyebrow: Season 8 community award
-    title: VGZT Enthusiast Award*
+    title: VGZT Enthusiast Award
     intro: >-
       We also want to recognise the people who keep showing up for the VGZT
       community. Based on recorded Season 8 attendance, the attendee with the
@@ -127,5 +119,4 @@ awards:
         label: Alternative
         description: An award may also be made if the Alternative slot runs often enough to support a meaningful and fair attendance comparison.
         conditional: true
-    sponsorNote: >-
-      *Final award name and prize details are subject to sponsorship.
+    sponsorNote: null

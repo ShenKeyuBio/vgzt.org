@@ -61,13 +61,13 @@ const {
           }
         </h2>
       </div>
-      <p>
-        {
-          events.length > 0
-            ? `Select a seminar to see its poster, speakers, and the correct date and time wherever you are. ${archive ? 'The full archive advances slowly until you interact.' : 'Published sessions appear as organizers confirm them.'}`
-            : 'The season rail remains visible while organizers arrange the first published sessions.'
-        }
-      </p>
+      {
+        events.length > 0 && (
+          <p>
+            {`Select a seminar to see its poster, speakers, and the correct date and time wherever you are. ${archive ? 'The full archive advances slowly until you interact.' : 'Published sessions appear as organizers confirm them.'}`}
+          </p>
+        )
+      }
     </div>
 
     {

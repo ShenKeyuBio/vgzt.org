@@ -5,11 +5,10 @@ interface PreviewSpeaker {
 }
 
 interface Props {
-  disclaimer: string;
   speakers: PreviewSpeaker[];
 }
 
-const { disclaimer, speakers } = Astro.props;
+const { speakers } = Astro.props;
 const orderedSpeakers = [...speakers].sort((a, b) =>
   a.name.localeCompare(b.name, 'en', { sensitivity: 'base' }),
 );
@@ -26,7 +25,6 @@ const orderedSpeakers = [...speakers].sort((a, b) =>
         <p class="eyebrow">Expected for Season 8</p>
         <h2 id="speaker-preview-title">Season 8 Speaker Preview</h2>
       </div>
-      <p class="speaker-preview__disclaimer">{disclaimer}</p>
     </div>
 
     <div class="speaker-preview__grid">
@@ -44,18 +42,12 @@ const orderedSpeakers = [...speakers].sort((a, b) =>
 
 <style>
   .speaker-preview__heading {
+    grid-template-columns: 1fr;
     align-items: start;
   }
 
   .speaker-preview__heading h2 {
     max-width: 12ch;
-  }
-
-  .speaker-preview__disclaimer {
-    max-width: 43rem;
-    font-size: clamp(1rem, 1.7vw, 1.2rem);
-    font-weight: 850;
-    line-height: 1.45;
   }
 
   .speaker-preview__grid {

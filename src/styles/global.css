@@ -452,13 +452,6 @@ main :where(section[id], [id]) {
   overflow-wrap: normal;
 }
 
-.hero__intro {
-  max-width: 34rem;
-  margin-bottom: 1.5rem;
-  font-size: clamp(1.05rem, 1.8vw, 1.35rem);
-  font-weight: 700;
-}
-
 .hero__mark {
   display: grid;
   justify-items: center;

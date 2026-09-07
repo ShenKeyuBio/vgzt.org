@@ -1,4 +1,6 @@
 ---
+import SponsorMark from '../SponsorMark.astro';
+
 interface AttendanceSlot {
   id: string;
   label: string;
@@ -54,6 +56,9 @@ const { award } = Astro.props;
         {award.sponsorNote && (
           <p class="enthusiast-award__sponsor">{award.sponsorNote}</p>
         )}
+        <div class="enthusiast-award__supporter">
+          <SponsorMark label="Season 8 award sponsor" />
+        </div>
       </div>
     </section>
   )
@@ -116,6 +121,12 @@ const { award } = Astro.props;
     margin: 1.25rem 0 0;
     font-size: 0.9rem;
     font-weight: 800;
+  }
+
+  .enthusiast-award__supporter {
+    display: flex;
+    margin-top: 1.25rem;
+    justify-content: flex-end;
   }
 
   @media (max-width: 48rem) {

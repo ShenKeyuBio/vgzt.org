@@ -140,8 +140,6 @@ const seasonDates = `${new Intl.DateTimeFormat('en-GB', { month: 'long', year: '
 const eastern = timeSlotsById.get('eastern');
 const western = timeSlotsById.get('western');
 const alternative = timeSlotsById.get('alternative');
-const pairedResearchSession = sessionTypesById.get('paired-research-session');
-const featuredSeminar = sessionTypesById.get('featured-seminar');
 const speakerPreview = currentSeason.data.speakerPreview;
 const enthusiastAward = currentSeason.data.awards?.attendance;
 ---
@@ -158,7 +156,6 @@ const enthusiastAward = currentSeason.data.awards?.attendance;
     seasonNumber={currentSeason.data.season}
     seasonLabel={currentSeason.data.label}
     seasonDates={seasonDates}
-    description="A global online seminar series for developmental biology—bringing emerging researchers and established investigators into one lively scientific room."
     abstractUrl={abstractState.ctaUrl}
     abstractLabel={abstractState.ctaLabel}
     abstractExternal={abstractState.external}
@@ -179,20 +176,13 @@ const enthusiastAward = currentSeason.data.awards?.attendance;
   />
   {
     speakerPreview?.enabled && speakerPreview.speakers.length > 0 ? (
-      <SpeakerPreview
-        disclaimer={speakerPreview.disclaimer}
-        speakers={speakerPreview.speakers}
-      />
+      <SpeakerPreview speakers={speakerPreview.speakers} />
     ) : null
   }
   <SeasonFormat
     easternTime={eastern?.time}
     westernTime={western?.time}
     alternativeTime={alternative?.time}
-    pairedResearchPresentation={pairedResearchSession?.presentationMinutesPerSpeaker}
-    pairedResearchQa={pairedResearchSession?.qaMinutesPerSpeaker}
-    featuredSeminarPresentation={featuredSeminar?.presentationMinutesPerSpeaker}
-    featuredSeminarQa={featuredSeminar?.qaMinutesPerSpeaker}
   />
   {
     enthusiastAward?.enabled ? (

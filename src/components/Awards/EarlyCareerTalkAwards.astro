@@ -1,4 +1,6 @@
 ---
+import SponsorMark from '../SponsorMark.astro';
+
 interface AwardCategory {
   id: string;
   label: string;
@@ -55,6 +57,9 @@ const { award, variant = 'full' } = Astro.props;
         {award.sponsorNote && (
           <p class="early-career-awards__sponsor">{award.sponsorNote}</p>
         )}
+        <div class="early-career-awards__supporter">
+          <SponsorMark label="Season 8 award sponsor" />
+        </div>
       </div>
     </section>
   )
@@ -127,6 +132,12 @@ const { award, variant = 'full' } = Astro.props;
     margin: 1.25rem 0 0;
     font-size: 0.9rem;
     font-weight: 800;
+  }
+
+  .early-career-awards__supporter {
+    display: flex;
+    margin-top: 1.25rem;
+    justify-content: flex-end;
   }
 
   @media (max-width: 42rem) {

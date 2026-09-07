@@ -39,7 +39,7 @@ export interface SpeakerPreviewPersonRecord {
 
 export interface SpeakerPreviewRecord {
   enabled: boolean;
-  disclaimer: string;
+  disclaimer?: string;
   speakers: SpeakerPreviewPersonRecord[];
 }
 
@@ -380,12 +380,14 @@ function validateSpeakerPreview(
       'Speaker preview enabled must be true or false.',
     );
   }
-  checkRequiredText(
-    issues,
-    `${source}:speakerPreview.disclaimer`,
-    value.disclaimer,
-    1_200,
-  );
+  if (value.disclaimer !== undefined) {
+    checkRequiredText(
+      issues,
+      `${source}:speakerPreview.disclaimer`,
+      value.disclaimer,
+      1_200,
+    );
+  }
   if (!Array.isArray(value.speakers)) {
     add(
       issues,

@@ -64,7 +64,7 @@ const nullableShortText = (maximum: number) =>
 const speakerPreview = z
   .object({
     enabled: z.boolean().default(true),
-    disclaimer: z.string().trim().min(1).max(1_200),
+    disclaimer: z.string().trim().min(1).max(1_200).optional(),
     speakers: z
       .array(
         z.object({

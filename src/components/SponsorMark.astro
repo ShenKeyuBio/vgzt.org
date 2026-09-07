@@ -1,0 +1,56 @@
+---
+interface Props {
+  label?: string;
+  variant?: 'default' | 'compact';
+}
+
+const { label = 'Season 8 sponsored by', variant = 'default' } = Astro.props;
+---
+
+<div class:list={['sponsor-mark', `sponsor-mark--${variant}`]}>
+  <span>{label}</span>
+  <img
+    src="/brand/the-node-logo.png"
+    alt="The Node"
+    width="1303"
+    height="658"
+    loading="eager"
+    decoding="async"
+  />
+</div>
+
+<style>
+  .sponsor-mark {
+    display: inline-grid;
+    width: max-content;
+    max-width: 100%;
+    padding: 0.75rem 0.9rem 0.85rem;
+    border: var(--keyline);
+    background: var(--vgzt-paper-strong);
+    color: var(--vgzt-ink);
+    gap: 0.4rem;
+    justify-items: start;
+  }
+
+  .sponsor-mark span {
+    font-size: 0.7rem;
+    font-weight: 950;
+    letter-spacing: 0.11em;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  .sponsor-mark img {
+    display: block;
+    width: clamp(8rem, 13vw, 10.5rem);
+    height: auto;
+  }
+
+  .sponsor-mark--compact {
+    padding: 0.6rem 0.72rem 0.66rem;
+  }
+
+  .sponsor-mark--compact img {
+    width: clamp(6.5rem, 10vw, 8.25rem);
+  }
+</style>

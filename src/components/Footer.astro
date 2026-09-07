@@ -3,6 +3,7 @@ import { Image } from 'astro:assets';
 import turingTexture from '../assets/brand/turing-historical-reference.png';
 import BrandMark from './BrandMark.astro';
 import SocialLinks from './SocialLinks.astro';
+import SponsorMark from './SponsorMark.astro';
 
 interface SocialItem {
   label: string;
@@ -46,6 +47,7 @@ const year = new Date().getUTCFullYear();
         </p>
       </div>
       <div class="site-footer__actions">
+        <SponsorMark variant="compact" />
         <div>
           <p class="eyebrow">Stay connected</p>
           <SocialLinks items={social} />

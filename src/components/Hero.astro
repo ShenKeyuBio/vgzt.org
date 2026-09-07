@@ -2,12 +2,12 @@
 import { Image } from 'astro:assets';
 import turingTexture from '../assets/brand/turing-historical-reference.png';
 import BrandMark from './BrandMark.astro';
+import SponsorMark from './SponsorMark.astro';
 
 interface Props {
   seasonNumber: number;
   seasonLabel: string;
   seasonDates: string;
-  description: string;
   abstractUrl?: string | null;
   abstractLabel?: string | null;
   abstractExternal?: boolean;
@@ -20,7 +20,6 @@ const {
   seasonNumber,
   seasonLabel,
   seasonDates,
-  description,
   abstractUrl = null,
   abstractLabel = null,
   abstractExternal = false,
@@ -51,7 +50,6 @@ const {
         <span class="hero__season-dates">{seasonDates}</span>
       </p>
       <h1 id="hero-title">Virtual<br />Gastrulation<br />Zoom Talks</h1>
-      <p class="hero__intro">{description}</p>
       <div class="button-row">
         {
           abstractUrl && abstractLabel ? (
@@ -67,6 +65,9 @@ const {
           ) : null
         }
         <a class="button" href="/subscribe/">Subscribe VGZT Talks</a>
+      </div>
+      <div class="hero__sponsor">
+        <SponsorMark />
       </div>
       {
         expectedSpeakerCount > 0 ? (
@@ -92,5 +93,9 @@ const {
     margin-top: 1rem;
     font-size: 0.9rem;
     font-weight: 850;
+  }
+
+  .hero__sponsor {
+    margin-top: 1.25rem;
   }
 </style>
