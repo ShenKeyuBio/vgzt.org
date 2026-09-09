@@ -56,7 +56,7 @@ test('home-desktop', async ({ page }, testInfo) => {
   await expect(page.locator('.schedule-empty')).toHaveCount(0);
 
   const layout = await grid.evaluate((element) => ({
-    columns: getComputedStyle(element).gridTemplateColumns.trim().split(/\\s+/),
+    columns: getComputedStyle(element).gridTemplateColumns.trim().split(' '),
     overflow: element.scrollWidth > element.clientWidth,
   }));
   expect(layout.columns).toHaveLength(3);
@@ -75,7 +75,7 @@ test('home-mobile', async ({ page }, testInfo) => {
   await expect(posters.nth(2)).toBeVisible();
 
   const layout = await grid.evaluate((element) => ({
-    columns: getComputedStyle(element).gridTemplateColumns.trim().split(/\\s+/),
+    columns: getComputedStyle(element).gridTemplateColumns.trim().split(' '),
     overflow: element.scrollWidth > element.clientWidth,
   }));
   expect(layout.columns).toHaveLength(1);
