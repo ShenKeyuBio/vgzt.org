@@ -47,12 +47,20 @@ test('home-desktop', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'desktop-1440');
   await openStable(page, '/');
 
-  const posters = page.locator('.programme-posters__grid img');
-  const grid = page.locator('.programme-posters__grid');
+  const programme2026 = page.locator('[data-programme-year="2026"]');
+  const programme2027 = page.locator('[data-programme-year="2027"]');
+  const posters = programme2026.locator('.programme-posters__grid img');
+  const grid = programme2026.locator('.programme-posters__grid');
   await expect(posters).toHaveCount(3);
   await expect(posters.nth(0)).toBeVisible();
   await expect(posters.nth(1)).toBeVisible();
   await expect(posters.nth(2)).toBeVisible();
+  await expect(programme2026).toContainText('2026 sessions');
+  await expect(programme2027).toContainText('2027 sessions');
+  await expect(programme2027.locator('img')).toHaveCount(0);
+  await expect(programme2027).toContainText(
+    '2027 session posters will appear here as dates are confirmed.',
+  );
   await expect(page.locator('.schedule-empty')).toHaveCount(0);
 
   const layout = await grid.evaluate((element) => ({
@@ -67,12 +75,17 @@ test('home-mobile', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'mobile-390');
   await openStable(page, '/');
 
-  const posters = page.locator('.programme-posters__grid img');
-  const grid = page.locator('.programme-posters__grid');
+  const programme2026 = page.locator('[data-programme-year="2026"]');
+  const programme2027 = page.locator('[data-programme-year="2027"]');
+  const posters = programme2026.locator('.programme-posters__grid img');
+  const grid = programme2026.locator('.programme-posters__grid');
   await expect(posters).toHaveCount(3);
   await expect(posters.nth(0)).toBeVisible();
   await expect(posters.nth(1)).toBeVisible();
   await expect(posters.nth(2)).toBeVisible();
+  await expect(programme2026).toContainText('September–December 2026');
+  await expect(programme2027).toContainText('January–July 2027');
+  await expect(programme2027.locator('img')).toHaveCount(0);
 
   const layout = await grid.evaluate((element) => ({
     columns: getComputedStyle(element).gridTemplateColumns.trim().split(' '),

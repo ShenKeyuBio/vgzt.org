@@ -81,36 +81,61 @@ const {
       events.length > 0 ? (
         <EventStage events={events} selectedId={selectedId} />
       ) : (
-        <div class="programme-posters" aria-label="Season 8 programme posters">
-          <p class="eyebrow programme-posters__label">
-            Season 8 programme overview
-          </p>
-          <div class="programme-posters__grid">
-            <img
-              src="/email-assets/season-08-lineup-september.jpg"
-              alt="VGZT Season 8 September 2026 speaker lineup"
-              width="1200"
-              height="675"
-              loading="eager"
-              decoding="async"
-            />
-            <img
-              src="/email-assets/season-08-lineup-october.jpg"
-              alt="VGZT Season 8 October 2026 speaker lineup"
-              width="1200"
-              height="675"
-              loading="lazy"
-              decoding="async"
-            />
-            <img
-              src="/email-assets/season-08-lineup-november-december.jpg"
-              alt="VGZT Season 8 November and December 2026 speaker lineup"
-              width="1200"
-              height="675"
-              loading="lazy"
-              decoding="async"
-            />
-          </div>
+        <div
+          class="programme-years"
+          aria-label={`${seasonLabel} programme by calendar year`}
+        >
+          <section class="programme-year" data-programme-year="2026">
+            <div class="programme-year__heading">
+              <div>
+                <p class="eyebrow">2026 sessions</p>
+                <h3>September–December 2026</h3>
+              </div>
+              <p>Published programme posters</p>
+            </div>
+            <div class="programme-posters__grid">
+              <img
+                src="/email-assets/season-08-lineup-september.jpg"
+                alt="VGZT Season 8 September 2026 speaker lineup"
+                width="1200"
+                height="675"
+                loading="eager"
+                decoding="async"
+              />
+              <img
+                src="/email-assets/season-08-lineup-october.jpg"
+                alt="VGZT Season 8 October 2026 speaker lineup"
+                width="1200"
+                height="675"
+                loading="lazy"
+                decoding="async"
+              />
+              <img
+                src="/email-assets/season-08-lineup-november-december.jpg"
+                alt="VGZT Season 8 November and December 2026 speaker lineup"
+                width="1200"
+                height="675"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+          </section>
+
+          <section
+            class="programme-year programme-year--pending"
+            data-programme-year="2027"
+          >
+            <div class="programme-year__heading">
+              <div>
+                <p class="eyebrow">2027 sessions</p>
+                <h3>January–July 2027</h3>
+              </div>
+              <p>Schedule in preparation</p>
+            </div>
+            <p class="programme-year__empty">
+              2027 session posters will appear here as dates are confirmed.
+            </p>
+          </section>
         </div>
       )
     }
@@ -126,15 +151,47 @@ const {
     margin-bottom: 1rem;
   }
 
-  .programme-posters {
+  .programme-years {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .programme-year {
     border: var(--keyline);
     background: var(--vgzt-paper-strong);
   }
 
-  .programme-posters__label {
-    margin: 0;
+  .programme-year__heading {
+    display: flex;
     padding: 0.85rem 1rem;
     border-bottom: var(--keyline);
+    align-items: end;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .programme-year__heading p,
+  .programme-year__heading h3 {
+    margin: 0;
+  }
+
+  .programme-year__heading h3 {
+    margin-top: 0.15rem;
+    font-size: clamp(1.35rem, 2.5vw, 2rem);
+  }
+
+  .programme-year__heading > p {
+    color: var(--vgzt-muted);
+    font-size: var(--font-ui-small);
+    font-weight: 900;
+    text-align: right;
+  }
+
+  .programme-year__empty {
+    margin: 0;
+    padding: clamp(1.25rem, 3vw, 2rem) 1rem;
+    color: var(--vgzt-muted);
+    font-weight: 800;
   }
 
   .programme-posters__grid {
@@ -153,6 +210,15 @@ const {
   }
 
   @media (max-width: 52rem) {
+    .programme-year__heading {
+      display: block;
+    }
+
+    .programme-year__heading > p {
+      margin-top: 0.45rem;
+      text-align: left;
+    }
+
     .programme-posters__grid {
       grid-template-columns: 1fr;
     }
