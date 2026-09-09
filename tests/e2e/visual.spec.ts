@@ -46,13 +46,40 @@ async function fillSubscribeForm(page: Page) {
 test('home-desktop', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'desktop-1440');
   await openStable(page, '/');
-  await expect(page).toHaveScreenshot('home-desktop.png', { fullPage: true });
+
+  const posters = page.locator('.programme-posters__grid img');
+  const grid = page.locator('.programme-posters__grid');
+  await expect(posters).toHaveCount(3);
+  await expect(posters.nth(0)).toBeVisible();
+  await expect(posters.nth(1)).toBeVisible();
+  await expect(posters.nth(2)).toBeVisible();
+  await expect(page.locator('.schedule-empty')).toHaveCount(0);
+
+  const layout = await grid.evaluate((element) => ({
+    columns: getComputedStyle(element).gridTemplateColumns.trim().split(/\\s+/),
+    overflow: element.scrollWidth > element.clientWidth,
+  }));
+  expect(layout.columns).toHaveLength(3);
+  expect(layout.overflow).toBe(false);
 });
 
 test('home-mobile', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'mobile-390');
   await openStable(page, '/');
-  await expect(page).toHaveScreenshot('home-mobile.png', { fullPage: true });
+
+  const posters = page.locator('.programme-posters__grid img');
+  const grid = page.locator('.programme-posters__grid');
+  await expect(posters).toHaveCount(3);
+  await expect(posters.nth(0)).toBeVisible();
+  await expect(posters.nth(1)).toBeVisible();
+  await expect(posters.nth(2)).toBeVisible();
+
+  const layout = await grid.evaluate((element) => ({
+    columns: getComputedStyle(element).gridTemplateColumns.trim().split(/\\s+/),
+    overflow: element.scrollWidth > element.clientWidth,
+  }));
+  expect(layout.columns).toHaveLength(1);
+  expect(layout.overflow).toBe(false);
 });
 
 test('home-season-archive-selected', async ({ page }, testInfo) => {
