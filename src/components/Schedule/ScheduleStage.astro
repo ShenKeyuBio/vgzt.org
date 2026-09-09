@@ -54,11 +54,7 @@ const {
       <div>
         <p class="eyebrow">{seasonLabel} {archive ? 'archive' : 'programme'}</p>
         <h2 id={`${sectionId}-title`}>
-          {
-            events.length > 0
-              ? 'The poster stage.'
-              : `${seasonLabel} programme.`
-          }
+          {events.length > 0 ? 'The poster stage.' : `${seasonLabel} programme.`}
         </h2>
       </div>
       {
@@ -86,34 +82,33 @@ const {
       events.length > 0 ? (
         <EventStage events={events} selectedId={selectedId} />
       ) : (
-        <div class="schedule-empty">
-          <div class="schedule-empty__copy">
-            <p class="eyebrow">Programme status</p>
-            <h3>{seasonLabel} programme scheduling is in progress.</h3>
-            <p>
-              Published seminar dates and posters will appear here as sessions
-              are confirmed.
-            </p>
-          </div>
-          <div class="schedule-empty__actions" aria-label="Programme actions">
-            <div class="button-row">
-              {hasSpeakerPreview && (
-                <a class="button button--ink" href="#speaker-preview">
-                  View expected speakers
-                </a>
-              )}
-              {abstractCtaUrl && abstractCtaLabel && (
-                <a class="button" href={abstractCtaUrl} data-submit-source>
-                  {abstractCtaLabel}
-                </a>
-              )}
-            </div>
-            <nav aria-label="More programme options">
-              {archiveUrl && archiveLabel && (
-                <a href={archiveUrl}>Explore full {archiveLabel} archive →</a>
-              )}
-              <a href="/subscribe/">Get programme updates →</a>
-            </nav>
+        <div class="programme-posters" aria-label="Season 8 programme posters">
+          <p class="eyebrow programme-posters__label">Season 8 programme overview</p>
+          <div class="programme-posters__grid">
+            <img
+              src="/email-assets/season-08-lineup-september.jpg"
+              alt="VGZT Season 8 September 2026 speaker lineup"
+              width="1200"
+              height="675"
+              loading="eager"
+              decoding="async"
+            />
+            <img
+              src="/email-assets/season-08-lineup-october.jpg"
+              alt="VGZT Season 8 October 2026 speaker lineup"
+              width="1200"
+              height="675"
+              loading="lazy"
+              decoding="async"
+            />
+            <img
+              src="/email-assets/season-08-lineup-november-december.jpg"
+              alt="VGZT Season 8 November and December 2026 speaker lineup"
+              width="1200"
+              height="675"
+              loading="lazy"
+              decoding="async"
+            />
           </div>
         </div>
       )
@@ -130,69 +125,40 @@ const {
     margin-bottom: 1rem;
   }
 
-  .schedule-empty {
-    display: grid;
+  .programme-posters {
     border: var(--keyline);
-    border-top: 0;
     background: var(--vgzt-paper-strong);
-    grid-template-columns: minmax(0, 1.35fr) minmax(18rem, 0.65fr);
   }
 
-  .schedule-empty__copy {
-    display: grid;
-    padding: clamp(1.5rem, 4vw, 3rem);
-    border-right: var(--keyline);
-    align-content: center;
-    justify-items: start;
-  }
-
-  .schedule-empty__copy h3 {
-    max-width: 18ch;
-    margin-bottom: 1rem;
-    font-size: clamp(2rem, 4vw, 3.6rem);
-  }
-
-  .schedule-empty__copy p:not(.eyebrow) {
-    margin-bottom: 0;
-    font-weight: 650;
-  }
-
-  .schedule-empty__actions {
-    display: grid;
-    padding: clamp(1.5rem, 3vw, 2.25rem);
-    background: var(--vgzt-pink);
-    gap: 1.25rem;
-    align-content: center;
-  }
-
-  .schedule-empty__actions .button-row {
-    align-items: stretch;
-  }
-
-  .schedule-empty__actions .button {
-    flex: 1 1 12rem;
-  }
-
-  .schedule-empty__actions nav {
-    display: grid;
-    border-top: var(--keyline);
-  }
-
-  .schedule-empty__actions nav a {
-    min-height: 2.9rem;
-    padding-block: 0.75rem;
+  .programme-posters__label {
+    margin: 0;
+    padding: 0.85rem 1rem;
     border-bottom: var(--keyline);
-    font-weight: 900;
+  }
+
+  .programme-posters__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .programme-posters__grid img {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .programme-posters__grid img + img {
+    border-left: var(--keyline);
   }
 
   @media (max-width: 52rem) {
-    .schedule-empty {
+    .programme-posters__grid {
       grid-template-columns: 1fr;
     }
 
-    .schedule-empty__copy {
-      border-right: 0;
-      border-bottom: var(--keyline);
+    .programme-posters__grid img + img {
+      border-top: var(--keyline);
+      border-left: 0;
     }
   }
 </style>
