@@ -1,0 +1,25 @@
+# Source: Directly supplied by VGZT organizers for the Season 8 opening session.
+id: season-08-2026-09-18
+season: season-08
+status: published
+date: '2026-09-18'
+time: '09:00'
+timezone: America/New_York
+durationMinutes: 60
+sessionType: paired-research-session
+timeSlot: custom
+speakers:
+  - person: shi-lei-xue
+    role: speaker
+    talkTitle: 'Mechanical principles in tissue morphogenesis'
+    affiliationOverride: 'Westlake University'
+  - person: riley-mcmahon
+    role: speaker
+    talkTitle: 'Evolutionary divergence of GATA6 function during mammalian pre-implantation development'
+    affiliationOverride: 'University of Cambridge'
+poster: ../../assets/posters/season-08/2026-09-18-xue-mcmahon.jpg
+posterAlt: 'VGZT Season 8 opening session poster for Shi-Lei Xue and Riley McMahon on 2026-09-18.'
+recordingUrl: null
+recordingLabel: null
+description: null
+featured: false

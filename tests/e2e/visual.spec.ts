@@ -47,27 +47,31 @@ test('home-desktop', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'desktop-1440');
   await openStable(page, '/');
 
-  const programme2026 = page.locator('[data-programme-year="2026"]');
-  const programme2027 = page.locator('[data-programme-year="2027"]');
-  const posters = programme2026.locator('.programme-posters__grid img');
-  const grid = programme2026.locator('.programme-posters__grid');
-  await expect(posters).toHaveCount(3);
-  await expect(posters.nth(0)).toBeVisible();
-  await expect(posters.nth(1)).toBeVisible();
-  await expect(posters.nth(2)).toBeVisible();
-  await expect(programme2026).toContainText('2026 sessions');
-  await expect(programme2027).toContainText('2027 sessions');
-  await expect(programme2027.locator('img')).toHaveCount(0);
-  await expect(programme2027).toContainText(
-    '2027 session posters will appear here as dates are confirmed.',
+  const eventPanel = page.locator('[data-event-panel="season-08-2026-09-18"]');
+  const eventTab = page.locator(
+    '[data-event-tab][data-event-id="season-08-2026-09-18"]',
+  );
+  await expect(eventTab).toBeVisible();
+  await expect(eventTab).toHaveAttribute('aria-selected', 'true');
+  await expect(eventPanel).toBeVisible();
+  await expect(eventPanel).toContainText('Shi-Lei Xue');
+  await expect(eventPanel).toContainText(
+    'Mechanical principles in tissue morphogenesis',
+  );
+  await expect(eventPanel).toContainText(
+    'Evolutionary divergence of GATA6 function during mammalian pre-implantation development',
+  );
+  await expect(eventPanel.locator('.poster-viewer__open img')).toHaveAttribute(
+    'alt',
+    /Shi-Lei Xue and Riley McMahon/,
   );
   await expect(page.locator('.schedule-empty')).toHaveCount(0);
 
-  const layout = await grid.evaluate((element) => ({
+  const layout = await eventPanel.evaluate((element) => ({
     columns: getComputedStyle(element).gridTemplateColumns.trim().split(' '),
     overflow: element.scrollWidth > element.clientWidth,
   }));
-  expect(layout.columns).toHaveLength(3);
+  expect(layout.columns).toHaveLength(2);
   expect(layout.overflow).toBe(false);
 });
 
@@ -75,19 +79,16 @@ test('home-mobile', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'mobile-390');
   await openStable(page, '/');
 
-  const programme2026 = page.locator('[data-programme-year="2026"]');
-  const programme2027 = page.locator('[data-programme-year="2027"]');
-  const posters = programme2026.locator('.programme-posters__grid img');
-  const grid = programme2026.locator('.programme-posters__grid');
-  await expect(posters).toHaveCount(3);
-  await expect(posters.nth(0)).toBeVisible();
-  await expect(posters.nth(1)).toBeVisible();
-  await expect(posters.nth(2)).toBeVisible();
-  await expect(programme2026).toContainText('September–December 2026');
-  await expect(programme2027).toContainText('January–July 2027');
-  await expect(programme2027.locator('img')).toHaveCount(0);
+  const eventPanel = page.locator('[data-event-panel="season-08-2026-09-18"]');
+  await expect(
+    page.locator('[data-event-tab][data-event-id="season-08-2026-09-18"]'),
+  ).toBeVisible();
+  await expect(eventPanel).toBeVisible();
+  await expect(eventPanel).toContainText('9:00');
+  await expect(eventPanel).toContainText('University of Cambridge');
+  await expect(eventPanel.locator('.poster-viewer__open img')).toBeVisible();
 
-  const layout = await grid.evaluate((element) => ({
+  const layout = await eventPanel.evaluate((element) => ({
     columns: getComputedStyle(element).gridTemplateColumns.trim().split(' '),
     overflow: element.scrollWidth > element.clientWidth,
   }));
