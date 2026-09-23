@@ -1,6 +1,7 @@
 import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
+import { accessError } from './lib/calendar';
 
 const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const wallTimePattern = /^(?:[01]\d|2[0-3]):[0-5]\d$/;
@@ -326,6 +327,18 @@ const events = defineCollection({
           .nullable()
           .default(null),
         posterAlt: nullableShortText(300),
+        access: z
+          .object({
+            url: z.string(),
+            meetingId: z.string(),
+            passcode: z.string(),
+          })
+          .refine(
+            (value) => accessError(value) === null,
+            'Supply matching Zoom URL, meeting ID and passcode.',
+          )
+          .nullable()
+          .default(null),
         recordingUrl: nullableHttpsUrl,
         recordingLabel: nullableShortText(100),
         description: nullableShortText(2_000),

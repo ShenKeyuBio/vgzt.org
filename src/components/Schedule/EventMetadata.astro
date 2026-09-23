@@ -88,10 +88,26 @@ const easternTimeLabel = new Intl.DateTimeFormat('en-GB', {
     >
   </div>
 
-  <p class="event-metadata__access">
-    Zoom access is shared with VGZT subscribers and community members.
-    <a href="/subscribe/">Get seminar access</a>
-  </p>
+  {
+    event.access ? (
+      <p class="event-metadata__access">
+        <>
+          <a href={event.access.url} target="_blank" rel="noopener noreferrer">
+            Join Zoom
+          </a>
+          <br />
+        </>
+        Meeting ID: {event.access.meetingId}
+        <br />
+        Passcode: {event.access.passcode}
+      </p>
+    ) : (
+      <p class="event-metadata__access">
+        Zoom access is shared with VGZT subscribers and community members.
+        <a href="/subscribe/">Get seminar access</a>
+      </p>
+    )
+  }
 </div>
 
 <style>

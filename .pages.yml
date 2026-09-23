@@ -713,6 +713,24 @@ content:
             label: Public recording URL
             component: nullable_https_url
             description: 'Optional approved public recording only. Never enter subscriber-only or Zoom access details.'
+          - name: access
+            label: Organizer-approved public Zoom access
+            type: object
+            default: null
+            description: 'Only publish access explicitly approved by the organizer. Supply all three fields for this event; never copy credentials from a previous session. Clear the entire object when access is not public.'
+            fields:
+              - name: url
+                label: Full Zoom URL
+                type: string
+                required: true
+              - name: meetingId
+                label: Meeting ID
+                type: string
+                required: true
+              - name: passcode
+                label: Passcode
+                type: string
+                required: true
           - name: recordingLabel
             label: Recording link label
             type: string

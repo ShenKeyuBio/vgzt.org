@@ -1,3 +1,5 @@
+import { accessError, type SessionAccess } from './calendar.ts';
+
 const ID_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const TIME_PATTERN = /^(?:[01]\d|2[0-3]):[0-5]\d$/;
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -100,6 +102,7 @@ export interface EventRecord extends SourcedRecord {
   poster: string | null;
   posterAlt: string | null;
   recordingUrl: string | null;
+  access?: SessionAccess | null;
 }
 
 export interface OpportunityRecord extends SourcedRecord {
@@ -1163,6 +1166,9 @@ export function validateContentGraph(
       }
     }
     checkNullableUrl(issues, `${source}:recordingUrl`, event.recordingUrl);
+    const invalidAccess = accessError(event.access);
+    if (invalidAccess)
+      add(issues, 'invalid_access', `${source}:access`, invalidAccess);
   }
 
   for (const [index, opportunity] of graph.opportunities.entries()) {

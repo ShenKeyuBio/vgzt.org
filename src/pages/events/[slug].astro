@@ -69,6 +69,7 @@ export const getStaticPaths = (async () => {
           };
         }),
         recordingUrl: data.recordingUrl,
+        access: data.access,
       };
       return { params: { slug: data.id }, props: { event } };
     });

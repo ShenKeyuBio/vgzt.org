@@ -1,0 +1,64 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getCollection } from 'astro:content';
+
+export const getStaticPaths = (async () => {
+  const events = await getCollection(
+    'events',
+    ({ data }) => data.status === 'published',
+  );
+  return events
+    .filter(
+      ({ data }) =>
+        data.date && data.time && data.id !== 'collection-empty-state',
+    )
+    .map(({ data }) => ({ params: { slug: data.id }, props: { id: data.id } }));
+}) satisfies GetStaticPaths;
+const { id } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Download VGZT calendar invite</title>
+  </head>
+  <body>
+    <main>
+      <h1>Download VGZT calendar invite</h1>
+      <p id="status" role="status">Preparing your calendar invite.</p>
+      <p>
+        <a
+          id="download"
+          href={`/events/${id}/calendar.ics`}
+          download={`${id}.ics`}>Download calendar invite (.ics)</a
+        >
+      </p>
+      <p><a href={`/events/${id}/`}>View session details</a></p>
+    </main>
+    <script is:inline src="/calendar/download.js"></script>
+  </body>
+</html>
+<style>
+  body {
+    margin: 0;
+    padding: 24px;
+    background: #f3f1ed;
+    color: #0b0b0b;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+  main {
+    max-width: 520px;
+    margin: 10vh auto;
+    padding: 36px;
+    background: white;
+    border: 2px solid #0b0b0b;
+    text-align: center;
+  }
+  a {
+    color: #1555c8;
+    font-weight: 700;
+  }
+</style>

@@ -23,3 +23,7 @@ recordingUrl: null
 recordingLabel: null
 description: null
 featured: false
+access:
+  url: 'https://ucla.zoom.us/j/96731487183?pwd=bBfYjemAodscbi3Pb5phgMRkikO82G.1'
+  meetingId: '967 3148 7183'
+  passcode: 'vgzt8'

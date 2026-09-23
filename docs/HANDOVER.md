@@ -1,5 +1,7 @@
 # VGZT website handover
 
+For the recurring poster → session → email → calendar workflow, use [WEEKLY-SESSION.md](WEEKLY-SESSION.md). The event is the shared source; generated email files are separate historical artifacts and must be reimported into EmailOctopus after any correction.
+
 This guide is for a VGZT organizer who is taking over the website and has never used Astro. You do not need to learn Astro for ordinary content work.
 
 ## The five things to know
