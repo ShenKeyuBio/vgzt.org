@@ -1,0 +1,30 @@
+# Source: Session details supplied directly by VGZT organizers; poster pending.
+id: season-08-2026-09-25
+season: season-08
+status: published
+date: '2026-09-25'
+time: '10:00'
+timezone: America/New_York
+# No duration supplied; use VGZT's usual one-hour session.
+durationMinutes: 60
+sessionType: paired-research-session
+timeSlot: custom
+speakers:
+  - person: chun-so
+    role: speaker
+    talkTitle: 'Illuminating the beginning of human life'
+    affiliationOverride: 'National Institute of Biological Sciences, Beijing (NIBS)'
+  - person: benjamin-swedlund
+    role: speaker
+    talkTitle: 'Deconstructing and Reconstructing Multicellular Self-organisation with Synthetic Biology'
+    affiliationOverride: 'University of Southern California'
+poster: null
+posterAlt: null
+recordingUrl: null
+recordingLabel: null
+description: null
+featured: false
+access:
+  url: 'https://ucla.zoom.us/j/98329340653?pwd=QiBe55nprSOyULlvirAL0Lx6KoNOEH.1'
+  meetingId: '983 2934 0653'
+  passcode: 'vgzt8'

@@ -14,6 +14,8 @@ The reusable `session-template.html` preserves the historical email's VGZT / The
 
 ## Validate and deliver
 
+If the organizer explicitly requests publication before a poster is available, keep `poster` and `posterAlt` null and run `pnpm run session:prepare <event-id> --without-poster`. The website uses its existing “Poster coming soon” fallback; the email omits the poster row and writes no poster asset. Joining information and the calendar still come from the event. When the poster arrives, regenerate into a temporary output directory and review the updated artifacts before replacing only that session's email; never reuse a different session's poster.
+
 - Format only changed files using the installed Prettier and repository config. Run all current CI checks: formatting, Astro/types, content graph, pending report, unit tests, build and browser suite; use CI's Linux run for visual baselines. Do not disable checks or regenerate unrelated baselines.
 - Run `pnpm exec playwright test tests/e2e/calendar-download.spec.ts` after building. Download tests must inspect the saved file, not just HTTP status. Independently parse delivered ICS with a real calendar parser and compare UTC start/end, titles, access, stable UID, CRLF, 75-octet folding and exact Zoom URL. In an isolated Python environment, `icalendar` can perform the independent parse; it is not a website dependency.
 - Preview the generated email at desktop and mobile widths, confirm no horizontal overflow, loaded images and an unlinked poster, inspect the exact Zoom href, and click the calendar link to save and parse its ICS. Email contains no JavaScript. A hyperlink is not a real email attachment.

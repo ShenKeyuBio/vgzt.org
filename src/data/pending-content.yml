@@ -1,4 +1,14 @@
 pending:
+  - key: season8.session-2026-09-25.poster
+    label: Poster for Chun So and Benjamin Swedlund on 25 September 2026
+    type: image
+    intendedLocation: Session page, homepage programme, and weekly email
+    status: pending
+    requiredForLaunch: false
+    replaceVia: Pages CMS > Events > season-08-2026-09-25 > Approved event poster
+    resolvedAt: null
+    notes: Organizer requested publication without a poster. Add the supplied poster later and regenerate this session's email.
+
   - key: brand.masterLogo
     label: Approved VGZT master logo
     type: image

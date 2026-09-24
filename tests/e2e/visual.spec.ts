@@ -1,3 +1,5 @@
+import { readFile } from 'node:fs/promises';
+import { parse } from 'yaml';
 import { expect, test, type Page } from '@playwright/test';
 import {
   eventRoute,
@@ -43,29 +45,41 @@ async function fillSubscribeForm(page: Page) {
   return form;
 }
 
+// Weekly content changes must remain visible in layout checks without pinning
+// the homepage to the opening session forever.
+async function selectedEventMatchesContent(page: Page) {
+  const panel = page.locator('[data-event-panel]:visible');
+  await expect(panel).toHaveCount(1);
+  const id = await panel.getAttribute('data-event-panel');
+  const event = parse(await readFile(`src/content/events/${id}.yml`, 'utf8'));
+  const tab = page.locator(`[data-event-tab][data-event-id="${id}"]`);
+  await expect(tab).toBeVisible();
+  await expect(tab).toHaveAttribute('aria-selected', 'true');
+  for (const speaker of event.speakers) {
+    const person = parse(
+      await readFile(`src/content/people/${speaker.person}.yml`, 'utf8'),
+    );
+    await expect(panel).toContainText(person.preferredName || person.name);
+    await expect(panel).toContainText(speaker.talkTitle);
+    await expect(panel).toContainText(
+      speaker.affiliationOverride || person.currentAffiliation,
+    );
+  }
+  await expect(panel).toContainText(event.time);
+  await expect(panel.locator('.poster-viewer__open img')).toHaveAttribute(
+    'alt',
+    event.poster ? event.posterAlt : 'Poster coming soon',
+  );
+  await expect(panel.locator('.poster-viewer__open img')).toBeVisible();
+  await expect(page.locator('.schedule-empty')).toHaveCount(0);
+  return panel;
+}
+
 test('home-desktop', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'desktop-1440');
   await openStable(page, '/');
 
-  const eventPanel = page.locator('[data-event-panel="season-08-2026-09-18"]');
-  const eventTab = page.locator(
-    '[data-event-tab][data-event-id="season-08-2026-09-18"]',
-  );
-  await expect(eventTab).toBeVisible();
-  await expect(eventTab).toHaveAttribute('aria-selected', 'true');
-  await expect(eventPanel).toBeVisible();
-  await expect(eventPanel).toContainText('Shi-Lei Xue');
-  await expect(eventPanel).toContainText(
-    'Mechanical principles in tissue morphogenesis',
-  );
-  await expect(eventPanel).toContainText(
-    'Evolutionary divergence of GATA6 function during mammalian pre-implantation development',
-  );
-  await expect(eventPanel.locator('.poster-viewer__open img')).toHaveAttribute(
-    'alt',
-    /Shi-Lei Xue and Riley McMahon/,
-  );
-  await expect(page.locator('.schedule-empty')).toHaveCount(0);
+  const eventPanel = await selectedEventMatchesContent(page);
 
   const layout = await eventPanel.evaluate((element) => ({
     columns: getComputedStyle(element).gridTemplateColumns.trim().split(' '),
@@ -79,14 +93,7 @@ test('home-mobile', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'mobile-390');
   await openStable(page, '/');
 
-  const eventPanel = page.locator('[data-event-panel="season-08-2026-09-18"]');
-  await expect(
-    page.locator('[data-event-tab][data-event-id="season-08-2026-09-18"]'),
-  ).toBeVisible();
-  await expect(eventPanel).toBeVisible();
-  await expect(eventPanel).toContainText('9:00');
-  await expect(eventPanel).toContainText('University of Cambridge');
-  await expect(eventPanel.locator('.poster-viewer__open img')).toBeVisible();
+  const eventPanel = await selectedEventMatchesContent(page);
 
   const layout = await eventPanel.evaluate((element) => ({
     columns: getComputedStyle(element).gridTemplateColumns.trim().split(' '),

@@ -9,6 +9,7 @@ import { accessError } from '../src/lib/calendar.ts';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const id = process.argv[2];
+const withoutPoster = process.argv.includes('--without-poster');
 const widthIndex = process.argv.indexOf('--poster-width');
 const posterWidth =
   widthIndex === -1 ? 1200 : Number(process.argv[widthIndex + 1]);
@@ -29,10 +30,10 @@ if (
   event.status !== 'published' ||
   !event.date ||
   !event.time ||
-  !event.poster
+  (!event.poster && !withoutPoster)
 )
   throw new Error(
-    'A published, scheduled event with its approved poster is required.',
+    'A published, scheduled event with its approved poster is required. Use --without-poster only when the organizer requests a text-only email.',
   );
 if (!event.access || accessError(event.access))
   throw new Error(
@@ -90,12 +91,15 @@ const posterPath = `/email-assets/${event.date}-session-poster-email.jpg`;
 const calendar = `https://vgzt.org/events/${id}/calendar/`;
 const p = (content) =>
   `<p style="font-family: Arial, Helvetica, sans-serif; font-size: 17px; line-height: 28px; margin: 0 0 22px">${content}</p>`;
+const posterRow = withoutPoster
+  ? ''
+  : `<tr><td class="mobile-pad" style="background-color:#ffffff;padding:10px 42px 32px">
+<img src="https://vgzt.org${posterPath}" width="556" alt="${escape(event.posterAlt)}" style="border:1px solid #d8d5cf;display:block;max-width:556px;width:100%;height:auto"/>
+</td></tr>`;
 const body = `<tr><td class="mobile-pad" style="background-color:#ffffff;color:#0b0b0b;padding:40px 42px 18px">
 ${p('Hi everyone,')}${p(`Please join us for the next VGZT Season ${season.season} session on ${escape(date)}.`)}
 ${people.map((person) => p(`<strong>${escape(person.name)} | ${escape(person.affiliation)}</strong><br/><em>${escape(person.title)}</em>`)).join('')}
-</td></tr><tr><td class="mobile-pad" style="background-color:#ffffff;padding:10px 42px 32px">
-<img src="https://vgzt.org${posterPath}" width="556" alt="${escape(event.posterAlt)}" style="border:1px solid #d8d5cf;display:block;max-width:556px;width:100%;height:auto"/>
-</td></tr><tr><td class="mobile-pad" style="background-color:#ffffff;color:#0b0b0b;padding:0 42px 42px">
+</td></tr>${posterRow}<tr><td class="mobile-pad" style="background-color:#ffffff;color:#0b0b0b;padding:0 42px 42px">
 ${p(`<strong>${escape(date)}</strong><br/>${times.map(escape).join('<br/>')}`)}
 ${p(`<a href="${calendar}" style="color:#1555c8;font-weight:700">Add to calendar (.ics)</a>`)}
 ${p(`<a href="${escape(event.access.url)}" style="color:#1555c8;font-weight:700;word-break:break-all">Join Zoom</a><br/><strong>Meeting ID:</strong> ${escape(event.access.meetingId)}<br/><strong>Passcode:</strong> ${escape(event.access.passcode)}`)}
@@ -128,24 +132,28 @@ const formatted = await format(html, {
   ...config,
   filepath: path.join(root, filename),
 });
-const sourcePoster = path.resolve(root, 'src/content/events', event.poster);
 let image;
-for (const quality of [85, 80, 75, 70, 65]) {
-  image = await sharp(sourcePoster)
-    .rotate()
-    .resize({ width: posterWidth, withoutEnlargement: true })
-    .flatten({ background: '#ffffff' })
-    .jpeg({ quality, mozjpeg: true })
-    .toBuffer();
-  if (image.length <= 300_000) break;
+if (!withoutPoster) {
+  const sourcePoster = path.resolve(root, 'src/content/events', event.poster);
+  for (const quality of [85, 80, 75, 70, 65]) {
+    image = await sharp(sourcePoster)
+      .rotate()
+      .resize({ width: posterWidth, withoutEnlargement: true })
+      .flatten({ background: '#ffffff' })
+      .jpeg({ quality, mozjpeg: true })
+      .toBuffer();
+    if (image.length <= 300_000) break;
+  }
+  if (image.length > 300_000)
+    throw new Error(
+      'Poster exceeds 300 KB; review compression manually before publication.',
+    );
+  await mkdir(path.join(outputRoot, 'public/email-assets'), {
+    recursive: true,
+  });
+  await writeFile(path.join(outputRoot, 'public', posterPath), image);
 }
-if (image.length > 300_000)
-  throw new Error(
-    'Poster exceeds 300 KB; review compression manually before publication.',
-  );
-await mkdir(path.join(outputRoot, 'public/email-assets'), { recursive: true });
 await mkdir(path.join(outputRoot, 'docs/email-templates'), { recursive: true });
-await writeFile(path.join(outputRoot, 'public', posterPath), image);
 await writeFile(path.join(outputRoot, filename), formatted);
 await writeFile(
   path.join(outputRoot, filename.replace('.html', '.json')),
@@ -157,12 +165,12 @@ await writeFile(
       times,
       durationMinutes: event.durationMinutes ?? 60,
       calendarUrl: calendar,
-      posterUrl: `https://vgzt.org${posterPath}`,
+      posterUrl: withoutPoster ? null : `https://vgzt.org${posterPath}`,
     },
     null,
     2,
   ) + '\n',
 );
 console.log(
-  `Prepared ${filename}\nPoster: ${image.length} bytes\nDuration: ${event.durationMinutes ?? 60} minutes${event.durationMinutes == null ? ' (default)' : ''}\nSubject: ${subject}\nPreview: ${preview}\nBuild and run the download/email QA before publishing.`,
+  `Prepared ${filename}\nPoster: ${image ? `${image.length} bytes` : 'omitted by organizer request'}\nDuration: ${event.durationMinutes ?? 60} minutes${event.durationMinutes == null ? ' (default)' : ''}\nSubject: ${subject}\nPreview: ${preview}\nBuild and run the download/email QA before publishing.`,
 );
