@@ -5,14 +5,14 @@ const id = 'season-08-2026-09-25';
 const zoom =
   'https://ucla.zoom.us/j/98329340653?pwd=QiBe55nprSOyULlvirAL0Lx6KoNOEH.1';
 
-test('poster-pending session and text-only email preserve the supplied details', async ({
+test('session poster and email preserve the supplied details', async ({
   page,
 }) => {
   await page.goto(`/events/${id}/`);
   await expect(page.locator('h1')).toHaveText('Chun So & Benjamin Swedlund');
   await expect(page.locator('.poster-viewer__open img')).toHaveAttribute(
     'src',
-    '/assets/poster-placeholder.svg',
+    /2026-09-25-session-poster/,
   );
   await expect(
     page.getByRole('link', { name: 'Join Zoom', exact: true }),
@@ -23,7 +23,7 @@ test('poster-pending session and text-only email preserve the supplied details',
   );
   expect(source).toMatch(/^<!doctype html>/i);
   expect(source).not.toMatch(
-    /<script\b|session-poster|Shi-Lei|McMahon|96731487183|September 18/,
+    /<script\b|Shi-Lei|McMahon|96731487183|September 18/,
   );
   for (const tag of [
     'PreviewText',
@@ -36,7 +36,13 @@ test('poster-pending session and text-only email preserve the supplied details',
   await page.setContent(
     source.replaceAll('https://vgzt.org', 'http://127.0.0.1:4321'),
   );
-  await expect(page.locator('img')).toHaveCount(2);
+  await expect(page.locator('img')).toHaveCount(3);
+  const poster = page.locator(
+    'img[src$="2026-09-25-session-poster-email.jpg"]',
+  );
+  await expect(poster).toBeVisible();
+  expect(await poster.evaluate((image) => image.closest('a'))).toBeNull();
+  await poster.evaluate((image) => (image as HTMLImageElement).decode());
   await expect(
     page.getByRole('link', { name: 'Join Zoom', exact: true }),
   ).toHaveAttribute('href', zoom);

@@ -1,4 +1,4 @@
-# Source: Session details supplied directly by VGZT organizers; poster pending.
+# Source: Session details and poster supplied directly by VGZT organizers.
 id: season-08-2026-09-25
 season: season-08
 status: published
@@ -18,8 +18,8 @@ speakers:
     role: speaker
     talkTitle: 'Deconstructing and Reconstructing Multicellular Self-organisation with Synthetic Biology'
     affiliationOverride: 'University of Southern California'
-poster: null
-posterAlt: null
+poster: ../../assets/posters/season-08/2026-09-25-session-poster.png
+posterAlt: 'VGZT Season 8: Chun So and Benjamin Swedlund, 25 September 2026 at 10:00 AM ET / 7:00 AM PT'
 recordingUrl: null
 recordingLabel: null
 description: null
