@@ -1,13 +1,19 @@
 import { test, expect } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
 
-test('session detail keeps Zoom access behind the subscriber message', async ({ page }) => {
+test('session detail keeps Zoom access behind the subscriber message', async ({
+  page,
+}) => {
   await page.goto('/events/season-08-2026-09-18/');
   await expect(page.locator('.event-metadata__access')).toContainText(
     'Zoom access is shared with VGZT subscribers and community members.',
   );
-  await expect(page.locator('.event-metadata__access')).not.toContainText('967 3148 7183');
-  await expect(page.locator('.event-metadata__access')).not.toContainText('vgzt8');
+  await expect(page.locator('.event-metadata__access')).not.toContainText(
+    '967 3148 7183',
+  );
+  await expect(page.locator('.event-metadata__access')).not.toContainText(
+    'vgzt8',
+  );
 });
 
 for (const route of [
