@@ -1,6 +1,6 @@
 import type { APIRoute, GetStaticPaths } from 'astro';
 import { getCalendarSessions } from '../../../lib/calendar-content';
-import { sessionCalendar } from '../../../lib/calendar';
+import { publicCalendar } from '../../../lib/calendar';
 
 export const getStaticPaths = (async () => {
   return (await getCalendarSessions()).map((event) => ({
@@ -13,7 +13,7 @@ export const GET: APIRoute = ({ props, site }) => {
   const event = props.event;
   if (!event || event.date === null || event.time === null)
     return new Response(null, { status: 404 });
-  const body = sessionCalendar(event, site || 'https://vgzt.org');
+  const body = publicCalendar(event, site || 'https://vgzt.org');
 
   return new Response(body, {
     headers: {

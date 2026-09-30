@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 import { getCalendarSessions } from '../../lib/calendar-content';
-import { sessionCalendar } from '../../lib/calendar';
+import { publicCalendar } from '../../lib/calendar';
 
 // Preserve the URL and UID already distributed in the opening-session email.
 // Future sessions use /events/[id]/calendar.ics and the event's canonical UID.
@@ -10,7 +10,7 @@ export const GET: APIRoute = async ({ site }) => {
   );
   if (!event) return new Response(null, { status: 404 });
   return new Response(
-    sessionCalendar(
+    publicCalendar(
       event,
       site || 'https://vgzt.org',
       new Date(),

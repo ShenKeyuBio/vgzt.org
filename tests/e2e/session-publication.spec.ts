@@ -14,9 +14,9 @@ test('session poster and email preserve the supplied details', async ({
     'src',
     /2026-09-25-session-poster/,
   );
-  await expect(
-    page.getByRole('link', { name: 'Join Zoom', exact: true }),
-  ).toHaveAttribute('href', zoom);
+  await expect(page.locator('.event-metadata__access')).toContainText(
+    'Zoom access is shared with VGZT subscribers and community members.',
+  );
   const source = await readFile(
     `docs/email-templates/vgzt-season-8-2026-09-25-session.html`,
     'utf8',
@@ -66,9 +66,10 @@ test('session poster and email preserve the supplied details', async ({
     'Benjamin Swedlund',
     'Illuminating the beginning of human life',
     'Deconstructing and Reconstructing Multicellular Self-organisation with Synthetic Biology',
-    'Meeting ID: 983 2934 0653',
-    'Passcode: vgzt8',
-    `URL:${zoom}\r\n`,
+    'Access is shared with VGZT subscribers and community members.',
+    `URL:https://vgzt.org/events/${id}/\r\n`,
   ])
     expect(unfolded).toContain(text);
+  expect(unfolded).not.toContain('983 2934 0653');
+  expect(unfolded).not.toContain('vgzt8');
 });

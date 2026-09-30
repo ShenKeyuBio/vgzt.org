@@ -1,6 +1,6 @@
 # Pages CMS organizer guide
 
-The optional Events → Organizer-approved public Zoom access object is for access explicitly approved for public weekly publication. Enter URL, meeting ID and passcode together, or clear the whole object to null. Do not reuse another event's access. See [WEEKLY-SESSION.md](WEEKLY-SESSION.md) for email generation and download verification.
+The optional Events → Email-only Zoom access object supplies email generation only. Enter URL, meeting ID and passcode together, or clear the whole object to null. Public webpage text, page data and downloadable calendars must never include these values. Original posters remain unchanged by organizer request. See [WEEKLY-SESSION.md](WEEKLY-SESSION.md).
 
 Pages CMS is a form-based editor for the YAML, Markdown, and media files in this repository. It is not the website runtime: it makes Git commits, CI validates those commits, and GitHub Pages serves the resulting static build.
 

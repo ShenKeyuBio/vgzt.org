@@ -125,3 +125,13 @@ export function sessionCalendar(
     .map(foldIcs)
     .join('\r\n');
 }
+
+/** Render a calendar invite for public distribution without meeting credentials. */
+export function publicCalendar(
+  event: CalendarSession,
+  site: string | URL,
+  generatedAt = new Date(),
+  uid = `${event.id}@vgzt.org`,
+): string {
+  return sessionCalendar({ ...event, access: null }, site, generatedAt, uid);
+}

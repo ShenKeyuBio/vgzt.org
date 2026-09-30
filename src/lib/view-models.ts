@@ -21,5 +21,4 @@ export interface EventViewModel {
   posterAlt: string;
   speakers: SpeakerViewModel[];
   recordingUrl?: string | null;
-  access?: { url: string; meetingId: string; passcode: string } | null;
 }

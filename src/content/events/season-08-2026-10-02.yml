@@ -1,0 +1,30 @@
+# Source: Session details and poster supplied directly by VGZT organizers.
+id: season-08-2026-10-02
+season: season-08
+status: published
+date: '2026-10-02'
+time: '10:00'
+timezone: America/New_York
+# No duration supplied; use VGZT's usual one-hour session.
+durationMinutes: 60
+sessionType: paired-research-session
+timeSlot: custom
+speakers:
+  - person: arjuna-rajakumar
+    role: speaker
+    talkTitle: 'Embryonic germ cell loss and alternative oocyte programs underlies queen-worker caste determination in Monomorium pharaonis'
+    affiliationOverride: 'Whitehead Institute'
+  - person: suraj-shankar
+    role: speaker
+    talkTitle: 'Embryonic wetting reveals mechanical control of robust fate timing'
+    affiliationOverride: 'University of Michigan'
+poster: ../../assets/posters/season-08/2026-10-02-session-poster.png
+posterAlt: 'VGZT Season 8: Arjuna Rajakumar and Suraj Shankar, 2 October 2026 at 10:00 AM ET / 7:00 AM PT'
+recordingUrl: null
+recordingLabel: null
+description: null
+featured: false
+access:
+  url: 'https://ucla.zoom.us/j/98329340653?pwd=QiBe55nprSOyULlvirAL0Lx6KoNOEH.1'
+  meetingId: '983 2934 0653'
+  passcode: 'vgzt8'

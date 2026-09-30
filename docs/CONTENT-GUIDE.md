@@ -2,7 +2,7 @@
 
 This guide explains what to write, where to put it, and how to leave missing information safely. For Pages CMS clicks and publishing steps, see [CMS.md](CMS.md).
 
-For the organizer's explicitly authorized public weekly session workflow, see [WEEKLY-SESSION.md](WEEKLY-SESSION.md). Its optional event `access` object supplies the full Zoom URL, matching meeting ID and passcode together; it defaults to null and must never inherit access from another event. This exception applies only to joining information explicitly approved for publication, not private credentials or subscriber-only links.
+For the weekly session email workflow, see [WEEKLY-SESSION.md](WEEKLY-SESSION.md). The optional event `access` object supplies email generation only. Do not expose its Zoom URL, meeting ID or passcode in public page markup, page data or calendar downloads. Original posters may remain unchanged when explicitly requested by the organizer.
 
 ## Editorial principles
 

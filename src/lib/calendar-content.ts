@@ -11,9 +11,11 @@ export async function getCalendarSessions(): Promise<CalendarSession[]> {
     .filter(({ data }) => data.id !== 'collection-empty-state')
     .filter(({ data }) => data.date !== null && data.time !== null)
     .map(({ data }) => ({
-      ...data,
+      id: data.id,
       date: data.date!,
       time: data.time!,
+      timezone: data.timezone,
+      durationMinutes: data.durationMinutes,
       speakers: data.speakers.map((speaker) => {
         const person = peopleById.get(speaker.person);
         return {
@@ -23,5 +25,6 @@ export async function getCalendarSessions(): Promise<CalendarSession[]> {
           talkTitle: speaker.talkTitle,
         };
       }),
+      access: null,
     }));
 }

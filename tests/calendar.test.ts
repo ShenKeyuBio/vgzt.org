@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
   accessError,
   foldIcs,
+  publicCalendar,
   sessionCalendar,
   type CalendarSession,
 } from '../src/lib/calendar';
@@ -65,6 +66,22 @@ describe('session calendars', () => {
         'https://vgzt.org',
       ),
     ).toThrow();
+  });
+  it('removes meeting credentials from public calendar output', () => {
+    const ics = unfold(
+      publicCalendar(
+        event,
+        'https://vgzt.org',
+        new Date('2026-09-01T01:02:03Z'),
+      ),
+    );
+    expect(ics).toContain('URL:https://vgzt.org/events/session-test/');
+    expect(ics).toContain(
+      'Access is shared with VGZT subscribers and community members.',
+    );
+    expect(ics).not.toContain(event.access!.url);
+    expect(ics).not.toContain(event.access!.meetingId);
+    expect(ics).not.toContain(event.access!.passcode);
   });
   it('rejects incomplete or mismatched access instead of reusing old credentials', () => {
     expect(accessError(null)).toBeNull();

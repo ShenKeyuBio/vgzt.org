@@ -714,10 +714,10 @@ content:
             component: nullable_https_url
             description: 'Optional approved public recording only. Never enter subscriber-only or Zoom access details.'
           - name: access
-            label: Organizer-approved public Zoom access
+            label: Email-only Zoom access
             type: object
             default: null
-            description: 'Only publish access explicitly approved by the organizer. Supply all three fields for this event; never copy credentials from a previous session. Clear the entire object when access is not public.'
+            description: 'For email generation only; never display in public webpage text, page data or calendar downloads. Supply all three confirmed fields for this event. Clear the entire object when not supplied.'
             fields:
               - name: url
                 label: Full Zoom URL

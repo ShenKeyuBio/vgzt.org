@@ -1,18 +1,13 @@
 import { test, expect } from '@playwright/test';
 import { readFile } from 'node:fs/promises';
 
-test('session detail shows its own approved Zoom access', async ({ page }) => {
+test('session detail keeps Zoom access behind the subscriber message', async ({ page }) => {
   await page.goto('/events/season-08-2026-09-18/');
-  await expect(
-    page.getByRole('link', { name: 'Join Zoom', exact: true }),
-  ).toHaveAttribute(
-    'href',
-    'https://ucla.zoom.us/j/96731487183?pwd=bBfYjemAodscbi3Pb5phgMRkikO82G.1',
-  );
   await expect(page.locator('.event-metadata__access')).toContainText(
-    '967 3148 7183',
+    'Zoom access is shared with VGZT subscribers and community members.',
   );
-  await expect(page.locator('.event-metadata__access')).toContainText('vgzt8');
+  await expect(page.locator('.event-metadata__access')).not.toContainText('967 3148 7183');
+  await expect(page.locator('.event-metadata__access')).not.toContainText('vgzt8');
 });
 
 for (const route of [
@@ -33,12 +28,15 @@ for (const route of [
     expect(await readFile((await manual.path())!, 'utf8')).toBe(first);
     const unfolded = first.replace(/\r\n[ \t]/g, '');
     expect(unfolded).toContain('Riley McMahon');
-    expect(unfolded).toContain('Meeting ID: 967 3148 7183');
-    expect(unfolded).toContain('Passcode: vgzt8');
+    expect(unfolded).toContain(
+      'Access is shared with VGZT subscribers and community members.',
+    );
+    expect(unfolded).not.toContain('967 3148 7183');
+    expect(unfolded).not.toContain('vgzt8');
     expect(unfolded).toContain('DTSTART:20260918T130000Z');
     expect(unfolded).toContain('DTEND:20260918T140000Z');
     expect(unfolded).toContain(
-      'URL:https://ucla.zoom.us/j/96731487183?pwd=bBfYjemAodscbi3Pb5phgMRkikO82G.1\r\n',
+      'URL:https://vgzt.org/events/season-08-2026-09-18/\r\n',
     );
     for (const line of first.split('\r\n'))
       expect(Buffer.byteLength(line)).toBeLessThanOrEqual(75);
