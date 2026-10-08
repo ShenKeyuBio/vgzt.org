@@ -1,4 +1,14 @@
 pending:
+  - key: season8.session-2026-10-09.poster
+    label: Poster for Rowan Karvas on 9 October 2026
+    type: image
+    intendedLocation: Session page, homepage programme, and weekly email
+    status: pending
+    requiredForLaunch: false
+    replaceVia: Pages CMS > Events > season-08-2026-10-09 > Approved event poster
+    resolvedAt: null
+    notes: Session announced before a poster was supplied; email omits the poster.
+
   - key: season8.session-2026-09-25.poster
     label: Poster for Chun So and Benjamin Swedlund on 25 September 2026
     type: image

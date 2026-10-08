@@ -1,0 +1,26 @@
+# Source: Session details supplied directly by VGZT organizers; poster pending.
+id: season-08-2026-10-09
+season: season-08
+status: published
+date: '2026-10-09'
+time: '10:00'
+timezone: America/New_York
+# No duration supplied; use VGZT's usual one-hour session.
+durationMinutes: 60
+sessionType: featured-seminar
+timeSlot: eastern
+speakers:
+  - person: rowan-karvas
+    role: speaker
+    talkTitle: 'Stem Cell Based Embryo model recapitulates features of pre- to post-implantation and gastrulation: a focus on the early placenta-like and embryo-like structures'
+    affiliationOverride: 'University of Colorado - Anschutz'
+poster: null
+posterAlt: null
+recordingUrl: null
+recordingLabel: null
+description: null
+featured: true
+access:
+  url: 'https://ucla.zoom.us/j/98329340653?pwd=QiBe55nprSOyULlvirAL0Lx6KoNOEH.1'
+  meetingId: '983 2934 0653'
+  passcode: 'vgzt8'
