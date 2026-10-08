@@ -1,0 +1,30 @@
+# Source: Session details supplied directly by VGZT organizers; Catherine's title and poster pending.
+id: season-08-2026-10-16
+season: season-08
+status: published
+date: '2026-10-16'
+time: '10:00'
+timezone: America/New_York
+# No duration supplied; use VGZT's usual one-hour session.
+durationMinutes: 60
+sessionType: paired-research-session
+timeSlot: eastern
+speakers:
+  - person: ashley-solmonson
+    role: speaker
+    talkTitle: 'Divergent strategies for purine synthesis support placental and embryonic growth'
+    affiliationOverride: 'UT Southwestern Medical Centre'
+  - person: catherine-triandafillou
+    role: speaker
+    talkTitle: 'TBD'
+    affiliationOverride: 'University of Pennsylvania'
+poster: null
+posterAlt: null
+recordingUrl: null
+recordingLabel: null
+description: null
+featured: false
+access:
+  url: 'https://ucla.zoom.us/j/98329340653?pwd=QiBe55nprSOyULlvirAL0Lx6KoNOEH.1'
+  meetingId: '983 2934 0653'
+  passcode: 'vgzt8'

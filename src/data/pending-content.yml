@@ -1,4 +1,34 @@
 pending:
+  - key: season8.session-2026-10-16.title
+    label: Catherine Triandafillou talk title for 16 October 2026
+    type: text
+    intendedLocation: Session page and weekly email
+    status: pending
+    requiredForLaunch: false
+    replaceVia: Pages CMS > Events > season-08-2026-10-16 > Speaker talk title
+    resolvedAt: null
+    notes: Organizer supplied the title as TBD; replace it when confirmed.
+
+  - key: season8.session-2026-10-16.zoom
+    label: Zoom joining information for 16 October 2026
+    type: text
+    intendedLocation: Weekly email only
+    status: resolved
+    requiredForLaunch: false
+    replaceVia: Pages CMS > Events > season-08-2026-10-16 > Session access
+    resolvedAt: '2026-10-08'
+    notes: Organizer confirmed the same Zoom URL, meeting ID and passcode are used for 16 October.
+
+  - key: season8.session-2026-10-16.poster
+    label: Poster for Ashley Solmonson and Catherine Triandafillou on 16 October 2026
+    type: image
+    intendedLocation: Session page, homepage programme, and weekly email
+    status: pending
+    requiredForLaunch: false
+    replaceVia: Pages CMS > Events > season-08-2026-10-16 > Approved event poster
+    resolvedAt: null
+    notes: No poster has been supplied for this date.
+
   - key: season8.session-2026-10-09.poster
     label: Poster for Rowan Karvas on 9 October 2026
     type: image
