@@ -1,4 +1,4 @@
-# Source: Session details supplied directly by VGZT organizers; poster pending.
+# Source: Session details and poster supplied directly by VGZT organizers.
 id: season-08-2026-10-09
 season: season-08
 status: published
@@ -14,8 +14,8 @@ speakers:
     role: speaker
     talkTitle: 'Stem Cell Based Embryo model recapitulates features of pre- to post-implantation and gastrulation: a focus on the early placenta-like and embryo-like structures'
     affiliationOverride: 'University of Colorado - Anschutz'
-poster: null
-posterAlt: null
+poster: ../../assets/posters/season-08/2026-10-09-session-poster.png
+posterAlt: 'VGZT Season 8 Rowan Karvas session poster for 9 October 2026 at 10:00 AM ET'
 recordingUrl: null
 recordingLabel: null
 description: null
