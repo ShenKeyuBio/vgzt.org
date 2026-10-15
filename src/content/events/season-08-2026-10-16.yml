@@ -1,4 +1,4 @@
-# Source: Updated session details supplied by VGZT organizers on 15 October 2026; poster pending.
+# Source: Updated session details supplied by VGZT organizers on 15 October 2026; approved poster supplied the same day.
 id: season-08-2026-10-16
 season: season-08
 status: published
@@ -18,8 +18,8 @@ speakers:
     role: speaker
     talkTitle: 'Decoding the Genotype-Phenotype Map: A Cross-Scale Systems Biology Mechanism Underlying Carotenoid-Based Color Polymorphism in Marine Mollusks'
     affiliationOverride: 'Westlake University, China'
-poster: null
-posterAlt: null
+poster: ../../assets/posters/season-08/2026-10-16-session-poster.png
+posterAlt: 'VGZT Season 8: Ashley Solmonson and Xiaohui Wei, 16 October 2026 at 10:00 AM ET / 7:00 AM PT'
 recordingUrl: null
 recordingLabel: null
 description: null

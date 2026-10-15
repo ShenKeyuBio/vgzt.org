@@ -53,11 +53,11 @@ pending:
     label: Poster for Ashley Solmonson and Xiaohui Wei on 16 October 2026
     type: image
     intendedLocation: Session page, homepage programme, and weekly email
-    status: pending
+    status: resolved
     requiredForLaunch: false
     replaceVia: Pages CMS > Events > season-08-2026-10-16 > Approved event poster
-    resolvedAt: null
-    notes: No poster has been supplied for this date.
+    resolvedAt: '2026-10-15'
+    notes: Organizer supplied the approved original poster; published unchanged and used for the local reminder email.
 
   - key: season8.session-2026-10-09.poster
     label: Poster for Rowan Karvas on 9 October 2026
