@@ -1,0 +1,27 @@
+# Source: Session details supplied directly by VGZT organizers on 15 October 2026.
+id: season-08-2026-10-23
+season: season-08
+status: published
+date: '2026-10-23'
+time: '10:00'
+timezone: America/New_York
+# No duration supplied; use VGZT's usual one-hour session.
+durationMinutes: 60
+sessionType: paired-research-session
+timeSlot: eastern
+speakers:
+  - person: alejandro-torres-sanchez
+    role: speaker
+    talkTitle: null
+    affiliationOverride: 'EMBL Barcelona, Spain'
+  - person: riddhiman-garge
+    role: speaker
+    talkTitle: 'Multi-omic approaches to map the proteomic landscape and temporal dynamics of mammalian gastruloid development'
+    affiliationOverride: 'University of Washington, USA'
+poster: null
+posterAlt: null
+recordingUrl: null
+recordingLabel: null
+description: null
+featured: false
+access: null

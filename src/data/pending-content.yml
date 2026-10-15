@@ -1,13 +1,43 @@
 pending:
-  - key: season8.session-2026-10-16.title
-    label: Catherine Triandafillou talk title for 16 October 2026
+  - key: season8.session-2026-10-23.title
+    label: Alejandro Torres-Sánchez talk title for 23 October 2026
     type: text
     intendedLocation: Session page and weekly email
     status: pending
     requiredForLaunch: false
-    replaceVia: Pages CMS > Events > season-08-2026-10-16 > Speaker talk title
+    replaceVia: Pages CMS > Events > season-08-2026-10-23 > Speaker talk title
     resolvedAt: null
-    notes: Organizer supplied the title as TBD; replace it when confirmed.
+    notes: Awaiting confirmation; keep the event talk title null.
+
+  - key: season8.session-2026-10-23.poster
+    label: Poster for Alejandro Torres-Sánchez and Riddhiman Garge on 23 October 2026
+    type: image
+    intendedLocation: Session page, homepage programme, and weekly email
+    status: pending
+    requiredForLaunch: false
+    replaceVia: Pages CMS > Events > season-08-2026-10-23 > Approved event poster
+    resolvedAt: null
+    notes: No poster has been supplied for this date.
+
+  - key: season8.session-2026-10-23.zoom
+    label: Zoom joining information for 23 October 2026
+    type: text
+    intendedLocation: Weekly email only
+    status: pending
+    requiredForLaunch: false
+    replaceVia: Pages CMS > Events > season-08-2026-10-23 > Session access
+    resolvedAt: null
+    notes: Confirm joining details for this date before generating its standalone weekly email.
+
+  - key: season8.session-2026-10-16.title
+    label: Updated second speaker and talk title for 16 October 2026
+    type: text
+    intendedLocation: Session page and weekly email
+    status: resolved
+    requiredForLaunch: false
+    replaceVia: Pages CMS > Events > season-08-2026-10-16 > Speaker talk title
+    resolvedAt: '2026-10-15'
+    notes: Organizer replaced Catherine Triandafillou with Xiaohui Wei and supplied the confirmed title.
 
   - key: season8.session-2026-10-16.zoom
     label: Zoom joining information for 16 October 2026
@@ -17,10 +47,10 @@ pending:
     requiredForLaunch: false
     replaceVia: Pages CMS > Events > season-08-2026-10-16 > Session access
     resolvedAt: '2026-10-08'
-    notes: Organizer confirmed the same Zoom URL, meeting ID and passcode are used for 16 October.
+    notes: Organizer reconfirmed access for the local weekly email; joining details are not committed with this update.
 
   - key: season8.session-2026-10-16.poster
-    label: Poster for Ashley Solmonson and Catherine Triandafillou on 16 October 2026
+    label: Poster for Ashley Solmonson and Xiaohui Wei on 16 October 2026
     type: image
     intendedLocation: Session page, homepage programme, and weekly email
     status: pending
@@ -63,11 +93,11 @@ pending:
     label: Published Season 8 programme
     type: configuration
     intendedLocation: Homepage schedule and event pages
-    status: pending
+    status: resolved
     requiredForLaunch: true
     replaceVia: Pages CMS > Events
-    resolvedAt: null
-    notes: Add only confirmed sessions; no example event is published.
+    resolvedAt: '2026-10-15'
+    notes: Confirmed Season 8 sessions from 18 September through 23 October are published.
 
   - key: abstractCall.submissionTimeline
     label: Season 8 abstract submission timeline
