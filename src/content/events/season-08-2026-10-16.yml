@@ -1,4 +1,4 @@
-# Source: Session details supplied directly by VGZT organizers; Catherine's title and poster pending.
+# Source: Updated session details supplied by VGZT organizers on 15 October 2026; poster pending.
 id: season-08-2026-10-16
 season: season-08
 status: published
@@ -13,18 +13,15 @@ speakers:
   - person: ashley-solmonson
     role: speaker
     talkTitle: 'Divergent strategies for purine synthesis support placental and embryonic growth'
-    affiliationOverride: 'UT Southwestern Medical Centre'
-  - person: catherine-triandafillou
+    affiliationOverride: 'UT Southwestern Medical Center, USA'
+  - person: xiaohui-wei
     role: speaker
-    talkTitle: 'TBD'
-    affiliationOverride: 'University of Pennsylvania'
+    talkTitle: 'Decoding the Genotype-Phenotype Map: A Cross-Scale Systems Biology Mechanism Underlying Carotenoid-Based Color Polymorphism in Marine Mollusks'
+    affiliationOverride: 'Westlake University, China'
 poster: null
 posterAlt: null
 recordingUrl: null
 recordingLabel: null
 description: null
 featured: false
-access:
-  url: 'https://ucla.zoom.us/j/98329340653?pwd=QiBe55nprSOyULlvirAL0Lx6KoNOEH.1'
-  meetingId: '983 2934 0653'
-  passcode: 'vgzt8'
+access: null
