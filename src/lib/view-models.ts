@@ -21,4 +21,5 @@ export interface EventViewModel {
   posterAlt: string;
   speakers: SpeakerViewModel[];
   recordingUrl?: string | null;
+  description?: string | null;
 }

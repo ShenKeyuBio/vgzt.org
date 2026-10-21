@@ -1,18 +1,18 @@
-# Source: Session details supplied directly by VGZT organizers on 15 October 2026.
+# Source: Session details supplied directly by VGZT organizers on 21 October 2026; noon ET and talk titles confirmed in organizer correspondence.
 id: season-08-2026-10-23
 season: season-08
 status: published
 date: '2026-10-23'
-time: '10:00'
+time: '12:00'
 timezone: America/New_York
 # No duration supplied; use VGZT's usual one-hour session.
 durationMinutes: 60
 sessionType: paired-research-session
-timeSlot: eastern
+timeSlot: custom
 speakers:
   - person: alejandro-torres-sanchez
     role: speaker
-    talkTitle: null
+    talkTitle: 'Mechanical failure as a tool in living matter: lessons from the beating heart'
     affiliationOverride: 'EMBL Barcelona, Spain'
   - person: riddhiman-garge
     role: speaker
@@ -22,6 +22,6 @@ poster: null
 posterAlt: null
 recordingUrl: null
 recordingLabel: null
-description: null
+description: 'Time change: this session starts at 12:00 noon ET (9:00 AM PT), instead of 10:00 AM ET.'
 featured: false
 access: null

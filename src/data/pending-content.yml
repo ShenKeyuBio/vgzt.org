@@ -3,11 +3,11 @@ pending:
     label: Alejandro Torres-Sánchez talk title for 23 October 2026
     type: text
     intendedLocation: Session page and weekly email
-    status: pending
+    status: resolved
     requiredForLaunch: false
     replaceVia: Pages CMS > Events > season-08-2026-10-23 > Speaker talk title
-    resolvedAt: null
-    notes: Awaiting confirmation; keep the event talk title null.
+    resolvedAt: '2026-10-21'
+    notes: Confirmed title supplied by the speaker and verified against organizer correspondence.
 
   - key: season8.session-2026-10-23.poster
     label: Poster for Alejandro Torres-Sánchez and Riddhiman Garge on 23 October 2026
@@ -23,11 +23,11 @@ pending:
     label: Zoom joining information for 23 October 2026
     type: text
     intendedLocation: Weekly email only
-    status: pending
+    status: resolved
     requiredForLaunch: false
     replaceVia: Pages CMS > Events > season-08-2026-10-23 > Session access
-    resolvedAt: null
-    notes: Confirm joining details for this date before generating its standalone weekly email.
+    resolvedAt: '2026-10-21'
+    notes: Organizer correspondence confirms the existing meeting for the local weekly email; joining details remain outside public event content.
 
   - key: season8.session-2026-10-16.title
     label: Updated second speaker and talk title for 16 October 2026

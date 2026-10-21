@@ -30,6 +30,13 @@ const easternTimeLabel = new Intl.DateTimeFormat('en-GB', {
     <p class="eyebrow">Selected seminar</p>
     <h3>{event.speakers.map((speaker) => speaker.name).join(' & ')}</h3>
   </div>
+  {
+    event.description && (
+      <p class="event-metadata__notice">
+        <strong>{event.description}</strong>
+      </p>
+    )
+  }
   <dl>
     <div>
       <dt>Your date</dt>
