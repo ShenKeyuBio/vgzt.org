@@ -13,11 +13,11 @@ pending:
     label: Poster for Alejandro Torres-Sánchez and Riddhiman Garge on 23 October 2026
     type: image
     intendedLocation: Session page, homepage programme, and weekly email
-    status: pending
+    status: resolved
     requiredForLaunch: false
     replaceVia: Pages CMS > Events > season-08-2026-10-23 > Approved event poster
-    resolvedAt: null
-    notes: No poster has been supplied for this date.
+    resolvedAt: '2026-10-23'
+    notes: Organizer authorized a temporary collage using speaker-provided portraits and research images; date, noon ET start, and original Zoom QR verified before publication.
 
   - key: season8.session-2026-10-23.zoom
     label: Zoom joining information for 23 October 2026

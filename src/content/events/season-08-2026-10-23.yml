@@ -18,8 +18,8 @@ speakers:
     role: speaker
     talkTitle: 'Multi-omic approaches to map the proteomic landscape and temporal dynamics of mammalian gastruloid development'
     affiliationOverride: 'University of Washington, USA'
-poster: null
-posterAlt: null
+poster: ../../assets/posters/season-08/2026-10-23-session-poster.png
+posterAlt: 'VGZT Season 8: Alejandro Torres-Sánchez and Riddhiman Garge, 23 October 2026 at 12:00 noon ET / 9:00 AM PT'
 recordingUrl: null
 recordingLabel: null
 description: 'Time change: this session starts at 12:00 noon ET (9:00 AM PT), instead of 10:00 AM ET.'
