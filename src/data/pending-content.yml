@@ -1,4 +1,14 @@
 pending:
+  - key: season8.session-2026-10-30.poster
+    label: Lisa Manning keynote poster and session details for 30 October 2026
+    type: image
+    intendedLocation: Session page, homepage programme, and weekly email
+    status: resolved
+    requiredForLaunch: false
+    replaceVia: Pages CMS > Events > season-08-2026-10-30
+    resolvedAt: '2026-10-30'
+    notes: Organizer supplied the original poster, title, abstract, 10 AM ET start and complete Zoom access. Poster preserved unchanged; email includes the supplied abstract and calendar link, with no next-session preview. Joining details stay in the local email and original poster; public event access remains null.
+
   - key: season8.session-2026-10-23.title
     label: Alejandro Torres-Sánchez talk title for 23 October 2026
     type: text

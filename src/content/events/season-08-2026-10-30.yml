@@ -1,0 +1,23 @@
+# Source: Session details and original poster supplied directly by VGZT organizers on 30 October 2026.
+id: season-08-2026-10-30
+season: season-08
+status: published
+date: '2026-10-30'
+time: '10:00'
+timezone: America/New_York
+# No duration supplied; use VGZT's usual one-hour session.
+durationMinutes: 60
+sessionType: keynote
+timeSlot: eastern
+speakers:
+  - person: lisa-manning
+    role: keynote
+    talkTitle: 'Sparse mesenchymal cell networks as a fluid under tension (and possibly as tunable matter)'
+    affiliationOverride: 'Syracuse University'
+poster: ../../assets/posters/season-08/2026-10-30-session-poster.png
+posterAlt: 'VGZT Season 8 keynote: Lisa Manning, Syracuse University, 30 October 2026 at 10:00 AM ET / 7:00 AM PT'
+recordingUrl: null
+recordingLabel: null
+description: null
+featured: false
+access: null
