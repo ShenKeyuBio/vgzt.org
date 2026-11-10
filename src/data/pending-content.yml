@@ -1,4 +1,14 @@
 pending:
+  - key: season8.session-2026-11-13.poster
+    label: Hans Clevers keynote poster and session details for 13 November 2026
+    type: image
+    intendedLocation: Session page, homepage programme, and weekly email
+    status: resolved
+    requiredForLaunch: false
+    replaceVia: Pages CMS > Events > season-08-2026-11-13
+    resolvedAt: '2026-11-10'
+    notes: Organizer supplied the approved original poster, confirmed title, 10 AM ET start, and full joining URL. Preserve the original poster and prepare the local email and calendar; no next-session preview. Only the supplied joining URL is printed in the email; public event access remains null.
+
   - key: season8.session-2026-10-30.poster
     label: Lisa Manning keynote poster and session details for 30 October 2026
     type: image

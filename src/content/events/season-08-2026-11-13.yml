@@ -1,0 +1,23 @@
+# Source: Session details and original keynote poster supplied directly by VGZT organizers on 10 November 2026.
+id: season-08-2026-11-13
+season: season-08
+status: published
+date: '2026-11-13'
+time: '10:00'
+timezone: America/New_York
+# No duration supplied; use VGZT's usual one-hour session.
+durationMinutes: 60
+sessionType: keynote
+timeSlot: eastern
+speakers:
+  - person: hans-clevers
+    role: keynote
+    talkTitle: 'Modeling human biology in organoids: 2D and 3D'
+    affiliationOverride: 'Hubrecht Institute | Utrecht University'
+poster: ../../assets/posters/season-08/2026-11-13-session-poster.png
+posterAlt: 'VGZT Season 8 keynote: Hans Clevers, Hubrecht Institute | Utrecht University, 13 November 2026 at 10:00 AM ET / 7:00 AM PT'
+recordingUrl: null
+recordingLabel: null
+description: null
+featured: false
+access: null
