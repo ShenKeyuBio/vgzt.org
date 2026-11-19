@@ -1,0 +1,25 @@
+# Source: Matteo A. Molè's 19 November 2026 email and the original keynote poster supplied by VGZT organizers.
+id: season-08-2026-11-20
+season: season-08
+status: published
+date: '2026-11-20'
+time: '12:00'
+timezone: America/New_York
+durationMinutes: 60
+sessionType: keynote
+timeSlot: custom
+speakers:
+  - person: matteo-a-mole
+    role: keynote
+    talkTitle: 'Modelling Human Implantation and Early Embryo–Endometrial Crosstalk In Vitro'
+    affiliationOverride: 'Stanford University School of Medicine'
+poster: ../../assets/posters/season-08/2026-11-20-session-poster.png
+posterAlt: 'VGZT Season 8 keynote: Matteo A. Molè, Stanford University School of Medicine, 20 November 2026 at 12:00 PM ET / 9:00 AM PT'
+recordingUrl: null
+recordingLabel: null
+description: null
+featured: false
+access:
+  url: 'https://ucla.zoom.us/j/98329340653?pwd=QiBe55nprSOyULlvirAL0Lx6KoNOEH.1'
+  meetingId: '983 2934 0653'
+  passcode: 'vgzt8'
